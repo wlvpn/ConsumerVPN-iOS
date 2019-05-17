@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dIH-fv-fXe">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="dXh-tb-fvW">
+            <objects>
+                <viewController id="dIH-fv-fXe" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="IWI-LD-8S7">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="banner" translatesAutoresizingMaskIntoConstraints="NO" id="JrQ-Gd-ubI">
+                                <rect key="frame" x="51" y="305" width="273" height="57"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.12156862745098039" green="0.13725490196078433" blue="0.18431372549019609" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="JrQ-Gd-ubI" firstAttribute="centerY" secondItem="IWI-LD-8S7" secondAttribute="centerY" id="5Ka-W9-aco"/>
+                            <constraint firstItem="JrQ-Gd-ubI" firstAttribute="centerX" secondItem="IWI-LD-8S7" secondAttribute="centerX" id="MvL-OF-VoX"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="SP7-bu-lWa"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="L6T-Cu-k91" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="38" y="-125"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="banner" width="273" height="57"/>
+    </resources>
+</document>

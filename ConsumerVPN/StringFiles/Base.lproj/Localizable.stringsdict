@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+ Localizable.stringsdict.plist
+ VPN-WL-iOS
+ 
+ Created by WLVPN on 10/11/16.
+ Copyright (c) 2016 NetProtect. All rights reserved.
+ -->
+<plist version="1.0">
+    <dict>
+        <key>%d server(s)</key>
+        <dict>
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%#@servers@</string>
+            <key>servers</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>d</string>
+                <key>one</key>
+                <string>%d server</string>
+                <key>other</key>
+                <string>%d servers</string>
+            </dict>
+        </dict>
+    </dict>
+</plist>

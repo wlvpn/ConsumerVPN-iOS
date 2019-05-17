@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ServerListViewController" customModule="Consumer_VPN" customModuleProvider="target">
+            <connections>
+                <outlet property="filterSegmentedControl" destination="tpt-ft-SfA" id="ho4-uQ-O6l"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="FilterNavBar" customModule="Consumer_VPN" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="tpt-ft-SfA">
+                    <rect key="frame" x="8" y="319.5" width="359" height="29"/>
+                    <segments>
+                        <segment title="Countries"/>
+                        <segment title="Cities"/>
+                    </segments>
+                    <color key="tintColor" red="0.29019607843137252" green="0.56470588235294117" blue="0.88627450980392153" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <connections>
+                        <action selector="filterSelected:" destination="-1" eventType="valueChanged" id="dAU-ph-zbw"/>
+                    </connections>
+                </segmentedControl>
+            </subviews>
+            <constraints>
+                <constraint firstItem="tpt-ft-SfA" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="7vt-4q-ZD9"/>
+                <constraint firstItem="tpt-ft-SfA" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="8" id="8x9-J9-Bwx"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="tpt-ft-SfA" secondAttribute="trailing" constant="8" id="jzu-tR-EEQ"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="204" y="-124.13793103448276"/>
+        </view>
+    </objects>
+</document>

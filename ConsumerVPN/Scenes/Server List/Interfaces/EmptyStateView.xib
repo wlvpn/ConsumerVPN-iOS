@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="iN0-l3-epB" customClass="EmptyStateView" customModule="Easynews" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No results found" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KHr-2w-K5v">
+                    <rect key="frame" x="0.0" y="273" width="375" height="20.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" layoutMarginsFollowReadableWidth="YES" text="No servers were found that match 'searchText' in the ping range 'Any'" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2tb-HK-uWK">
+                    <rect key="frame" x="72" y="301.5" width="231" height="33.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="search_large" translatesAutoresizingMaskIntoConstraints="NO" id="hkV-6J-orS">
+                    <rect key="frame" x="150" y="190" width="75" height="75"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="hkV-6J-orS" secondAttribute="height" multiplier="1:1" id="d8f-Si-eEf"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GSE-fn-VDD" customClass="CustomButton" customModule="Easynews" customModuleProvider="target">
+                    <rect key="frame" x="72" y="351" width="231" height="29"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <state key="normal" title="Reload Servers">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <real key="value" value="50"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                            <real key="value" value="1"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadiusMultiplier">
+                            <real key="value" value="50"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="reloadServers:" destination="iN0-l3-epB" eventType="touchUpInside" id="3Gn-Od-ssU"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.51183745596143937" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="hkV-6J-orS" firstAttribute="centerX" secondItem="KHr-2w-K5v" secondAttribute="centerX" id="3es-JL-6uU"/>
+                <constraint firstItem="GSE-fn-VDD" firstAttribute="top" secondItem="2tb-HK-uWK" secondAttribute="bottom" constant="16" id="43M-n5-mdG"/>
+                <constraint firstItem="KHr-2w-K5v" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" multiplier="0.85" id="5D9-jE-eWa"/>
+                <constraint firstItem="2tb-HK-uWK" firstAttribute="top" secondItem="KHr-2w-K5v" secondAttribute="bottom" constant="8" id="80L-Fi-UJu"/>
+                <constraint firstItem="GSE-fn-VDD" firstAttribute="width" secondItem="2tb-HK-uWK" secondAttribute="width" id="GiP-NJ-keT"/>
+                <constraint firstItem="2tb-HK-uWK" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="72" id="LoL-qs-7aw"/>
+                <constraint firstItem="KHr-2w-K5v" firstAttribute="top" secondItem="hkV-6J-orS" secondAttribute="bottom" constant="8" id="SWp-PC-tKa"/>
+                <constraint firstItem="KHr-2w-K5v" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Yez-RK-qP2"/>
+                <constraint firstItem="KHr-2w-K5v" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="lih-j6-Gjw"/>
+                <constraint firstAttribute="trailing" secondItem="2tb-HK-uWK" secondAttribute="trailing" constant="72" id="sjn-hS-X4d"/>
+                <constraint firstItem="GSE-fn-VDD" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="xSB-Sh-v65"/>
+                <constraint firstItem="hkV-6J-orS" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" multiplier="0.2" id="zIM-gf-U9g"/>
+            </constraints>
+            <connections>
+                <outlet property="noResultsDescriptionLabel" destination="2tb-HK-uWK" id="c5S-uc-TIb"/>
+                <outlet property="noResultsTitleLabel" destination="KHr-2w-K5v" id="qcS-2S-hmh"/>
+                <outlet property="reloadServersButton" destination="GSE-fn-VDD" id="cpG-M8-WYa"/>
+            </connections>
+            <point key="canvasLocation" x="33.5" y="54.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="search_large" width="102" height="102"/>
+    </resources>
+</document>

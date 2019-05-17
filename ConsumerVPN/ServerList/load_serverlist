@@ -1,0 +1,87 @@
+#!/usr/bin/env php
+<?php
+
+$fileLoader = new FileLoader();
+
+if (count($argv) < 5) {
+	echo "Usage: load_serverlist <path> <username> <password> <api_key>\r\n";
+	return;
+}
+
+
+$fileLoader->loadServerList($argv[1], $argv[2], $argv[3], $argv[4]);
+
+
+final class FileLoader {
+	private $baseURL = "https://api.wlvpn.com/v3/";
+	
+	public function loadServerList($path, $username, $password, $api_key) {
+		$access_token = $this->login($username, $password, $api_key);
+
+		if (!$access_token) {
+			echo "No Access Token\r\n";
+			return;
+		}
+
+		// Load Protocols
+		$this->putURLToFile(
+			$this->baseURL . "protocols",
+			$access_token,
+			$path . "/protocols.json"
+		);
+
+		// Load Servers
+		$this->putURLToFile(
+			$this->baseURL . "servers",
+			$access_token,
+			$path . "servers.json"
+		);
+
+	}
+
+	private function login($username, $password, $api_key) {
+		$login_request = [
+			"username" => $username,
+			"password" => $password,
+			"api_key"  => $api_key,
+			"client"   => "WLVPN_iOS_Download",
+			"os"       => "Curl_Script"
+		];
+
+		$login_string = json_encode($login_request);
+
+		$ch = curl_init($this->baseURL . "login");
+
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $login_string);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+		    'Content-Type: application/json',
+		));                                                                                                                   
+
+		$json_result = curl_exec($ch);
+		curl_close($ch);
+
+		$result = json_decode($json_result);
+
+		if (!isset($result->access_token)) {
+			return null;
+		}
+
+		return $result->access_token;
+	}
+
+	private function putURLToFile($url, $access_token, $file) {
+		$ch = curl_init($url);
+
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Authorization: Bearer ' . $access_token,
+		));
+
+		$json_result = curl_exec($ch);
+		curl_close($ch);
+
+		file_put_contents($file, $json_result);
+	}
+}
