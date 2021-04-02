@@ -1,0 +1,266 @@
+/* Label displaying an option indicating only servers with a latency between 100 and 200 inclusive will be displayed */
+"100 - 200" = "100 - 200";
+
+/* Label displaying an option indicating only servers with a latency between 50 and 100 inclusive will be displayed */
+"50 - 100" = "50 - 100";
+
+/* Label displaying an option indicating only servers with a latency of less than 50 will be displayed */
+"< 50" = "< 50";
+
+/* Label displaying an option indicating only servers with a latency greater than 200 will be displayed */
+"> 200" = "> 200";
+
+/* Account was created successfully. */
+"Account Created Successfully" = "Account Created Successfully";
+
+/* Alert title indicating more information needed to verify account */
+"Account Verification" = "Account Verification";
+
+/* Alert user that their account is expired and they should update their information or contact support to proceed. */
+"AccountExpiredMessage" = "AccountExpiredMessage";
+
+/* Label indicating the current encryption level of the connection */
+"AES-128" = "AES-128";
+
+/* Label indicating the current encryption level of the connection */
+"AES-256" = "AES-256";
+
+/* Title for account not provisioned alert. */
+"Almost Done" = "Almost Done";
+
+/* No comment provided by engineer. */
+"Already have an account? Login" = "Already have an account? Login";
+
+/* Label displaying an option indicating any and all values will be displayed */
+"Any" = "Any";
+
+/* No comment provided by engineer. */
+"Apply and Reconnect" = "Apply and Reconnect";
+
+/* No comment provided by engineer. */
+"Are you sure you would like to logout?" = "Are you sure you would like to logout?";
+
+/* Static text indicating progress of logging in. */
+"Authenticating..." = "Authenticating...";
+
+/* Accessibility for between 100 and 200 filter option */
+"Between 100 and 200" = "Between 100 and 200";
+
+/* Accessibility for between 50 and 100 filter option */
+"Between 50 and 100" = "Between 50 and 100";
+
+/* No comment provided by engineer. */
+"Cancel" = "Cancel";
+
+/* Label displaying a preference for sorting the servers list */
+"City" = "City";
+
+/* Confirm */
+"Confirm" = "Confirm";
+
+/* Status label to indicate to the user that they are connected to the VPN. */
+"Connected" = "Connected";
+
+/* No comment provided by engineer. */
+"Connecting..." = "Connecting...";
+
+/* Alert Button verb contact support */
+"Contact" = "Contact";
+
+/* Label displaying a preference for sorting the servers list */
+"Country" = "Country";
+
+/* Static text indicating progress of logging in. */
+"Creating Account..." = "Creating Account...";
+
+/* No comment provided by engineer. */
+"Disconnect and Apply" = "Disconnect and Apply";
+
+/* Disconnecting from the VPN will disable OnDemand settings. Do you wish to continue? */
+"Disconnecting from the VPN will disable OnDemand settings. Do you wish to continue?" = "Disconnecting from the VPN will disable OnDemand settings. Do you wish to continue?";
+
+/* account email
+   Placeholder text to indicate the account email should be entered */
+"Email" = "Email";
+
+/* account password */
+"Enter Your Password" = "Enter Your Password";
+
+/* Alert message asking user to input their account password */
+"Enter your password:" = "Enter your password:";
+
+/* The connection to the VPN has failed. */
+"Failed to connect to VPN" = "Failed to connect to VPN";
+
+/* Cell allowing the user to let the app choose the optimal city, country for the connection */
+"Fastest Available" = "Fastest Available";
+
+/* Accessibility for filter button */
+"Filter" = "Filter";
+
+/* Accessibility for greater than 200 filter option */
+"Greater than 200" = "Greater than 200";
+
+/* No comment provided by engineer. */
+"In order to log in, please follow the link sent to your email." = "In order to log in, please follow the link sent to your email.";
+
+/* Accessibility for less than 50 filter option */
+"Less than 50" = "Less than 50";
+
+/* Initial server list load has started. */
+"Loading Initial Servers" = "Loading Initial Servers";
+
+/* Notify the user that the server update has started. */
+"Loading Servers" = "Loading Servers";
+
+/* Label shown for loading to indicate indeterminate progress */
+"Loading..." = "Loading...";
+
+/* System Alert Message to indicate reason for Touch ID prompt */
+"Logging in with Touch ID" = "Logging in with Touch ID";
+
+/* No comment provided by engineer. */
+"Logging out will disconnect you from the VPN. Are you sure you would like to logout?" = "Logging out will disconnect you from the VPN. Are you sure you would like to logout?";
+
+/* A Login Error has occurred */
+"Login Failed" = "Login Failed";
+
+/* No comment provided by engineer. */
+"Logout" = "Logout";
+
+/* No comment provided by engineer. */
+"Logout?" = "Logout?";
+
+/* Alert Title indicating a root cause of an issue */
+"Network Settings" = "Network Settings";
+
+/* Title Label shown to indicate no servers match provided options and/or search text */
+"No Results Found" = "No Results Found";
+
+/* Label shown for no servers within ping range. Suggesting to change filter options */
+"No servers were found in the ping range \"%@\". Try changing the filter options." = "No servers were found in the ping range \"%@\". Try changing the filter options.";
+
+/* Label shown for no servers matching search text within ping range */
+"No servers were found that match \"%@\" in the ping range \"%@\"." = "No servers were found that match \"%1$@\" in the ping range \"%2$@\".";
+
+/* Label shown for no servers matching search text */
+"No servers were found that match \"%@\"." = "No servers were found that match \"%@\".";
+
+/* Label shown to indicate no servers were found at all and prompt the user to attempt to retry loading the servers again */
+"No servers were found. Try again." = "No servers were found. Try again.";
+
+/* Understood */
+"OK" = "OK";
+
+/* OnDemand is Enabled. */
+"OnDemand is Enabled" = "OnDemand is Enabled";
+
+/* Alert Message telling the user one or more fields are empty and should not be
+   One or more fields are empty */
+"One or more login fields are empty. Please enter your credentials." = "One or more login fields are empty. Please enter your credentials.";
+
+/* Alert Message telling the user we don't immediately know what the problem is and to contact support */
+"Operation failed with error: \"%@\" If this problem continues, please contact support for further assistance." = "Operation failed with error: \"%@\" If this problem continues, please contact support for further assistance.";
+
+/* account password */
+"Password" = "Password";
+
+/* Password confirmation doesn't match Password. */
+"Password confirmation doesn't match Password." = "Password confirmation doesn't match Password.";
+
+/* Alert Message telling the user the password field has too few characters */
+"Password must be at least 4 characters long." = "Password must be at least 4 characters long.";
+
+/* Alert Message telling the user the password fields do not match */
+"Passwords do not match. Please make sure both entires are the same." = "Passwords do not match. Please make sure both entires are the same.";
+
+/* Header presenting list of options for constraining servers within a range of ping values */
+"Ping" = "Ping";
+
+/* No comment provided by engineer. */
+"Preferences" = "Preferences";
+
+/* Alert message asking user to input their account password correctly */
+"Previous attempt failed. You have %d attempt(s) left before being logged out. Enter your password:" = "Previous attempt failed. You have %d attempt(s) left before being logged out. Enter your password:";
+
+/* Static Text informing the user they can rate the product */
+"Rate %@" = "Rate %@";
+
+/* account password */
+"Reenter Your Password" = "Reenter Your Password";
+
+/* Accessibility for search button */
+"Search" = "Search";
+
+/* Label displaying a preference for sorting the servers list */
+"Server Count" = "Server Count";
+
+/* Notify the user that the server update has failed. */
+"Server update failed" = "Server update failed";
+
+/* Notify the user that the server update has succeeded. */
+"Servers loaded successfully!" = "Servers loaded successfully!";
+
+/* Accessibility for settings button */
+"Settings" = "Settings";
+
+/* No comment provided by engineer. */
+"Sign Up" = "Sign Up";
+
+/* Alert Title indicating an error on Sign Up */
+"Sign Up Error" = "Sign Up Error";
+
+/* A Sign Up Error has occurred */
+"Sign Up Failed" = "Sign Up Failed";
+
+/* Title telling the user something went wrong */
+"Something Went Wrong" = "Something Went Wrong";
+
+/* Header presenting list of options for how to sort the servers list */
+"Sort By" = "Sort By";
+
+/* Alert Message telling the user an invalid email address was provided */
+"The email address you entered is not a valid email." = "The email address you entered is not a valid email.";
+
+/* Username invalid format */
+"The username entered is invalid." = "The username entered is invalid.";
+
+/* Alert message telling the user an invalid username was provided */
+"The username you entered is not valid. Only letters and numbers are allowed. No special characters." = "The username you entered is not valid. Only letters and numbers are allowed. No special characters.";
+
+/* Alert message letting the user know that the username they selected is already being used. */
+"The username you have selected is already in use." = "The username you have selected is already in use.";
+
+/* Alert Message requesting the user check their network settings */
+"There appears to be no network connection. Please check your connection settings." = "There appears to be no network connection. Please check your connection settings.";
+
+/* No comment provided by engineer. */
+"To apply this change now, we must restart your connection. Do you want to continue?" = "To apply this change now, we must restart your connection. Do you want to continue?";
+
+/* Placeholder text to indicate the account username should be entered */
+"Username" = "Username";
+
+/* account username */
+"Username or Email" = "Username or Email";
+
+/* Invalid VPN Configuration */
+"VPNConnectionFailedInvalidConfig" = "VPNConnectionFailedInvalidConfig";
+
+/* Invalid Protocol selected */
+"VPNConnectionFailedInvalidProtocol" = "VPNConnectionFailedInvalidProtocol";
+
+/* Notify the user that there is an issue with their network connectivity. */
+"VPNConnectionFailedNoInternet" = "VPNConnectionFailedNoInternet";
+
+/* Account needs to be provisioned. */
+"Your account has not yet been fully provisioned. Please wait a few minutes before attempting to login." = "Your account has not yet been fully provisioned. Please wait a few minutes before attempting to login.";
+
+/* Account was created successfully. */
+"Your account has successfully been created!" = "Your account has successfully been created!";
+
+/* Alert Message telling the user the email field has too many characters */
+"Your email must be less than 100 characters." = "Your email must be less than 100 characters.";
+
+/* Alert message telling the user the email field has too many characters */
+"Your username must be less than 255 characters" = "Your username must be less than 255 characters";
+

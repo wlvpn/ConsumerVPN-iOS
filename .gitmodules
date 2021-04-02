@@ -1,0 +1,3 @@
+[submodule "Theme"]
+	path = Theme
+	url = ../consumervpn-ios-theme.git

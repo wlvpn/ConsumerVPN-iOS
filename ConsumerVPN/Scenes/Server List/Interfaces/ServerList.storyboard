@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Y3f-hl-Q07">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Server List View Controller-->
+        <scene sceneID="dQG-sH-jhh">
+            <objects>
+                <tableViewController id="Y3f-hl-Q07" customClass="ServerListViewController" customModule="ConsumerVPN" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="WNQ-QK-AuP">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <connections>
+                            <outlet property="dataSource" destination="Y3f-hl-Q07" id="cXX-N4-3kG"/>
+                            <outlet property="delegate" destination="Y3f-hl-Q07" id="uJ4-8l-NSP"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <segue destination="rxZ-3U-lqi" kind="show" identifier="ServerListFilterSegue" id="pqj-FN-T3F"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UZS-ep-KEF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3112.8000000000002" y="-411.544227886057"/>
+        </scene>
+        <!--Filter-->
+        <scene sceneID="CGN-gU-omz">
+            <objects>
+                <viewController id="rxZ-3U-lqi" customClass="FilterViewController" customModule="ConsumerVPN" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="i6x-0b-fBc"/>
+                        <viewControllerLayoutGuide type="bottom" id="3v4-Az-Tci"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Mia-Qj-OrQ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="5YB-Cy-yj4">
+                                <rect key="frame" x="0.0" y="-44" width="375" height="711"/>
+                                <color key="backgroundColor" red="0.10980392160000001" green="0.1215686275" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="filterCellReuseIdentifier" textLabel="QaU-Pt-xuA" style="IBUITableViewCellStyleDefault" id="9cD-lJ-WCZ">
+                                        <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9cD-lJ-WCZ" id="TxO-wQ-6cX">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QaU-Pt-xuA">
+                                                    <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.2470588235" green="0.25098039220000001" blue="0.25490196079999999" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="tintColor" red="0.96078431369999995" green="0.28627450980000002" blue="0.25490196079999999" alpha="1" colorSpace="calibratedRGB"/>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="rxZ-3U-lqi" id="m4O-db-pcR"/>
+                                    <outlet property="delegate" destination="rxZ-3U-lqi" id="tnR-om-ykq"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.10980392160000001" green="0.1215686275" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="3v4-Az-Tci" firstAttribute="top" secondItem="5YB-Cy-yj4" secondAttribute="bottom" id="2EV-An-wuE"/>
+                            <constraint firstItem="5YB-Cy-yj4" firstAttribute="width" secondItem="Mia-Qj-OrQ" secondAttribute="width" id="Oll-vF-dAj"/>
+                            <constraint firstItem="5YB-Cy-yj4" firstAttribute="centerX" secondItem="Mia-Qj-OrQ" secondAttribute="centerX" id="xWX-es-Uq2"/>
+                            <constraint firstItem="5YB-Cy-yj4" firstAttribute="top" secondItem="i6x-0b-fBc" secondAttribute="bottom" constant="-64" id="xgg-L8-mRH"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="LJe-oi-Ivz"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Filter" id="2f9-p1-Wvw">
+                        <barButtonItem key="rightBarButtonItem" title="Reset" id="eRm-dF-vmm">
+                            <connections>
+                                <action selector="resetFilters:" destination="rxZ-3U-lqi" id="ipg-gV-CRq"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="filterTableView" destination="5YB-Cy-yj4" id="GZM-jD-IqG"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="kJC-pE-EMK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3863.1999999999998" y="-409.7451274362819"/>
+        </scene>
+    </scenes>
+</document>

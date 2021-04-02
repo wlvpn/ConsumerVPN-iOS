@@ -1,0 +1,7 @@
+.idea
+xcuserdata
+servers.json
+protocols.json
+SDK/*.framework
+SDK/*.xcframework
+.DS_Store
