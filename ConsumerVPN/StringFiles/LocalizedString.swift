@@ -73,7 +73,7 @@ enum LocalizedString {
 	static let loginErrorAlertTitle = NSLocalizedString("Login Failed", comment: "A Login Error has occurred")
 	static let signUpAlertTitle = NSLocalizedString("Sign Up Failed", comment: "A Sign Up Error has occurred")
 	static let preferencesHeader = NSLocalizedString("Preferences", comment: "")
-	static let onDemandConnectedAlertTitle = NSLocalizedString("OnDemand is Enabled", comment: "OnDemand is Enabled.")
+	static let onDemandConnectedAlertTitle = NSLocalizedString("On Demand is Enabled", comment: "On Demand is Enabled.")
 	static let signUpErrorAlertTitle = NSLocalizedString("Sign Up Error", comment: "Alert Title indicating an error on Sign Up")
 	static let passwordAlertTitle = NSLocalizedString("Account Verification", comment: "Alert title indicating more information needed to verify account")
 	static let accountAlertTitle = NSLocalizedString("Account Created Successfully", comment: "Account was created successfully.")
@@ -92,8 +92,8 @@ enum LocalizedString {
 	static let initialServerListBegin = NSLocalizedString("Loading Initial Servers", comment: "Initial server list load has started.")
 	static let networkConnectionIssue = NSLocalizedString("There appears to be no network connection. Please check your connection settings.",
 														  comment: "Alert Message requesting the user check their network settings")
-	static let onDemandConnectedAlertMessage = NSLocalizedString("Disconnecting from the VPN will disable OnDemand settings. Do you wish to continue?",
-																 comment: "Disconnecting from the VPN will disable OnDemand settings. Do you wish to continue?")
+	static let onDemandConnectedAlertMessage = NSLocalizedString("Disconnecting from the VPN will disable On Demand. Do you wish to continue?",
+																 comment: "Disconnecting from the VPN will disable On Demand. Do you wish to continue?")
 	static let signUpEmptyFieldAlertMessage = NSLocalizedString("One or more login fields are empty. Please enter your credentials.",
 																comment: "Alert Message telling the user one or more fields are empty and should not be")
 	static let signUpUsernameCharacterCountAlertMessage = NSLocalizedString("Your username must be less than 255 characters",

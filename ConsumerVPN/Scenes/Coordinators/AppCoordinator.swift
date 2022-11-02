@@ -54,7 +54,6 @@ extension AppCoordinator : DashboardViewControllerDelegate {
 }
 
 extension AppCoordinator : LoginCoordinatorDelegate {
-	
 	func didSignIn(_ user: User) {
 		UserDefaults.standard.set(true, forKey: Theme.firstConnectKey)
 		UserDefaults.standard.synchronize()

@@ -76,6 +76,12 @@ final class ServerListViewController: BaseServerTableViewController {
     
     var presentedModally = false
     
+    /// Used when changing onDemand settings while currently connected to reconnect the user after applying changes.
+    private var shouldReconnect = false
+    
+    /// Used when changing while currently connected to reconnect the user after applying changes.
+    var shouldReconnectOnConfigUpdate = false
+    
     // MARK: Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,7 +131,7 @@ final class ServerListViewController: BaseServerTableViewController {
         searchController.searchResultsUpdater = self
         
         // set some options in preparation for the searchController
-        searchController.dimsBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
         searchController.searchBar.barTintColor = .serverListBackground
         
@@ -321,16 +327,18 @@ final class ServerListViewController: BaseServerTableViewController {
             cityModel = resultsServerViewController.sortedCityModels[indexPath.row]
         }
         
-        if let cityModel = cityModel {
-            vpnConfiguration?.server = nil
-            vpnConfiguration?.setCityAndCountry(cityModel.city)
-        } else {
-            vpnConfiguration?.server = nil
-            vpnConfiguration?.city = nil
-            vpnConfiguration?.country = nil
+        connectOnSelection { [weak self] in
+            guard let strongSelf = self else { return }
+            if let cityModel = cityModel {
+                strongSelf.vpnConfiguration?.country = cityModel.city.country
+                strongSelf.vpnConfiguration?.city = cityModel.city
+                strongSelf.vpnConfiguration?.server = nil
+            } else {
+                strongSelf.vpnConfiguration?.server = nil
+                strongSelf.vpnConfiguration?.city = nil
+                strongSelf.vpnConfiguration?.country = nil
+            }
         }
-
-        returnToDashboard()
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -409,18 +417,73 @@ final class ServerListViewController: BaseServerTableViewController {
         var country: Country?
     }
     
-    @objc private func countrySelected(_ sender: CountryTapGesture) {
-        if let country = sender.country {
-            vpnConfiguration?.server = nil
-            vpnConfiguration?.city = nil
-            vpnConfiguration?.country = country
+    func connectOnSelection(updateVPNConfig: @escaping () ->()) {
+        if apiManager.isConnectedToVPN() {
+            
+            let title = LocalizedString.preferencesHeader
+            let message = LocalizedString.applyChangeReconnect
+            var actions : [UIAlertAction] = []
+            
+            var action = UIAlertAction(title: LocalizedString.cancel, style: .cancel,handler: { (action) in
+               
+            })
+            actions.append(action)
+            
+            action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { [unowned self] (action) in
+                self.shouldReconnect = false
+                self.shouldReconnectOnConfigUpdate = true
+                self.apiManager.disconnect()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    guard let strongSelf = self else { return }
+                    updateVPNConfig()
+                    strongSelf.vpnConfiguration?.onDemandConfiguration?.enabled = false
+                    strongSelf.apiManager.synchronizeConfiguration()
+                }
+                returnToDashboard()
+            })
+            actions.append(action)
+            
+            if let onDemandConfig = vpnConfiguration?.onDemandConfiguration, onDemandConfig.enabled {
+                action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { [unowned self] (action) in
+                    self.shouldReconnect = false
+                    self.shouldReconnectOnConfigUpdate = false
+                    self.vpnConfiguration?.onDemandConfiguration?.enabled = false
+                    self.apiManager.disconnect()
+                    
+                    updateVPNConfig()
+                    self.apiManager.synchronizeConfiguration()
+                    returnToDashboard()
+                })
+                actions.append(action)
+            }
+            
+            let alert = UIAlertController.alert(withTitle: title, message: message, actions: actions, alertType: .alert)
+            present(alert, animated: true, completion: nil)
+            
         } else {
-            vpnConfiguration?.server = nil
-            vpnConfiguration?.city = nil
-            vpnConfiguration?.country = nil
+            updateVPNConfig()
+            if let onDemandConfig = vpnConfiguration?.onDemandConfiguration, onDemandConfig.enabled {
+                self.apiManager.synchronizeConfiguration()
+            } else {
+                self.apiManager.connect()
+            }
+            returnToDashboard()
         }
-
-        returnToDashboard()
+    }
+    
+    @objc private func countrySelected(_ sender: CountryTapGesture) {
+        connectOnSelection { [weak self] in
+            guard let strongSelf = self else { return }
+            if let country = sender.country {
+                strongSelf.vpnConfiguration?.server = nil
+                strongSelf.vpnConfiguration?.city = nil
+                strongSelf.vpnConfiguration?.country = country
+            } else {
+                strongSelf.vpnConfiguration?.server = nil
+                strongSelf.vpnConfiguration?.city = nil
+                strongSelf.vpnConfiguration?.country = nil
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -641,5 +704,90 @@ extension ServerListViewController: StoryboardInstantiable {
         let servVC = instantiateInitial()
         servVC.apiManager = apiManager
         return servVC
+    }
+}
+
+// MARK: - VPNConnectionStatusReporting
+extension ServerListViewController : VPNConnectionStatusReporting {
+    func statusConnectionSucceeded(_ notification: Notification) {
+        guard let vpnConfiguration = vpnConfiguration else {
+            return
+        }
+        
+        // if autobalancing is on, reset the vpn config to nil in those areas
+        if vpnConfiguration.usingAutoselectedCity {
+            vpnConfiguration.city = nil
+        }
+    }
+    
+    func statusConnectionDidDisconnect(_ notification: Notification) {
+        if shouldReconnect {
+            shouldReconnect = false
+            apiManager.connect()
+        }
+    }
+    
+    func statusConnectionFailed(_ notification: Notification) {
+        if let error = notification.object as? Error {
+            print("Connection Failed with Error - \(error.localizedDescription)")
+        }
+    }
+    
+    func updateConfigurationSucceeded(_ notification: Notification) {
+        if shouldReconnectOnConfigUpdate {
+            shouldReconnectOnConfigUpdate = false
+            DispatchQueue.main.async { self.apiManager.connect() }
+        }
+    }
+    
+}
+
+// MARK: - VPNAccountStatusReporting
+extension ServerListViewController: VPNAccountStatusReporting {
+    
+    func statusLoginServerUpdateWillBegin(_ notification: Notification) {
+        print("Login Server List Begin")
+    }
+    
+    func statusLoginServerUpdateSucceeded(_ notification: Notification) {
+        if serverUpdatePressed {
+            // Set to false in the scenario the user tapped the `refresh servers` button to not show any more notifications unless pressed again
+            serverUpdatePressed = false
+        }
+        
+        // Get all of the cities from the APIManager
+        guard let fetchedCities = apiManager.fetchAllCities() as? [City] else {
+            return
+        }
+        
+        // Convert the incoming fetched Cities into the CityModel objects
+        let fetchedCityModels = fetchedCities.compactMap(CityModel.init)
+        
+        // 2. Replace base with newly updated fetched info
+        self.cityModels = fetchedCityModels
+        
+        // 3. filter/sort using filteroptions into local variable and then diff against displayed filtered info.
+        
+        // Depending on which table is being displayed (ServerList - main table, ResultsController - search table),
+        // update that data model and table
+        let searchText = searchController.searchBar.text ?? ""
+        let isSearchTableDisplayed = searchController.isActive && searchText.hasText
+        
+        if isSearchTableDisplayed {
+            resultsServerViewController.sortedCityModels = self.cityModels.sorted(by: sortOption)
+            resultsServerViewController.tableView.reloadData()
+        } else {
+            sortedModels = self.cityModels.sorted(by: sortOption)
+            tableView.reloadData()
+        }
+        
+        // Save out this moment in time for the last update
+        UserDefaults.standard.set(Date(), forKey: Theme.lastUpdateKey)
+    }
+    
+    func statusLoginServerUpdateFailed(_ notification: Notification) {
+        if let error = notification.object as? Error {
+            print("Login Server List Failed with Error - \(error.localizedDescription)")
+        }
     }
 }
