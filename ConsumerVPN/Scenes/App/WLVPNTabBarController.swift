@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import VPNKit
 
 class WLVPNTabBarController: UITabBarController {
 	
@@ -21,10 +22,43 @@ class WLVPNTabBarController: UITabBarController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		tabBar.tintColor = .tabBarItemActiveTint
-		tabBar.unselectedItemTintColor = .tabBarItemInactiveTint
-		tabBar.barTintColor = .tabBarBg
+        if #available(iOS 13.0, *) {
+            //This example assumes a custom UITabBarController overridden class.  You can
+            //also use it anywhere the `tabBar` of the current `tabBarController` is available.
+            let appearance = UITabBarAppearance()
+            appearance.backgroundColor = .tabBarBg
+            
+            tabBar.standardAppearance = appearance
+            if #available(iOS 15.0, *) {
+                tabBar.scrollEdgeAppearance = appearance
+            }
+            
+            //Set all possible tab bar item styles as necessary (based on rotation and size capabilities).  Here
+            //we're setting all three available appearances
+            setTabBarItemColors(appearance.stackedLayoutAppearance)
+            setTabBarItemColors(appearance.inlineLayoutAppearance)
+            setTabBarItemColors(appearance.compactInlineLayoutAppearance)
+            
+            tabBar.tintColor = .tabBarItemActiveTint
+            tabBar.unselectedItemTintColor = .tabBarItemInactiveTint
+            tabBar.barTintColor = .tabBarBg
+            
+        } else {
+            tabBar.tintColor = .tabBarItemActiveTint
+            tabBar.unselectedItemTintColor = .tabBarItemInactiveTint
+            tabBar.barTintColor = .tabBarBg
+        }
+        
 	}
+    
+    @available(iOS 13.0, *)
+    private func setTabBarItemColors(_ itemAppearance: UITabBarItemAppearance) {
+        itemAppearance.normal.iconColor = .tabBarItemInactiveTint
+        itemAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.tabBarItemInactiveTint]
+            
+        itemAppearance.selected.iconColor = .tabBarItemActiveTint
+        itemAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.tabBarItemActiveTint]
+    }
 }
 
 extension WLVPNTabBarController: StoryboardInstantiable {

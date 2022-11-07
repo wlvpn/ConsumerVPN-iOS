@@ -17,12 +17,14 @@
  * Builds a VPNAPIManager object for various api and connection adapter settings.
  *
  * @param brandName The brand name of this client
+ * @param configName The VPN configuration name of this client
  * @param apiKey    The api key provided on WLVPN signup
  * @param suffix    The username suffix provided on WLVPN Signup
  *
  * @return An initialized VPNAPIManager ready to use
  */
 + (nonnull VPNAPIManager *)initializeAPIManagerWithBrandName:(NSString *)brandName
+                                                  configName:(NSString *)configName
 													  apiKey:(NSString *)apiKey
 												   andSuffix:(NSString *)suffix {
 
@@ -40,15 +42,16 @@
 		kV3ApiKey: apiKey,
 		kV3CoreDataURL: coreDataUrl,
 	};
-
+    
 	V3APIAdapter *apiAdapter = [[V3APIAdapter alloc] initWithOptions:apiAdapterOptions];
-
+    
 	NSDictionary *connectionOptions = @{
 		kVPNManagerUsernameExtensionKey: suffix,
 		kVPNManagerBrandNameKey: brandName,
+        kVPNManagerConfigurationNameKey: configName,
 		kIKEv2KeychainServiceName: apiAdapter.passwordServiceName,
 	};
-
+    
 	// The simulator doesn't work with VPN connections so the VPNConnectionTestAdapter fakes a connection
 	// in the simulator. Produces all the correct notifications
 #if (TARGET_OS_SIMULATOR)
@@ -56,9 +59,12 @@
 #else
 	id <VPNConnectionAdapterProtocol> connectionAdapter = [[NEVPNManagerAdapter alloc] initWithOptions:connectionOptions];
 #endif
-
+    
+    NSNumber *defaultProtocol = [NSNumber numberWithInt:VPNProtocolIKEv2];
+    
 	NSDictionary *apiManagerOptions = @{
 		kBundleNameKey: bundleID,
+        kVPNDefaultProtocolKey: defaultProtocol,
 	};
 
 	VPNAPIManager *apiManager = [[VPNAPIManager alloc] initWithAPIAdapter:apiAdapter
@@ -66,7 +72,7 @@
 															   andOptions:apiManagerOptions];
 
 	// ensure that connections are not killed off when the app dies during an active connection
-	[apiManager.vpnConfiguration setOption:@YES forKey:kStayConnectedOnQuit];
+    [apiManager.vpnConfiguration setOption:@YES forKey:kVPNStayConnectedOnQuit];
 
 	return apiManager;
 }

@@ -46,9 +46,12 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
     
     var loginCoordinator: LoginCoordinator?
     
+    /// Used when changing while currently connected to reconnect the user after applying changes.
+    var shouldReconnectOnConfigUpdate = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         // Setup Colors
         tableView.backgroundColor = .viewBackground
         for label in labels {
@@ -82,6 +85,15 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         super.viewDidAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
         clearSelected()
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+    }
+    
+    deinit {
+        unregisterForNotifications()
     }
     
     func registerNotifications() {
@@ -89,6 +101,13 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         
         // Listen for VPNKit Notifications
         NotificationCenter.default.addObserver(for: self)
+    }
+    
+    func unregisterForNotifications() {
+        let center = NotificationCenter.default
+        
+        center.removeObserver(for: self)
+        center.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     /// Clear selected table row
@@ -102,7 +121,7 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
     /// Load settings from vpn configuration and apply them visually.
     func restoreDefaultSettings() {
         // Set always on switch to match vpn configuration.
-        if let alwaysOn = vpnConfiguration?.getOptionForKey(kOnDemandEnabledKey) as? Bool {
+        if let alwaysOn = vpnConfiguration?.onDemandConfiguration?.enabled as? Bool {
             alwaysOnSwitch.setOn(alwaysOn, animated: true)
         }
         
@@ -119,7 +138,7 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         // 1. Check if user is connected to the VPN
         // 2. If connected, notify user that the change will disconnect from VPN, Apply the changes and then reconnect them to VPN.
         // 3. If not connected, Apply changes and update helper.
-        if apiManager.status == VPNConnectionStatus.statusConnected || apiManager.status == VPNConnectionStatus.statusActive {
+        if apiManager.isConnectedToVPN() {
             let title = LocalizedString.preferencesHeader
             let message = LocalizedString.applyChangeReconnect
             var actions : [UIAlertAction] = []
@@ -129,19 +148,28 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
             })
             actions.append(action)
            
-            action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { (action) in
-                
-                self.shouldReconnect = true
-                self.vpnConfiguration?.setOption(NSNumber.init(booleanLiteral: sender.isOn), forKey: kOnDemandEnabledKey)
-                self.apiManager.installHelperAndConnect(onInstall: true)
+            action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { [unowned self] (action) in
+                self.shouldReconnect = false
+                self.shouldReconnectOnConfigUpdate = true
+                self.apiManager.disconnect()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                    guard let strongSelf = self else { return }
+                    strongSelf.vpnConfiguration?.onDemandConfiguration?.enabled = sender.isOn
+                    strongSelf.apiManager.synchronizeConfiguration()
+                }
             })
             actions.append(action)
             
             if !sender.isOn {
-                action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { (action) in
-                    self.apiManager.disconnect()
-                    self.vpnConfiguration?.setOption(NSNumber.init(booleanLiteral: sender.isOn), forKey: kOnDemandEnabledKey)
-                    self.apiManager.installHelperAndConnect(onInstall: false)
+                action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { [unowned self] (action) in
+                    self.shouldReconnect = false
+                    self.shouldReconnectOnConfigUpdate = false
+                    self.vpnConfiguration?.onDemandConfiguration?.enabled = sender.isOn
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                        guard let strongSelf = self else { return }
+                        strongSelf.apiManager.synchronizeConfiguration()
+                    }
                 })
                 actions.append(action)
             }
@@ -149,8 +177,12 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
             let alert = UIAlertController.alert(withTitle: title, message: message, actions: actions, alertType: .alert)
             present(alert, animated: true, completion: nil)
         } else {
-            vpnConfiguration?.setOption(NSNumber.init(booleanLiteral: sender.isOn), forKey: kOnDemandEnabledKey)
-            apiManager.installHelperAndConnect(onInstall: false)
+            self.vpnConfiguration?.onDemandConfiguration?.enabled = sender.isOn
+            
+            DispatchQueue.main.async {
+                self.apiManager.synchronizeConfiguration()
+            }
+            
         }
     }
     
@@ -167,16 +199,18 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
                 break
             }
             
-            // Install helper to apply changes
+            // Install configuration to apply changes
             if shouldReconnect {
-                apiManager.installHelperAndConnect(onInstall: true)
+                shouldReconnect = false
+                shouldReconnectOnConfigUpdate = true
+                apiManager.synchronizeConfiguration()
             }
         }
         
         // 1. Check if user is connected to the VPN
         // 2. If connected, notify user that the change will disconnect from VPN, Apply the changes and then reconnect them to VPN.
         // 3. If not connected, Apply changes and update helper.
-        if apiManager.status == VPNConnectionStatus.statusConnected || apiManager.status == VPNConnectionStatus.statusActive {
+        if apiManager.isConnectedToVPN() {
             
             let title = LocalizedString.preferencesHeader
             let message = LocalizedString.applyChangeReconnect
@@ -196,7 +230,7 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
             action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { (action) in
                 
                 // Get always on switch from vpn configuration.
-                if let alwaysOn = self.vpnConfiguration?.getOptionForKey(kOnDemandEnabledKey) as? Bool {
+                if let alwaysOn = self.vpnConfiguration?.onDemandConfiguration?.enabled {
                     
                     // If Always On enabled, notify user that always on will be disabled if they decide to apply the changes.
                     if alwaysOn {
@@ -207,12 +241,14 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
                         })
                         
                         let confirmAction = UIAlertAction.init(title: LocalizedString.onDemandConnectedAlertConfirm, style: .default, handler: { (UIAlertAction) in
+                            self.shouldReconnect = false
+                            self.shouldReconnectOnConfigUpdate = false
                             self.apiManager.disconnect()
                             switchSelectedProtocol()
                             
-                            self.vpnConfiguration?.setOption(NSNumber.init(booleanLiteral: false), forKey: kOnDemandEnabledKey)
+                            self.vpnConfiguration?.onDemandConfiguration?.enabled = false
                             self.alwaysOnSwitch.isOn = false
-                            self.apiManager.installHelperAndConnect(onInstall: false)
+                            self.apiManager.synchronizeConfiguration()
                         })
                         
                         alert.addAction(cancelAction)
@@ -320,7 +356,7 @@ extension SettingsTableViewController {
 extension SettingsTableViewController : VPNHelperStatusReporting {
     func statusHelperInstallFailed(_ notification: Notification) {
         alwaysOnSwitch.setOn(false, animated: true)
-        vpnConfiguration?.setOption(false, forKey: kOnDemandEnabledKey)
+        vpnConfiguration?.onDemandConfiguration?.enabled = false
         
         if let error = notification.object as? Error {
             print("Helper Install Failed with Error - \(error.localizedDescription)")
@@ -354,6 +390,13 @@ extension SettingsTableViewController : VPNConnectionStatusReporting {
         }
         
         alwaysOnSwitch.setOn(false, animated: true)
+    }
+    
+    func updateConfigurationSucceeded(_ notification: Notification) {
+        if shouldReconnectOnConfigUpdate {
+            shouldReconnectOnConfigUpdate = false
+            DispatchQueue.main.async { self.apiManager.connect() }
+        }
     }
     
 }

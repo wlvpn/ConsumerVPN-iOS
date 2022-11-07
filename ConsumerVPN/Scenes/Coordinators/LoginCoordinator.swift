@@ -41,11 +41,12 @@ final class LoginCoordinator: NSObject {
 	func start(from: UIViewController) {
 		let loginVC = LoginViewController.build(with: self)
 		loginVC.delegate = self
+        
 		if #available(iOS 13.0, *) {
 			loginVC.isModalInPresentation = true
 		}
 		rootViewController = UINavigationController(rootViewController: loginVC)
-		
+        rootViewController.modalPresentationStyle = .fullScreen
 		// Causes modal presentation to occur on the next run loop iteration, preventing "unbalanced call" messages
 		DispatchQueue.main.async {
 			from.present(self.rootViewController, animated: true, completion: nil)

@@ -14,6 +14,7 @@
  * Builds a VPNAPIManager object for various api and connection adapter settings.
  *
  * @param brandName The brand name of this client
+ * @param configName The VPN configuration name of this client
  * @param apiKey    The api key provided on WLVPN signup
  * @param suffix    The username suffix provided on WLVPN Signup
  *
@@ -22,6 +23,7 @@
 @interface SDKInitializer : NSObject
 
 + (nonnull VPNAPIManager*)initializeAPIManagerWithBrandName:(nonnull NSString *)brandName
+                                                 configName:(nullable NSString *)configName
 													 apiKey:(nonnull NSString *)apiKey
 												  andSuffix:(nonnull NSString *)suffix;
 @end

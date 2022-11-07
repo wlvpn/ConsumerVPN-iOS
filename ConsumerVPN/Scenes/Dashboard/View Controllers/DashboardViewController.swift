@@ -62,6 +62,8 @@ final class DashboardViewController: UIViewController {
 	// being fetched or updated.
 	var updatingServers = false
 	
+    var shouldreconnectAfterConfigUpdate: Bool = false
+    
 	override var preferredStatusBarStyle: UIStatusBarStyle {
 		return .dashboardStatusBar
 	}
@@ -291,10 +293,12 @@ final class DashboardViewController: UIViewController {
 		
 	}
 	
-	fileprivate func showHelperFailedDialog() {
-		let alertController = UIAlertController(title: "Install Failure", message: "There was an error installing the VPN configuration. Please try again.", preferredStyle: .alert)
+	fileprivate func showConfigurationUpdateFailedDialog() {
+		let alertController = UIAlertController(title: "Configuration Failure",
+                                                message: "There was an error installing the VPN configuration. Please try again.",
+                                                preferredStyle: .alert)
 		let reinstallAction = UIAlertAction(title: "Reinstall configuration", style: .default) { action in
-			self.apiManager.installHelperAndConnect(onInstall: false)
+			self.apiManager.synchronizeConfiguration()
 		}
 		alertController.addAction(reinstallAction)
 		
@@ -337,36 +341,37 @@ final class DashboardViewController: UIViewController {
 	}
 	
 	@IBAction private func connectDisconnectTapped(sender: UIButton) {
+        
 		switch apiManager.status {
 			
-		case .statusDisconnected, .statusError, .statusFailed, .statusInvalid, .statusDisconnecting:
+            case .statusDisconnected, .statusError, .statusInvalid, .statusDisconnecting:
 			// User wishes to connect
-			delegate.userRequestedConnection(from: self)
+                delegate.userRequestedConnection(from: self)
 			
-		case .statusConnected, .statusActive, .statusConnecting, .statusReconnecting:
-			// User wishes to disconnect
-			if let onDemandEnabled = vpnConfiguration?.getOptionForKey(kOnDemandEnabledKey) as? Bool,
-				onDemandEnabled != false {
-				let alert = UIAlertController(title: LocalizedString.onDemandConnectedAlertTitle, message: LocalizedString.onDemandConnectedAlertMessage, preferredStyle: .alert)
-				let cancelAction = UIAlertAction.init(title: LocalizedString.cancel, style: .cancel, handler: nil)
-				let confirmAction = UIAlertAction.init(title: LocalizedString.onDemandConnectedAlertConfirm, style: .default, handler: { (UIAlertAction) in
-					self.updateStatusForState(state: .statusDisconnecting)
-					self.vpnConfiguration?.setOption(NSNumber(booleanLiteral: false), forKey: kOnDemandEnabledKey)
-					self.apiManager.installHelperAndConnect(onInstall: false)
-				})
-				alert.addAction(cancelAction)
-				alert.addAction(confirmAction)
-				present(alert, animated: true, completion: nil)
-			} else {
-				apiManager.disconnect()
-				updateStatusForState(state: .statusDisconnecting)
-			}
-		case .statusReconnect:
-			// This status is only used during OpenVPN connections, which are
-			// not possible with NEVPNManager
-			print("")
-		default:
-			break;
+            case .statusConnected, .statusActive, .statusConnecting, .statusReconnecting:
+            // User wishes to disconnect
+                if let onDemandEnabled = vpnConfiguration?.onDemandConfiguration?.enabled,
+                   onDemandEnabled {
+                    let alert = UIAlertController(title: LocalizedString.onDemandConnectedAlertTitle, message: LocalizedString.onDemandConnectedAlertMessage, preferredStyle: .alert)
+                    let cancelAction = UIAlertAction.init(title: LocalizedString.cancel, style: .cancel, handler: nil)
+                    let confirmAction = UIAlertAction.init(title: LocalizedString.onDemandConnectedAlertConfirm, style: .default, handler: { (UIAlertAction) in
+                        self.updateStatusForState(state: .statusDisconnecting)
+                        self.vpnConfiguration?.onDemandConfiguration?.enabled = false
+                        self.apiManager.synchronizeConfiguration()
+                    })
+                    alert.addAction(cancelAction)
+                    alert.addAction(confirmAction)
+                    present(alert, animated: true, completion: nil)
+                } else {
+                    apiManager.disconnect()
+                    updateStatusForState(state: .statusDisconnecting)
+                }
+            case .statusReconnect:
+                // This status is only used during OpenVPN connections, which are
+                // not possible with NEVPNManager
+                print("")
+            default:
+                break;
 		}
 	}
 }
@@ -392,7 +397,8 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 	/// Transitions the Dashboard's connected state off of the screen via an animation
 	func statusConnectionDidDisconnect(_ notification: Notification) {
 		updateStatusForState(state: .statusDisconnected)
-		
+        apiManager.refreshLocation()
+        
 		UIView.animate(withDuration: 0.75,
 					   animations: {
 						self.view.layoutSubviews()
@@ -428,6 +434,18 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 			present(UIAlertController.network(), animated: true, completion: nil)
 		}
 	}
+    
+    func updateConfigurationSucceeded(_ notification: Notification) {
+        if shouldreconnectAfterConfigUpdate {
+            shouldreconnectAfterConfigUpdate = false
+            DispatchQueue.main.async { self.apiManager.connect() }
+        }
+    }
+    
+    func updateConfigurationFailed(_ notification: Notification) {
+        updateStatusForState()
+        showConfigurationUpdateFailedDialog()
+    }
 }
 
 // MARK: - VPNConfigurationStatusReporting
@@ -451,6 +469,7 @@ extension DashboardViewController : VPNServerStatusReporting {
 	func statusInitialServerUpdateSucceeded(_ notification: Notification) {
 		self.connectButton.isEnabled = true
 		UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
+        apiManager.updateServerList()
 	}
 	
 	func statusInitialServerUpdateFailed(_ notification: Notification) {
@@ -472,23 +491,6 @@ extension DashboardViewController : VPNServerStatusReporting {
 	func statusServerUpdateFailed(_ notification: Notification) {
 		updatingServers = false
 		updateStatusForState()
-	}
-}
-
-// MARK: - VPNHelperStatusReporting
-extension DashboardViewController : VPNHelperStatusReporting {
-	func statusHelperInstallFailed(_ notification: Notification) {
-		updateStatusForState()
-		showHelperFailedDialog()
-	}
-	
-	// Helper should be installed here
-	func statusHelperShouldInstall(_ notification: Notification) {
-		apiManager.installHelperAndConnect(onInstall: true)
-	}
-	
-	func statusHelperDidInstall(_ notification: Notification) {
-		//        apiManager.connect()
 	}
 }
 
@@ -520,6 +522,28 @@ extension DashboardViewController: VPNAccountStatusReporting {
 		alertController.addAction(okAction)
 		present(alertController, animated: true, completion: nil)
 	}
+    
+    func statusLoginServerUpdateWillBegin(_ notification: Notification) {
+        UserDefaults.standard.set(true, forKey: Theme.isInitialLoad)
+        if apiManager.status == .statusDisconnected {
+            lockUIAndSetServersUpdatingStatus()
+        }
+    }
+    
+    func statusLoginServerUpdateSucceeded(_ notification: Notification) {
+        
+        UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
+        
+        updatingServers = false
+        connectButton.isEnabled = true
+        updateStatusForState()
+    }
+    
+    func statusLoginServerUpdateFailed(_ notification: Notification) {
+        updatingServers = false
+        UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
+        updateStatusForState()
+    }
 }
 
 // MARK: - StoryboardInstantiable
