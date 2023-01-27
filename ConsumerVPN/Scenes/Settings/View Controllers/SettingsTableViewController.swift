@@ -64,10 +64,12 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         
         if #available(iOS 13.0, *) {
             protocolSegmentControl.selectedSegmentTintColor = .segmentedControlTint
-        }
-        else {
+        } else {
             protocolSegmentControl.tintColor = .segmentedControlTint
         }
+        protocolSegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.primaryText], for: .selected)
+        protocolSegmentControl.setTitleTextAttributes([.foregroundColor: UIColor.secondaryText], for: .normal)
+        
         checkmarkImageView.tintColor = .appWideTint
         
         tableView.separatorStyle = .none
@@ -126,10 +128,20 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         }
         
         // Set protocol segmented control to currently selected protocol.
-        if vpnConfiguration?.selectedProtocol == VPNProtocol.ikEv2 {
+        guard let selectedProtocol = vpnConfiguration?.selectedProtocol else {
             protocolSegmentControl.selectedSegmentIndex = 0
-        } else if vpnConfiguration?.selectedProtocol == VPNProtocol.ipSec {
+            return
+        }
+        
+        switch selectedProtocol {
+        case .wireGuard:
+            protocolSegmentControl.selectedSegmentIndex = 0
+        case .ikEv2:
             protocolSegmentControl.selectedSegmentIndex = 1
+        case .ipSec:
+            protocolSegmentControl.selectedSegmentIndex = 2
+        default:
+            protocolSegmentControl.selectedSegmentIndex = 0
         }
     }
     
@@ -192,8 +204,10 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
             // Set protocol based on user selection
             switch sender.selectedSegmentIndex {
             case 0:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.ikEv2
+                vpnConfiguration?.selectedProtocol = VPNProtocol.wireGuard
             case 1:
+                vpnConfiguration?.selectedProtocol = VPNProtocol.ikEv2
+            case 2:
                 vpnConfiguration?.selectedProtocol = VPNProtocol.ipSec
             default:
                 break
