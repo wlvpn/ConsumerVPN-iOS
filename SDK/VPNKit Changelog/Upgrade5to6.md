@@ -236,3 +236,31 @@ Removes Ethernet rule in OnDemandConfiguration
 Renames killSwitch methods with `activateAdapter` and `deactivateAdapter` methods
 
 Renames `removeHelperWithCompletionHandler` with `renameConfiguration:withCompletion:`
+
+# VPNKit 6.5 -> 6.6 Updates
+
+Adds `installSystemExtension()` API to install WireGuard System Extension.
+
+Adds `uninstallSystemExtension()` API to uninstall WireGuard System Extension.
+
+Adds below delegate method at `VPNHelperStatusReporting` which calls after `installSystemExtension()` API call.
+```
+- (void)statusHelperInstallSuccess:(nonnull NSNotification *)notification;
+
+- (void)statusHelperInstallPending:(nonnull NSNotification *)notification;
+
+- (void)statusHelperInstallFailed:(nonnull NSNotification *)notification;
+```
+```
+func statusHelperInstallSuccess(_ notification: Notification)
+func statusHelperInstallPending(_ notification: Notification)
+func statusHelperInstallFailed(_ notification: Notification)
+```
+
+Adds below delegate method at `VPNConnectionStatusReporting`.
+```
+- (void)networkConnectionStatusChanged:(nonnull NSNotification*)notification;
+```
+```
+func networkConnectionStatusChanged(_ notification: Notification)
+```
