@@ -1,3 +1,7 @@
+# VPNKit Version
+------
+The latest version of the WLVPN Apple SDK is 6.6
+
 ## Getting started
 
 To get the necessary assets/SDK for this application to run, please contact support@wlvpn.com
