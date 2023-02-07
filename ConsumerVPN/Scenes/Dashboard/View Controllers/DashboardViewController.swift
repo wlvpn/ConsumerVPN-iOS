@@ -357,6 +357,7 @@ final class DashboardViewController: UIViewController {
                     let confirmAction = UIAlertAction.init(title: LocalizedString.onDemandConnectedAlertConfirm, style: .default, handler: { (UIAlertAction) in
                         self.updateStatusForState(state: .statusDisconnecting)
                         self.vpnConfiguration?.onDemandConfiguration?.enabled = false
+                        self.apiManager.disconnect()
                         self.apiManager.synchronizeConfiguration()
                     })
                     alert.addAction(cancelAction)
