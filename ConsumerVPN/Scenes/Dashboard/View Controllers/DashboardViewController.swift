@@ -501,18 +501,26 @@ extension DashboardViewController: VPNAccountStatusReporting {
 	
 	/// - Parameter notification: Notification kicked back from the framework. Holds `Account` information.
 	func statusLoginSucceeded(_ notification: Notification) {
-		if let _ = loginCoordinator {
-			dismiss(animated: true, completion: nil)
-			loginCoordinator = nil
-			if tabBarController?.selectedIndex != 0 {
-				// The dashboard isn't the current active tab, so switch to it
-				tabBarController?.selectedViewController = self
-			}
-		}
-		
-		updateStatusForState()
-		self.connectButton.isEnabled = false
+        onLogin()
 	}
+    
+    func statusAutomaticLoginSuceeded(_ notification: Notification) {
+        onLogin()
+    }
+    
+    func onLogin() {
+        if let _ = loginCoordinator {
+            dismiss(animated: true, completion: nil)
+            loginCoordinator = nil
+            if tabBarController?.selectedIndex != 0 {
+                // The dashboard isn't the current active tab, so switch to it
+                tabBarController?.selectedViewController = self
+            }
+        }
+        
+        updateStatusForState()
+        self.connectButton.isEnabled = false
+    }
 	
 	/// Login failures are handled by the Login View Controller
 	func statusLoginFailed(_ notification: Notification) {}

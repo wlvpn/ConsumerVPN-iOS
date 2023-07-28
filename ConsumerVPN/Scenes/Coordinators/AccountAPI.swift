@@ -32,13 +32,7 @@ class AccountAPI : NSObject {
 extension AccountAPI: VPNAccountStatusReporting {
 	
 	func statusLoginSucceeded(_ notification: Notification) {
-		
-		guard let user = notification.object as? User else {
-			assertionFailure("`statusLoginSucceeded` notification does not contain a `User` object")
-			return
-		}
-		
-		signInCompletion?(.success(user))
+        onLogin(notification)
 	}
 	
 	func statusLoginFailed(_ notification: Notification) {
@@ -50,4 +44,17 @@ extension AccountAPI: VPNAccountStatusReporting {
 		
 		signInCompletion?(.failure(error))
 	}
+    
+    func statusAutomaticLoginSuceeded(_ notification: Notification) {
+        onLogin(notification)
+    }
+    
+    func onLogin(_ notification: Notification) {
+        guard let user = notification.object as? User else {
+            assertionFailure("`statusLoginSucceeded` notification does not contain a `User` object")
+            return
+        }
+        
+        signInCompletion?(.success(user))
+    }
 }

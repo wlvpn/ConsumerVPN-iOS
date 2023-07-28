@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import VPNKit
 
 class AppCoordinator : NSObject {
 	
@@ -88,11 +89,15 @@ extension AppCoordinator: VPNAccountStatusReporting {
 		UserDefaults.standard.set(0, forKey: Theme.sortOptionKey)
 		UserDefaults.standard.set(nil, forKey: Theme.lastUpdateKey)
 		UserDefaults.standard.synchronize()
-		
 		beginLoginFlow()
 	}
+    
+    func statusLogoutSucceeded(_ notification: Notification) {
+        self.apiManager.vpnConfiguration.onDemandConfiguration?.enabled = false
+        self.apiManager.vpnConfiguration.selectedProtocol = .wireGuard
+    }
 	
 	func statusLoginSucceeded(_ notification: Notification) {}
-	
-	func statusLogoutWillBegin() {}
+
+    func statusAutomaticLoginSuceeded(_ notification: Notification) { }
 }
