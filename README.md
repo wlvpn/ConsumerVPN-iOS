@@ -10,4 +10,3 @@ Please see the ConsumerVPN Client Readme document to get started.
 - Rename `kStayConnectedOnQuit` to `kVPNStayConnectedOnQuit` which ensure that connections are not killed off when the app dies during an active connection.
 - Rename `installHelperAndConnectOnInstall()` method to `synchronizeConfiguration()`, which responsible to updates VPN configuration.
 - Replace `login()` API with `loginWithRetry()` after purchase success.
-- Added `installSystemExtension()` API to install WireGuard System Extension.
