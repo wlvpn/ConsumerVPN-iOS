@@ -49,14 +49,9 @@ final class DashboardViewController: UIViewController {
 	
 	var delegate: DashboardViewControllerDelegate!
 	
-	// APIManager and VPNConfiguration options
-	var apiManager: VPNAPIManager! {
-		didSet {
-			vpnConfiguration = apiManager.vpnConfiguration
-		}
-	}
+	// APIManager
+	var apiManager: VPNAPIManager!
 	
-	var vpnConfiguration: VPNConfiguration?
 	
 	// Used to block UI/show loading animation when server list is
 	// being fetched or updated.
@@ -91,13 +86,9 @@ final class DashboardViewController: UIViewController {
 		mapImageView.alpha = 0
 		
 		view.backgroundColor = .viewBackground
-		
-		connectButton.setTitleColor(.connectButtonText, for: .normal)
-		connectButton.tintColor = .connectButtonText
-		connectButton.layer.borderColor = UIColor.connectButtonBorder.cgColor
-		connectButton.backgroundColor = .connectButtonBg
-		connectButton.layer.cornerRadius = 8.0
-		connectButton.layer.borderWidth = 2.0
+        connectButton.layer.cornerRadius = 8.0
+        connectButton.layer.borderWidth = 2.0
+		setConnectButton()
 		
 		locationSelectionLabel.textColor = .primaryFont
 		
@@ -111,7 +102,7 @@ final class DashboardViewController: UIViewController {
 		ipAddressDescriptionLabel.textColor = .primaryText
 		ipAddressLabel.textColor = .secondaryText
 		
-		shieldImageView.image = apiManager.isConnectedToVPN() ? ConnectedShield.imageOfArtboard() : DisconnectedShield.imageOfArtboard()
+        shieldImageView.image = ApiManagerHelper.shared.isConnectedToVPN() ? ConnectedShield.imageOfArtboard() : DisconnectedShield.imageOfArtboard()
 		shieldImageView.alpha = 1
 		connectedLabel.alpha = 0
 		
@@ -141,16 +132,8 @@ final class DashboardViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		if UserDefaults.standard.bool(forKey: Theme.isInitialLoad) {
-		}
-		
-		// based on the current status of the apiManager's connection, change which state is shown to user
-		if apiManager.isConnectedToVPN() {
-		} else {
-		}
-		
-		// Update UI animations
-		updateStatusForState()
+        ipAddressLabel.text = ApiManagerHelper.shared.getCurrentIPLocationString()
+        visibleLocationLabel.text = ApiManagerHelper.shared.getCityDisplayString()
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
@@ -171,8 +154,8 @@ final class DashboardViewController: UIViewController {
 	///   - didFail: Bool to determine if it should show failed animation.
 	func updateStatusForState(state : VPNConnectionStatus? = nil, didFail : Bool = false) {
 		// If no state was set, retrieves apiManager status directly to determine state.
-		let connectionStatus = state ?? apiManager.status
-		
+        let connectionStatus = state ?? ApiManagerHelper.shared.getVPNConnectionStatus()
+        debugPrint("[ConsumerVPN] \(#function) \(connectionStatus.rawValue)")
 		// Error occurred, displays error animation and returns
 		if didFail {
 			return
@@ -181,50 +164,45 @@ final class DashboardViewController: UIViewController {
 		// sets dashboard status UI and animation for state
 		switch connectionStatus {
 		case .statusDisconnected:
-			setDisconnectedStatus()
+            setDisconnectedStatus()
 		case .statusConnecting:
-			setInFluxStatus(connecting: true)
-		case .statusDisconnecting:
+            self.connectButton.isHidden = true
+            setInFluxStatus(connecting: true)
+        case .statusDisconnecting:
+            self.connectButton.isHidden = true
 			setInFluxStatus(connecting: false)
 		case .statusConnected:
 			setConnectedStatus()
 		default:
+            self.connectButton.isHidden = false
 			print("Not implemented")
 		}
 	}
 	
 	private func setDisconnectedStatus() {
-		UIView.animate(withDuration: 0.4) {
-			self.locationStackView.alpha = 1.0
-			self.connectionDetailsView.alpha = 0
-			self.mapImageView.alpha = 0
-			self.shieldImageView.image = DisconnectedShield.imageOfArtboard()
-			self.shieldImageView.alpha = 1
-			self.loadingCircle.alpha = 0
-			self.connectButton.alpha = 1.0
-			
-			self.connectButton.setTitle("Connect", for: .normal)
-			self.connectButton.setTitleColor(.connectButtonText, for: .normal)
-			self.connectButton.tintColor = .connectButtonText
-			self.connectButton.layer.borderColor = UIColor.connectButtonBorder.cgColor
-			self.connectButton.backgroundColor = .connectButtonBg
-		}
-	}
+        UIView.animate(withDuration: 0.4) {
+            self.locationStackView.alpha = 1.0
+            self.connectionDetailsView.alpha = 0
+            self.mapImageView.alpha = 0
+            self.shieldImageView.image = DisconnectedShield.imageOfArtboard()
+            self.shieldImageView.alpha = 1
+            self.loadingCircle.alpha = 0
+            self.setConnectButton()
+        } completion: { [weak self] success in
+            guard let self = self else { return  }
+            self.connectButton.isHidden = false
+            self.tabBarController?.tabBar.isUserInteractionEnabled = true
+        }
+    }
 	
 	private func setInFluxStatus(connecting: Bool) {
+        self.tabBarController?.tabBar.isUserInteractionEnabled = false
 		UIView.animate(withDuration: 0.4) {
 			self.locationStackView.alpha = 0
 			self.connectionDetailsView.alpha = 0
 			self.mapImageView.alpha = 0
 			self.shieldImageView.alpha = 0
 			self.loadingCircle.alpha = 1.0
-			self.connectButton.alpha = 1.0
-			
-			self.connectButton.setTitle("Disconnect", for: .normal)
-			self.connectButton.setTitleColor(.disconnectButtonText, for: .normal)
-			self.connectButton.tintColor = .disconnectButtonText
-			self.connectButton.layer.borderColor = UIColor.disconnectButtonBorder.cgColor
-			self.connectButton.backgroundColor = .disconnectButtonBg
 		}
 		if connecting {
 			loadingCircle.spinCycle(for: .connecting, completionDelegate: self)
@@ -240,7 +218,6 @@ final class DashboardViewController: UIViewController {
 			self.mapImageView.alpha = 0
 			self.shieldImageView.alpha = 0
 			self.loadingCircle.alpha = 1.0
-			self.connectButton.alpha = 0
 		}
 		
 		updatingServers = true
@@ -255,50 +232,42 @@ final class DashboardViewController: UIViewController {
 			self.shieldImageView.image = ConnectedShield.imageOfArtboard()
 			self.shieldImageView.alpha = 1.0
 			self.loadingCircle.alpha = 0
-			self.connectButton.alpha = 1.0
-			
-			self.connectButton.setTitle("Disconnect", for: .normal)
-			self.connectButton.setTitleColor(.disconnectButtonText, for: .normal)
-			self.connectButton.tintColor = .disconnectButtonText
-			self.connectButton.layer.borderColor = UIColor.disconnectButtonBorder.cgColor
-			self.connectButton.backgroundColor = .disconnectButtonBg
-		}
+			self.ipAddressLabel.text = ApiManagerHelper.shared.getCurrentIPLocationString()
+            self.visibleLocationLabel.text = ApiManagerHelper.shared.getCityDisplayString()
+            self.setDisconnectButton()
+        } completion: { [weak self] success in
+            guard let self = self else { return  }
+            self.connectButton.isHidden = false
+            self.tabBarController?.tabBar.isUserInteractionEnabled = true
+        }
 	}
 	
-	/// This helper method takes the passed in VPNConfiguration object to determine what the current location
-	/// string should say when presented to the user. This method is mainly used to format out the number the API
-	/// will kick back at times. e.g. "0, New Zealand" to instead become: "New Zealand" or "Loading" if the location
-	/// has not been determined yet.
-	///
-	/// - Parameter vpnConfiguration: The configuration object for VPN Services
-	/// - Returns: A formatted text based on the parameter's location contents to display to the user
-	fileprivate func locationString(for vpnConfiguration: VPNConfiguration?) -> String {
-		// If the location text does not exist, display loading.
-		// If the location text exists, but has a number in the text, display just the country name
-		// otherwise, display the received location text
-		let locationString = vpnConfiguration?.currentLocation?.location() ?? LocalizedString.loading
-		// If a number is found, split the string based on the comma + space ', ' and take the second part
-		// if it exists
-		if locationString.rangeOfCharacter(from: .decimalDigits) != nil {
-			// split the string around the comma + space
-			let components = locationString.components(separatedBy: ", ")
-			if components.count > 0 {
-				return components.last!
-			} else {
-				return locationString
-			}
-		} else {
-			return locationString
-		}
-		
-	}
+    private func setDisconnectButton() {
+        self.connectButton.setTitle("Disconnect", for: .normal)
+        self.connectButton.setTitleColor(.disconnectButtonText, for: .normal)
+        self.connectButton.tintColor = .disconnectButtonText
+        self.connectButton.layer.borderColor = UIColor.disconnectButtonBorder.cgColor
+        self.connectButton.backgroundColor = .disconnectButtonBg
+        self.connectButton.alpha = 1.0
+    }
+    
+    private func setConnectButton() {
+        self.connectButton.setTitle("Connect", for: .normal)
+        self.connectButton.setTitleColor(.connectButtonText, for: .normal)
+        self.connectButton.tintColor = .connectButtonText
+        self.connectButton.layer.borderColor = UIColor.connectButtonBorder.cgColor
+        self.connectButton.backgroundColor = .connectButtonBg
+        self.connectButton.alpha = 1.0
+    }
+    
+	
 	
 	fileprivate func showConfigurationUpdateFailedDialog() {
 		let alertController = UIAlertController(title: "Configuration Failure",
                                                 message: "There was an error installing the VPN configuration. Please try again.",
                                                 preferredStyle: .alert)
 		let reinstallAction = UIAlertAction(title: "Reinstall configuration", style: .default) { action in
-			self.apiManager.synchronizeConfiguration()
+            ApiManagerHelper.shared.synchronizeConfiguration()
 		}
 		alertController.addAction(reinstallAction)
 		
@@ -319,30 +288,10 @@ final class DashboardViewController: UIViewController {
 		present(serverNavC, animated: true, completion: nil)
 	}
 	
-	fileprivate var cityDisplayString: String {
-		var displayString = ""
-		
-		if let vpnConfiguration = vpnConfiguration {
-			if let city = vpnConfiguration.city,
-				let cityName = city.name {
-				displayString.append(cityName + ", ")
-			}
-			if let country = vpnConfiguration.country,
-				let countryName = country.name {
-				displayString.append(countryName)
-			}
-			if vpnConfiguration.city == nil,
-				vpnConfiguration.country == nil {
-				displayString = LocalizedString.fastestAvailable
-			}
-		}
-		
-		return displayString
-	}
 	
 	@IBAction private func connectDisconnectTapped(sender: UIButton) {
         
-		switch apiManager.status {
+        switch ApiManagerHelper.shared.getVPNConnectionStatus() {
 			
             case .statusDisconnected, .statusError, .statusInvalid, .statusDisconnecting:
 			// User wishes to connect
@@ -350,21 +299,19 @@ final class DashboardViewController: UIViewController {
 			
             case .statusConnected, .statusActive, .statusConnecting, .statusReconnecting:
             // User wishes to disconnect
-                if let onDemandEnabled = vpnConfiguration?.onDemandConfiguration?.enabled,
-                   onDemandEnabled {
+            if ApiManagerHelper.shared.isOnDemandEnabled {
                     let alert = UIAlertController(title: LocalizedString.onDemandConnectedAlertTitle, message: LocalizedString.onDemandConnectedAlertMessage, preferredStyle: .alert)
                     let cancelAction = UIAlertAction.init(title: LocalizedString.cancel, style: .cancel, handler: nil)
                     let confirmAction = UIAlertAction.init(title: LocalizedString.onDemandConnectedAlertConfirm, style: .default, handler: { (UIAlertAction) in
                         self.updateStatusForState(state: .statusDisconnecting)
-                        self.vpnConfiguration?.onDemandConfiguration?.enabled = false
-                        self.apiManager.disconnect()
-                        self.apiManager.synchronizeConfiguration()
+                        ApiManagerHelper.shared.disconnect()
+                        ApiManagerHelper.shared.setOnDemand(enable: false)
                     })
                     alert.addAction(cancelAction)
                     alert.addAction(confirmAction)
                     present(alert, animated: true, completion: nil)
                 } else {
-                    apiManager.disconnect()
+                    ApiManagerHelper.shared.disconnect()
                     updateStatusForState(state: .statusDisconnecting)
                 }
             case .statusReconnect:
@@ -387,6 +334,7 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 	
 	/// Used to log the connection status of `Did Begin`
 	func statusConnectionDidBegin(_ notification: Notification) {
+        self.connectButton.isHidden = true
 		// Display indeterminate progress showing that the connection process did begin.
 	}
 	
@@ -398,7 +346,7 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 	/// Transitions the Dashboard's connected state off of the screen via an animation
 	func statusConnectionDidDisconnect(_ notification: Notification) {
 		updateStatusForState(state: .statusDisconnected)
-        apiManager.refreshLocation()
+        ApiManagerHelper.shared.refreshLocation()
         
 		UIView.animate(withDuration: 0.75,
 					   animations: {
@@ -417,11 +365,12 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 	///
 	/// - parameter notification: Notification object kicked back from the VPNKit. The notification's `object` property is an NSError describing the reason for failure
 	func statusConnectionFailed(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
 		updateStatusForState(didFail: true)
 		
 		// Removes error animation after 5 seconds
-		DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5), execute: {
-			self.updateStatusForState()
+		DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5), execute: { [weak self] in
+			self?.updateStatusForState()
 		})
 		
 		guard let error = notification.object as? Error else {
@@ -429,21 +378,26 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 			return
 		}
 		
-		if apiManager.networkIsReachable { // Contact Support
+        if ApiManagerHelper.shared.isNetworkReachable() { // Contact Support
 			present(UIAlertController.contactSupport(with: error), animated: true, completion: nil)
 		} else { // Network Connection Issue
 			present(UIAlertController.network(), animated: true, completion: nil)
 		}
 	}
     
+    func updateConfigurationBegin(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController!.view)
+    }
+    
     func updateConfigurationSucceeded(_ notification: Notification) {
-        if shouldreconnectAfterConfigUpdate {
-            shouldreconnectAfterConfigUpdate = false
-            DispatchQueue.main.async { self.apiManager.connect() }
-        }
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        ProgressSpinnerHelper.shared.hideSpinner()
     }
     
     func updateConfigurationFailed(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        ProgressSpinnerHelper.shared.hideSpinner()
         updateStatusForState()
         showConfigurationUpdateFailedDialog()
     }
@@ -452,59 +406,73 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 // MARK: - VPNConfigurationStatusReporting
 extension DashboardViewController : VPNConfigurationStatusReporting {
 	func statusCurrentCityDidChange(_ notification: Notification) {
-		locationSelectionButton.setTitle(cityDisplayString, for: .normal)
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        locationSelectionButton.setTitle(ApiManagerHelper.shared.getCityDisplayString(), for: .normal)
 	}
 	
 	func statusCurrentLocationDidChange(_ notification: Notification) {
-		ipAddressLabel.text = vpnConfiguration?.currentLocation?.ipAddress ?? LocalizedString.loading
-		visibleLocationLabel.text = cityDisplayString
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        ipAddressLabel.text = ApiManagerHelper.shared.getCurrentIPLocationString()
+		visibleLocationLabel.text = ApiManagerHelper.shared.getCityDisplayString()
 	}
 }
 
 // MARK: - VPNServerStatusReporting
 extension DashboardViewController : VPNServerStatusReporting {
-	func statusInitialServerUpdateWillBegin(_ notification: Notification) {
-		UserDefaults.standard.set(true, forKey: Theme.isInitialLoad)
-	}
-	
-	func statusInitialServerUpdateSucceeded(_ notification: Notification) {
-		self.connectButton.isEnabled = true
-		UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
-        apiManager.updateServerList()
-	}
-	
-	func statusInitialServerUpdateFailed(_ notification: Notification) {
-		UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
-	}
-	
+    
 	func statusServerUpdateWillBegin(_ notification: Notification) {
-		if apiManager.status == .statusDisconnected {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        updatingServers = true
+        connectButton.isHidden = true
+        UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
+        if ApiManagerHelper.shared.getVPNConnectionStatus() == .statusDisconnected {
 			lockUIAndSetServersUpdatingStatus()
 		}
 	}
 	
 	func statusServerUpdateSucceeded(_ notification: Notification) {
-		updatingServers = false
-		self.connectButton.isEnabled = true
-		updateStatusForState()
+        debugPrint("[ConsumerVPN] \(#function)")
+        
+        if !UserDefaults.standard.bool(forKey: Theme.isInitialLoad) {
+            ApiManagerHelper.shared.synchronizeConfiguration { success in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self  else { return }
+                    self.connectButton.isHidden = !success
+                }
+            }
+        }
+        
+        updatingServers = false
+        updateStatusForState()
+        UserDefaults.standard.set(true, forKey: Theme.isInitialLoad)
 	}
 	
 	func statusServerUpdateFailed(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        if !UserDefaults.standard.bool(forKey: Theme.isInitialLoad) {
+            return
+        }
+        UserDefaults.standard.set(true, forKey: Theme.isInitialLoad)
 		updatingServers = false
 		updateStatusForState()
 	}
+    
 }
 
 // MARK: - VPNAccountStatusReporting
 extension DashboardViewController: VPNAccountStatusReporting {
-	func statusLoginWillBegin(_ notification: Notification) {}
+	func statusLoginWillBegin(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+    }
 	
 	/// - Parameter notification: Notification kicked back from the framework. Holds `Account` information.
 	func statusLoginSucceeded(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
         onLogin()
 	}
     
     func statusAutomaticLoginSuceeded(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
         onLogin()
     }
     
@@ -519,39 +487,24 @@ extension DashboardViewController: VPNAccountStatusReporting {
         }
         
         updateStatusForState()
-        self.connectButton.isEnabled = false
     }
 	
 	/// Login failures are handled by the Login View Controller
-	func statusLoginFailed(_ notification: Notification) {}
-	
+	func statusLoginFailed(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+    }
+    
 	func statusAccountExpired(_ notification: Notification) {
+        ProgressSpinnerHelper.shared.hideSpinner()
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
 		let alertController = UIAlertController(title: "Account Expired", message: "Want to build a VPN app like this? Contact partners@wlvpn.com", preferredStyle: .alert)
 		let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
 		alertController.addAction(okAction)
 		present(alertController, animated: true, completion: nil)
 	}
     
-    func statusLoginServerUpdateWillBegin(_ notification: Notification) {
-        UserDefaults.standard.set(true, forKey: Theme.isInitialLoad)
-        if apiManager.status == .statusDisconnected {
-            lockUIAndSetServersUpdatingStatus()
-        }
-    }
-    
-    func statusLoginServerUpdateSucceeded(_ notification: Notification) {
-        
-        UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
-        
-        updatingServers = false
-        connectButton.isEnabled = true
-        updateStatusForState()
-    }
-    
-    func statusLoginServerUpdateFailed(_ notification: Notification) {
-        updatingServers = false
-        UserDefaults.standard.set(false, forKey: Theme.isInitialLoad)
-        updateStatusForState()
+    func statusLogoutWillBegin(_ notification: Notification) {
+        ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController!.view)
     }
 }
 
@@ -573,9 +526,9 @@ extension DashboardViewController: StoryboardInstantiable {
 // MARK: - Animation Delegate
 extension DashboardViewController: CAAnimationDelegate {
 	func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-		if apiManager.isConnectingToVPN() {
+        if ApiManagerHelper.shared.isConnectingToVPN() {
 			loadingCircle.spinCycle(for: .connecting, completionDelegate: self)
-		} else if apiManager.isDisconnectingFromVPN() {
+		} else if ApiManagerHelper.shared.isDisconnectingFromVPN() {
 			loadingCircle.spinCycle(for: .disconnecting, completionDelegate: self)
 		} else if updatingServers {
 			loadingCircle.spinCycle(for: .loadingServers, completionDelegate: self)

@@ -49,6 +49,7 @@ final class LoginCoordinator: NSObject {
         rootViewController.modalPresentationStyle = .fullScreen
 		// Causes modal presentation to occur on the next run loop iteration, preventing "unbalanced call" messages
 		DispatchQueue.main.async {
+            ProgressSpinnerHelper.shared.hideSpinner()
 			from.present(self.rootViewController, animated: true, completion: nil)
 		}
 	}
@@ -56,19 +57,21 @@ final class LoginCoordinator: NSObject {
 	func login(username: String?, password: String?, in controller: UIViewController) {
 		
 		guard let username = username?.emailCharactersOnlyString else {
+            ProgressSpinnerHelper.shared.hideSpinner()
 			UIAlertController.presentErrorAlert(LocalizedString.usernameInvalid, in: controller)
 			return
 		}
 		
 		guard let password = password?.whiteSpaceTrimmed else {
+            ProgressSpinnerHelper.shared.hideSpinner()
 			UIAlertController.presentErrorAlert(LocalizedString.loginEmptyField, in: controller)
 			return
 		}
 		
 		accountAPI.signIn(username: username, password: password) { result in
+            ProgressSpinnerHelper.shared.hideSpinner()
 			switch result {
-				
-			case .success(let user):
+            case .success(let user):
 				self.delegate.didSignIn(user)
 				
 			case .failure(let error):
@@ -84,6 +87,7 @@ extension LoginCoordinator : LoginFlowViewControllerDelegate {
 		
 		// If we're coming `from = SignUpVC` then display the LoginVC.
 		guard controller is LoginViewController else {
+            ProgressSpinnerHelper.shared.hideSpinner()
 			rootViewController.popToRootViewController(animated: true)
 			return
 		}

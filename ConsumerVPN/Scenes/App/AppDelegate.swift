@@ -25,17 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Initialize the APIManager using helper Objc object.
-        apiManager = SDKInitializer.initializeAPIManager(
-            withBrandName: Theme.brandName,
-            configName: Theme.configName,
-            apiKey: Theme.apiKey,
-            andSuffix: Theme.usernameSuffix
-        )
-        
+        apiManager = ApiManagerHelper.shared.apiManager
         // set the default encryption to 256 if one isn't already set
-        if apiManager.vpnConfiguration.hasOption(forKey: kIKEv2Encryption) == false {
-            apiManager.vpnConfiguration.setOption(kVPNEncryptionAES256, forKey: kIKEv2Encryption)
-        }
+        ApiManagerHelper.shared.setDefaultEncryption()
         
         appCoordinator = AppCoordinator(apiManager: apiManager)
         
@@ -50,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         appCoordinator.tabController = tabBarC
         
         // No user object means not signed in, so show login view
-        if apiManager.vpnConfiguration.user == nil {
+        if !ApiManagerHelper.shared.isUserLogin() {
             appCoordinator.beginLoginFlow()
         }
         
@@ -77,17 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        UserDefaults.standard.set(nil, forKey: Theme.loginErrorKey)
-        UserDefaults.standard.synchronize()
-        if apiManager.isConnectedToVPN() {
-            if let ondemandConfiguration = apiManager.vpnConfiguration.onDemandConfiguration {
-                if !ondemandConfiguration.enabled { apiManager.disconnect() }
-            } else {
-                apiManager.disconnect()
-            }
-        }
-        
-        apiManager.cleanup()
+        ApiManagerHelper.shared.disconnectOnAppTerminate()
     }
     
     func application(_ application: UIApplication,
@@ -138,8 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             showExpiredTokenMessage()
             return false
         }
-        
-        apiManager.login(withUsername: username, password: password)
+        ApiManagerHelper.shared.loginWith(forUsername: username, password: password)
         return true
     }
     

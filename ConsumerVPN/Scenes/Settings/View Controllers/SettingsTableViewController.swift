@@ -17,6 +17,7 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
     @IBOutlet weak var alwaysOnSwitch: UISwitch!
     @IBOutlet weak var protocolSegmentControl: UISegmentedControl!
     @IBOutlet weak var checkmarkImageView: UIImageView!
+    @IBOutlet weak var killSwitch: UISwitch!
     
     // All labels for theming
     @IBOutlet var labels: [UILabel]!
@@ -30,24 +31,11 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
     
     /// VPNKit Variables
     /// This should have a value through dependency injection. If this doesn't have a value, something went wrong and we should crash
-    var apiManager : VPNAPIManager! {
-        didSet {
-            vpnConfiguration = apiManager.vpnConfiguration
-        }
-    }
+    var apiManager : VPNAPIManager!
 
-    var vpnConfiguration: VPNConfiguration?
-    
-    /// Used when changing onDemand settings while currently connected to reconnect the user after applying changes.
-    var shouldReconnect = false
-    
-    /// Used when the user presses the `refresh servers` button so that we can display the appropriate server update succeeded/failed notifications
-    var serverUpdatePressed = false
-    
+        
     var loginCoordinator: LoginCoordinator?
     
-    /// Used when changing while currently connected to reconnect the user after applying changes.
-    var shouldReconnectOnConfigUpdate = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,17 +111,10 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
     /// Load settings from vpn configuration and apply them visually.
     func restoreDefaultSettings() {
         // Set always on switch to match vpn configuration.
-        if let alwaysOn = vpnConfiguration?.onDemandConfiguration?.enabled as? Bool {
-            alwaysOnSwitch.setOn(alwaysOn, animated: true)
-        }
+        alwaysOnSwitch.setOn(ApiManagerHelper.shared.isOnDemandEnabled, animated: true)
         
         // Set protocol segmented control to currently selected protocol.
-        guard let selectedProtocol = vpnConfiguration?.selectedProtocol else {
-            protocolSegmentControl.selectedSegmentIndex = 0
-            return
-        }
-        
-        switch selectedProtocol {
+        switch ApiManagerHelper.shared.selectedProtocol {
         case .wireGuard:
             protocolSegmentControl.selectedSegmentIndex = 0
         case .ikEv2:
@@ -143,6 +124,8 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         default:
             protocolSegmentControl.selectedSegmentIndex = 0
         }
+        configureUIForSelectedState()
+        
     }
     
     /// This will handle turning the always on functionality on/off.
@@ -150,140 +133,82 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
         // 1. Check if user is connected to the VPN
         // 2. If connected, notify user that the change will disconnect from VPN, Apply the changes and then reconnect them to VPN.
         // 3. If not connected, Apply changes and update helper.
-        if apiManager.isConnectedToVPN() {
-            let title = LocalizedString.preferencesHeader
-            let message = LocalizedString.applyChangeReconnect
-            var actions : [UIAlertAction] = []
-            
-            var action = UIAlertAction(title: LocalizedString.cancel, style: .cancel,handler: { (action) in
-                sender.setOn(!sender.isOn, animated: true)
-            })
-            actions.append(action)
-           
-            action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { [unowned self] (action) in
-                self.shouldReconnect = false
-                self.shouldReconnectOnConfigUpdate = true
-                self.apiManager.disconnect()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                    guard let strongSelf = self else { return }
-                    strongSelf.vpnConfiguration?.onDemandConfiguration?.enabled = sender.isOn
-                    strongSelf.apiManager.synchronizeConfiguration()
-                }
-            })
-            actions.append(action)
-            
-            if !sender.isOn {
-                action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { [unowned self] (action) in
-                    self.shouldReconnect = false
-                    self.shouldReconnectOnConfigUpdate = false
-                    self.vpnConfiguration?.onDemandConfiguration?.enabled = sender.isOn
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                        guard let strongSelf = self else { return }
-                        strongSelf.apiManager.synchronizeConfiguration()
-                    }
+        sender.isEnabled = false
+        if sender.isOn != ApiManagerHelper.shared.isOnDemandEnabled  {
+            if ApiManagerHelper.shared.isConnectedToVPN() {
+                let title = LocalizedString.preferencesHeader
+                let message = LocalizedString.applyChangeReconnect
+                var actions : [UIAlertAction] = []
+                
+                var action = UIAlertAction(title: LocalizedString.cancel, style: .cancel,handler: { (action) in
+                    sender.setOn(!sender.isOn, animated: true)
+                    sender.isEnabled = true
                 })
                 actions.append(action)
+               
+                action = UIAlertAction(title: LocalizedString.reconnect, style: .default) {  (action) in
+                    ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
+                    ApiManagerHelper.shared.disconnect()
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) { [weak self] in
+                        guard let self = self else { return }
+                        ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
+                        ApiManagerHelper.shared.toggleOnDemand(enable: sender.isOn, reconnect: true) { success in
+                            DispatchQueue.main.async {
+                                sender.isEnabled = true
+                            }
+                            
+                        }
+                    }
+                }
+                
+                actions.append(action)
+                
+                if !sender.isOn {
+                    action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive) {  (action) in
+                        ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
+                        ApiManagerHelper.shared.disconnect()
+                        ApiManagerHelper.shared.setOnDemand(enable: false)
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) {
+                            sender.isEnabled = true
+                        }
+                        
+                    }
+                    actions.append(action)
+                }
+                
+                let alert = UIAlertController.alert(withTitle: title, message: message, actions: actions, alertType: .alert)
+                present(alert, animated: true, completion: nil)
+            } else {
+                ApiManagerHelper.shared.toggleOnDemand(enable: sender.isOn) { success in
+                    DispatchQueue.main.async {
+                        sender.isEnabled = true
+                    }
+                }
             }
-            
-            let alert = UIAlertController.alert(withTitle: title, message: message, actions: actions, alertType: .alert)
-            present(alert, animated: true, completion: nil)
         } else {
-            self.vpnConfiguration?.onDemandConfiguration?.enabled = sender.isOn
-            
-            DispatchQueue.main.async {
-                self.apiManager.synchronizeConfiguration()
-            }
-            
+            sender.isEnabled = true
         }
+        
+    }
+    
+    /// This will handle turning the kill switch functionality on/off.
+    @IBAction func killSwitch(_ sender: UISwitch) {
+        ApiManagerHelper.shared.toggleKillSwitch(enable: sender.isOn)
+    }
+    
+    private func configureUIForSelectedState() {
+        killSwitch.isOn = ApiManagerHelper.shared.isKillSwitchOn
+        killSwitch.isEnabled = ApiManagerHelper.shared.isSafeToChangeConfiguration()
+        alwaysOnSwitch.isEnabled = !ApiManagerHelper.shared.isVPNConnectionInProgress()
+        protocolSegmentControl.isEnabled = ApiManagerHelper.shared.isSafeToChangeConfiguration()
     }
     
     /// This will switch the protocol and save the users preference. Currently supported Protocols (IKEv2,IPSec)
     @IBAction func protocolSegmentValueChanged(_ sender: UISegmentedControl) {
-        func switchSelectedProtocol() {
-            // Set protocol based on user selection
-            switch sender.selectedSegmentIndex {
-            case 0:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.wireGuard
-            case 1:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.ikEv2
-            case 2:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.ipSec
-            default:
-                break
-            }
-            
-            // Install configuration to apply changes
-            if shouldReconnect {
-                shouldReconnect = false
-                shouldReconnectOnConfigUpdate = true
-                apiManager.synchronizeConfiguration()
-            }
-        }
-        
-        // 1. Check if user is connected to the VPN
-        // 2. If connected, notify user that the change will disconnect from VPN, Apply the changes and then reconnect them to VPN.
-        // 3. If not connected, Apply changes and update helper.
-        if apiManager.isConnectedToVPN() {
-            
-            let title = LocalizedString.preferencesHeader
-            let message = LocalizedString.applyChangeReconnect
-            var actions : [UIAlertAction] = []
-            
-            var action = UIAlertAction(title: LocalizedString.cancel, style: .cancel,handler: { (action) in
-                sender.selectedSegmentIndex = 1 - sender.selectedSegmentIndex
-            })
-            actions.append(action)
-            
-            action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { (action) in
-                self.shouldReconnect = true
-                switchSelectedProtocol()
-            })
-            actions.append(action)
-            
-            action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { (action) in
-                
-                // Get always on switch from vpn configuration.
-                if let alwaysOn = self.vpnConfiguration?.onDemandConfiguration?.enabled {
-                    
-                    // If Always On enabled, notify user that always on will be disabled if they decide to apply the changes.
-                    if alwaysOn {
-                        let alert = UIAlertController(title: LocalizedString.onDemandConnectedAlertTitle, message: LocalizedString.onDemandConnectedAlertMessage, preferredStyle: .alert)
-                        
-                        let cancelAction = UIAlertAction.init(title: LocalizedString.cancel, style: .cancel, handler: { (action) in
-                            sender.selectedSegmentIndex = 1 - sender.selectedSegmentIndex
-                        })
-                        
-                        let confirmAction = UIAlertAction.init(title: LocalizedString.onDemandConnectedAlertConfirm, style: .default, handler: { (UIAlertAction) in
-                            self.shouldReconnect = false
-                            self.shouldReconnectOnConfigUpdate = false
-                            self.apiManager.disconnect()
-                            switchSelectedProtocol()
-                            
-                            self.vpnConfiguration?.onDemandConfiguration?.enabled = false
-                            self.alwaysOnSwitch.isOn = false
-                            self.apiManager.synchronizeConfiguration()
-                        })
-                        
-                        alert.addAction(cancelAction)
-                        alert.addAction(confirmAction)
-                        
-                        self.present(alert, animated: true, completion: nil)
-                        
-                        return
-                    }
-                }
-                
-                self.apiManager.disconnect()
-                switchSelectedProtocol()
-            })
-            actions.append(action)
-            
-            let alert = UIAlertController.alert(withTitle: title, message: message, actions: actions, alertType: .alert)
-            present(alert, animated: true, completion: nil)
-        } else {
-            switchSelectedProtocol()
-        }
+        protocolSegmentControl.isEnabled = false
+        alwaysOnSwitch.isEnabled = false
+        killSwitch.isEnabled = false
+        ApiManagerHelper.shared.switchProtocol(index: sender.selectedSegmentIndex)
     }
     
     func fadeOut(imageView: UIImageView, usingImage imageName:String) {
@@ -329,34 +254,29 @@ extension SettingsTableViewController {
             switch indexPath.row {
             case 1:
                 // Logout
-                apiManager.logout()
+                tableView.deselectRow(at: indexPath, animated: true)
+                ApiManagerHelper.shared.logout()
             default:
                 break
             }
         case 1: // Connection Settings
             switch indexPath.row {
-            case 2: // Refresh Servers
-                // 1) If the network is reachable,
-                    // a) Refresh the servers if it has been more than 5 minutes since the last successful update OR
-                    // b) Inform the user the servers are already up to date, otherwise
-                // 2) Tell the user to change their network settings
-                
-                if apiManager.networkIsReachable {
-                    // Has it been more than 5 minutes (300 seconds) since the last successful update?
-                    let lastUpdate = UserDefaults.standard.value(forKey: Theme.lastUpdateKey) as? Date ?? Date.distantPast
-                    if Date().timeIntervalSince(lastUpdate) > 300 { // Update servers
-                        serverUpdatePressed = true
-                        apiManager.updateServerList()
-                    } else {
+            case 3:
+                ApiManagerHelper.shared.refreshServer { [weak self] success, error in
+                    guard let `self` = self else { return  }
+                    if success {
                         fadeOut(imageView: checkmarkImageView, usingImage: "checkmark_icon")
+                    } else {
+                        if let updateServerError = error {
+                            present(UIAlertController.contactSupport(with: updateServerError), animated: true, completion: nil)
+                        } else {
+                            if !ApiManagerHelper.shared.isNetworkReachable() {
+                                self.present(UIAlertController.network(), animated: true, completion: nil)
+                            }
+                        }
                     }
-                } else { // Change Network Settings
-                    // This is run on the main thread because for some reason without it, it takes forever for the alert to show (WTF?)
-                    DispatchQueue.main.async {
-                        self.present(UIAlertController.network(), animated: true, completion: nil)
-                    }
-                    
                 }
+                
             default:
                 break
             }
@@ -370,7 +290,7 @@ extension SettingsTableViewController {
 extension SettingsTableViewController : VPNHelperStatusReporting {
     func statusHelperInstallFailed(_ notification: Notification) {
         alwaysOnSwitch.setOn(false, animated: true)
-        vpnConfiguration?.onDemandConfiguration?.enabled = false
+        ApiManagerHelper.shared.setOnDemand(enable: false)
         
         if let error = notification.object as? Error {
             print("Helper Install Failed with Error - \(error.localizedDescription)")
@@ -381,83 +301,55 @@ extension SettingsTableViewController : VPNHelperStatusReporting {
 // MARK: - VPNConnectionStatusReporting
 extension SettingsTableViewController : VPNConnectionStatusReporting {
     func statusConnectionSucceeded(_ notification: Notification) {
-        guard let vpnConfiguration = vpnConfiguration else {
-            return
-        }
-        
-        // if autobalancing is on, reset the vpn config to nil in those areas
-        if vpnConfiguration.usingAutoselectedCity {
-            vpnConfiguration.city = nil
-        }
+        configureUIForSelectedState()
+        ProgressSpinnerHelper.shared.hideSpinner()
     }
     
     func statusConnectionDidDisconnect(_ notification: Notification) {
-        if shouldReconnect {
-            shouldReconnect = false
-            apiManager.connect()
-        }
+        configureUIForSelectedState()
+        ProgressSpinnerHelper.shared.hideSpinner()
     }
     
     func statusConnectionFailed(_ notification: Notification) {
         if let error = notification.object as? Error {
             print("Connection Failed with Error - \(error.localizedDescription)")
         }
-        
-        alwaysOnSwitch.setOn(false, animated: true)
+        alwaysOnSwitch.setOn(ApiManagerHelper.shared.isOnDemandEnabled, animated: true)
+        configureUIForSelectedState()
     }
-    
-    func updateConfigurationSucceeded(_ notification: Notification) {
-        if shouldReconnectOnConfigUpdate {
-            shouldReconnectOnConfigUpdate = false
-            DispatchQueue.main.async { self.apiManager.connect() }
+    func statusConnectionWillBegin(_ notification: Notification) {
+        if self.tabBarController?.selectedIndex == 2 {
+            ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
+        }
+        configureUIForSelectedState()
+    }
+    func statusConnectionWillDisconnect(_ notification: Notification) {
+        if self.tabBarController?.selectedIndex == 2 {
+            ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
         }
     }
     
 }
 
-// MARK: - VPNServerStatusReporting
-extension SettingsTableViewController: VPNServerStatusReporting {
-    
-    func statusServerUpdateSucceeded(_ notification: Notification) {
-        if serverUpdatePressed {
-            // Set to false in the scenario the user tapped the `refresh servers` button to not show any more notifications unless pressed again
-            serverUpdatePressed = false
+extension SettingsTableViewController: VPNConfigurationStatusReporting {
+    func statusCurrentProtocolDidChange(_ notification: Notification) {
+        ApiManagerHelper.shared.synchronizeConfiguration { success in
             
-            // Since we succeeded, save out this time stamp to user defaults
-            UserDefaults.standard.set(Date(), forKey: Theme.lastUpdateKey)
-            
-            fadeOut(imageView: checkmarkImageView, usingImage: "checkmark_icon")
-        }
-    }
-    
-    func statusServerUpdateFailed(_ notification: Notification) {
-        if serverUpdatePressed { // Only display something if the user manually attempted refresh
-            
-            // 1) If the network is reachable, tell the user they should contact support, otherwise
-            // 2) Tell them to change their network settings (This should never happen since we're responding to this when refresh is selected)
-            if apiManager.networkIsReachable { // Contact Support
-                
-                guard let error = notification.object as? Error else {
-                    print("Server Update Failed with No Error")
-                    return
-                }
-				
-                // This alert is to inform the user to contact support
-                present(UIAlertController.contactSupport(with: error), animated: true, completion: nil)
-                
-            } else { // Change Settings
-                present(UIAlertController.network(), animated: true, completion: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                guard let `self` = self else {return}
+                self.alwaysOnSwitch.isEnabled = true
+                self.protocolSegmentControl.isEnabled = true
+                self.killSwitch.isEnabled = true
             }
+            
         }
-        
-        // Set to false in the scenario the user tapped the `refresh servers` button to not show any more notifications unless pressed again
-        serverUpdatePressed = false
-        
-        // Since we failed, erase the last successful update
-        UserDefaults.standard.set(nil, forKey: Theme.lastUpdateKey)
+    }
+    
+    func updateConfigurationFailed(_ notification: Notification) {
+        alwaysOnSwitch.setOn(ApiManagerHelper.shared.isOnDemandEnabled, animated: true)
     }
 }
-
+// MARK: - VPNServerStatusReporting
 extension SettingsTableViewController: StoryboardInstantiable {
     
     static var storyboardName: String {
@@ -470,4 +362,3 @@ extension SettingsTableViewController: StoryboardInstantiable {
         return settingsVC
     }
 }
-

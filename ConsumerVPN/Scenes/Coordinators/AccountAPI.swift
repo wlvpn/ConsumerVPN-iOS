@@ -23,9 +23,10 @@ class AccountAPI : NSObject {
 	
 	func signIn(username: String, password: String, completion: @escaping (Result<User, Error>) -> Void) {
 		// This function will notify us via notifications of the results.
-        apiManager.loginWithRetry(forUsername: username, password: password)
-		signInCompletion = completion
+        ApiManagerHelper.shared.loginWithRetry(forUsername: username, password: password)
+        signInCompletion = completion
 	}
+    
 }
 
 // MARK: - VPNAccountStatusReporting
@@ -54,7 +55,13 @@ extension AccountAPI: VPNAccountStatusReporting {
             assertionFailure("`statusLoginSucceeded` notification does not contain a `User` object")
             return
         }
-        
-        signInCompletion?(.success(user))
+        ApiManagerHelper.shared.refreshLocation { success in
+            DispatchQueue.main.async {
+                ApiManagerHelper.shared.refreshServer { [unowned self] success, error in
+                    self.signInCompletion?(.success(user))
+                    ProgressSpinnerHelper.shared.hideSpinner()
+                }
+            }
+        }
     }
 }

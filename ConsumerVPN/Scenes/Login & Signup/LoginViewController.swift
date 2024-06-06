@@ -43,8 +43,6 @@ class LoginViewController: UIViewController {
 	// suppored iOS device (currently the SE), so changing it is ill advised.
 	private var smallViewTopConstraintTopConstant: CGFloat = 20.0
 	
-	// MARK: - VPNKit Variables
-	var vpnConfiguration: VPNConfiguration?
 	
 	override var preferredStatusBarStyle: UIStatusBarStyle {
 		return .loginStatusBar
@@ -178,6 +176,7 @@ class LoginViewController: UIViewController {
 	}
 	
 	@IBAction func login(_ sender: UIButton) {
+        ProgressSpinnerHelper.shared.showSpinner(on: self.view)
 		delegate.signInRequested(username: usernameTextField.text,
 								 password: passwordTextField.text,
 								 from: self)
