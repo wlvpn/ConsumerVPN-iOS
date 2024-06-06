@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,7 +18,6 @@
 		0E8D871920C7187000E2D9AB /* CityServerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8D871820C7187000E2D9AB /* CityServerTableViewCell.swift */; };
 		0EC51C6A22209CB700A394E6 /* ConnectedShield.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EC51C6922209CB700A394E6 /* ConnectedShield.swift */; };
 		0EDA2479222DB98700D1D41E /* PrivacyNoticeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDA2478222DB98700D1D41E /* PrivacyNoticeViewController.swift */; };
-		454BAFBD2306141C00BB6625 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 454BAFBC2306141C00BB6625 /* README.md */; };
 		4556EA7A204F514C00049414 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1DDDC33AF4346F5C19F2B0 /* AppDelegate.swift */; };
 		4556EA81204F514C00049414 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F4CCE21C04CDEF00F5DBA9 /* NetworkExtension.framework */; };
 		4556EA92204F514C00049414 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 9C1DD1A07D9B04CD5673F28C /* Localizable.stringsdict */; };
@@ -76,14 +75,21 @@
 		F5C16FAF890B5C80B9A32F64 /* FilterViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C16BCAEFBE17D33C4C434C /* FilterViewControllerDelegate.swift */; };
 		F5C16FF5C50803065D67B14A /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C16A8B8463EC403FD03D5E /* SettingsTableViewController.swift */; };
 		F6395A0C2922860C00FADD31 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6395A0B2922860C00FADD31 /* StoreKit.framework */; };
+		F64E01D82B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F64E01D62B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework */; };
+		F64E01D92B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F64E01D62B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F64E01DA2B2793A9002D8A1B /* VPKWireGuardExtension.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F64E01D72B2793A8002D8A1B /* VPKWireGuardExtension.xcframework */; };
+		F64E01DB2B2793A9002D8A1B /* VPKWireGuardExtension.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F64E01D72B2793A8002D8A1B /* VPKWireGuardExtension.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F64E01DC2B2793B4002D8A1B /* VPKWireGuardExtension.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F64E01D72B2793A8002D8A1B /* VPKWireGuardExtension.xcframework */; };
 		F65D6DDD2923B6F8002EE810 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F4CCE21C04CDEF00F5DBA9 /* NetworkExtension.framework */; };
 		F65D6DE02923B6F8002EE810 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65D6DDF2923B6F8002EE810 /* PacketTunnelProvider.swift */; };
 		F65D6DE52923B6F8002EE810 /* ConsumerVPNWGExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F65D6DDC2923B6F8002EE810 /* ConsumerVPNWGExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F65D6DEA2923B78A002EE810 /* VPKWireGuardExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F670E1FE2919291E0070717B /* VPKWireGuardExtension.framework */; };
-		F670E200291929530070717B /* VPKWireGuardAdapter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F670E1FF2919291E0070717B /* VPKWireGuardAdapter.framework */; platformFilter = ios; };
-		F670E201291929530070717B /* VPKWireGuardAdapter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F670E1FF2919291E0070717B /* VPKWireGuardAdapter.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F670E202291929530070717B /* VPKWireGuardExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F670E1FE2919291E0070717B /* VPKWireGuardExtension.framework */; platformFilter = ios; };
-		F670E203291929530070717B /* VPKWireGuardExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F670E1FE2919291E0070717B /* VPKWireGuardExtension.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F90761AF2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */; };
+		F90761B12C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */; };
+		F90761B32C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */; };
+		F95C1F282BFE25E900D2FA23 /* README iOS.md in Resources */ = {isa = PBXBuildFile; fileRef = F95C1F272BFE25E900D2FA23 /* README iOS.md */; };
+		F9F951D12C07053500188E84 /* ProgressSpinnerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F951CE2C07053500188E84 /* ProgressSpinnerHelper.swift */; };
+		F9F951D22C07053500188E84 /* ProgressSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F951CF2C07053500188E84 /* ProgressSpinnerView.swift */; };
+		F9FBB5A12BFF7BDC00C8C9FB /* ApiManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FBB5A02BFF7BDC00C8C9FB /* ApiManagerHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,10 +109,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F670E201291929530070717B /* VPKWireGuardAdapter.framework in Embed Frameworks */,
+				F64E01DB2B2793A9002D8A1B /* VPKWireGuardExtension.xcframework in Embed Frameworks */,
 				459C268A25C868D6009B7CC6 /* VPNV3APIAdapter.xcframework in Embed Frameworks */,
+				F64E01D92B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework in Embed Frameworks */,
 				459C268825C868D5009B7CC6 /* VPNKit.xcframework in Embed Frameworks */,
-				F670E203291929530070717B /* VPKWireGuardExtension.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,7 +143,6 @@
 		0EC51C6922209CB700A394E6 /* ConnectedShield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedShield.swift; sourceTree = "<group>"; };
 		0EDA2478222DB98700D1D41E /* PrivacyNoticeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyNoticeViewController.swift; sourceTree = "<group>"; };
 		37F4CCE21C04CDEF00F5DBA9 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
-		454BAFBC2306141C00BB6625 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4556EA9B204F514C00049414 /* ConsumerVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConsumerVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		459C268325C86714009B7CC6 /* VPNV3APIAdapter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VPNV3APIAdapter.xcframework; sourceTree = "<group>"; };
 		459C268425C86714009B7CC6 /* VPNKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VPNKit.xcframework; sourceTree = "<group>"; };
@@ -197,12 +202,21 @@
 		F5C16FB8ADBA586FDF33DFCE /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		F5C16FC3AFE395DAB2AFE052 /* HelperExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperExtensions.swift; sourceTree = "<group>"; };
 		F6395A0B2922860C00FADD31 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		F64E01D62B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = VPKWireGuardAdapter.xcframework; path = SDK/VPKWireGuardAdapter.xcframework; sourceTree = "<group>"; };
+		F64E01D72B2793A8002D8A1B /* VPKWireGuardExtension.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = VPKWireGuardExtension.xcframework; path = SDK/VPKWireGuardExtension.xcframework; sourceTree = "<group>"; };
+		F64E01DF2B2793DD002D8A1B /* VPKWireGuardAdapter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VPKWireGuardAdapter.xcframework; sourceTree = "<group>"; };
+		F64E01E02B2793DD002D8A1B /* VPKWireGuardExtension.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VPKWireGuardExtension.xcframework; sourceTree = "<group>"; };
 		F65D6DDC2923B6F8002EE810 /* ConsumerVPNWGExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ConsumerVPNWGExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F65D6DDF2923B6F8002EE810 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
 		F65D6DE12923B6F8002EE810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F65D6DE22923B6F8002EE810 /* ConsumerVPNWGExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ConsumerVPNWGExtension.entitlements; sourceTree = "<group>"; };
-		F670E1FE2919291E0070717B /* VPKWireGuardExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VPKWireGuardExtension.framework; sourceTree = "<group>"; };
-		F670E1FF2919291E0070717B /* VPKWireGuardAdapter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VPKWireGuardAdapter.framework; sourceTree = "<group>"; };
+		F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConfiguration.swift"; sourceTree = "<group>"; };
+		F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConnection.swift"; sourceTree = "<group>"; };
+		F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+Logger.swift"; sourceTree = "<group>"; };
+		F95C1F272BFE25E900D2FA23 /* README iOS.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "README iOS.md"; sourceTree = "<group>"; };
+		F9F951CE2C07053500188E84 /* ProgressSpinnerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressSpinnerHelper.swift; sourceTree = "<group>"; };
+		F9F951CF2C07053500188E84 /* ProgressSpinnerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressSpinnerView.swift; sourceTree = "<group>"; };
+		F9FBB5A02BFF7BDC00C8C9FB /* ApiManagerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManagerHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,13 +224,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F64E01DA2B2793A9002D8A1B /* VPKWireGuardExtension.xcframework in Frameworks */,
 				459C268C25C86BEF009B7CC6 /* WebKit.framework in Frameworks */,
 				4556EA81204F514C00049414 /* NetworkExtension.framework in Frameworks */,
 				459C268725C868D5009B7CC6 /* VPNKit.xcframework in Frameworks */,
+				F64E01D82B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework in Frameworks */,
 				F6395A0C2922860C00FADD31 /* StoreKit.framework in Frameworks */,
-				F670E200291929530070717B /* VPKWireGuardAdapter.framework in Frameworks */,
 				459C268925C868D6009B7CC6 /* VPNV3APIAdapter.xcframework in Frameworks */,
-				F670E202291929530070717B /* VPKWireGuardExtension.framework in Frameworks */,
 				458A9B25255C798C0083E056 /* Purchases in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,8 +239,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F64E01DC2B2793B4002D8A1B /* VPKWireGuardExtension.xcframework in Frameworks */,
 				F65D6DDD2923B6F8002EE810 /* NetworkExtension.framework in Frameworks */,
-				F65D6DEA2923B78A002EE810 /* VPKWireGuardExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +300,7 @@
 		37D7324B1BF103E3005733C8 /* ConsumerVPN */ = {
 			isa = PBXGroup;
 			children = (
+				F96244BE2C00959600748ADF /* SDKHelper */,
 				F5C16A485B528D73442652D0 /* SDKInitializer */,
 				F5C1696E25FC9AB10A07C3CC /* Scenes */,
 				F5C1681BA9A314733FC11396 /* Resources */,
@@ -299,11 +314,11 @@
 		45ACC88120BDDBE400AEF62D /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				F95C1F272BFE25E900D2FA23 /* README iOS.md */,
+				F64E01DF2B2793DD002D8A1B /* VPKWireGuardAdapter.xcframework */,
+				F64E01E02B2793DD002D8A1B /* VPKWireGuardExtension.xcframework */,
 				459C268425C86714009B7CC6 /* VPNKit.xcframework */,
 				459C268325C86714009B7CC6 /* VPNV3APIAdapter.xcframework */,
-				F670E1FF2919291E0070717B /* VPKWireGuardAdapter.framework */,
-				F670E1FE2919291E0070717B /* VPKWireGuardExtension.framework */,
-				454BAFBC2306141C00BB6625 /* README.md */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -311,6 +326,8 @@
 		504DF70434B7E31AF3FB72C0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F64E01D62B2793A8002D8A1B /* VPKWireGuardAdapter.xcframework */,
+				F64E01D72B2793A8002D8A1B /* VPKWireGuardExtension.xcframework */,
 				F6395A0B2922860C00FADD31 /* StoreKit.framework */,
 				459C268B25C86BEF009B7CC6 /* WebKit.framework */,
 				37F4CCE21C04CDEF00F5DBA9 /* NetworkExtension.framework */,
@@ -350,6 +367,7 @@
 		F5C1605FC616A3411756583C /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F9F951D02C07053500188E84 /* Loading */,
 				F5C167AF153466FF857353C8 /* UIColor+HexColor.h */,
 				F5C169E77BBFA37F21BA67C3 /* UIColor+HexColor.m */,
 				F5C16B0FC72C8276FF670B1C /* CustomButton.swift */,
@@ -541,6 +559,26 @@
 			path = ConsumerVPNWGExtension;
 			sourceTree = "<group>";
 		};
+		F96244BE2C00959600748ADF /* SDKHelper */ = {
+			isa = PBXGroup;
+			children = (
+				F9FBB5A02BFF7BDC00C8C9FB /* ApiManagerHelper.swift */,
+				F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */,
+				F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */,
+				F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */,
+			);
+			path = SDKHelper;
+			sourceTree = "<group>";
+		};
+		F9F951D02C07053500188E84 /* Loading */ = {
+			isa = PBXGroup;
+			children = (
+				F9F951CE2C07053500188E84 /* ProgressSpinnerHelper.swift */,
+				F9F951CF2C07053500188E84 /* ProgressSpinnerView.swift */,
+			);
+			path = Loading;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -638,9 +676,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				454BAFBD2306141C00BB6625 /* README.md in Resources */,
 				4556EA92204F514C00049414 /* Localizable.stringsdict in Resources */,
 				94CA4A33221DDC39001F0863 /* FilterNavBar.xib in Resources */,
+				F95C1F282BFE25E900D2FA23 /* README iOS.md in Resources */,
 				DAC619FF242E8C2D0015AC35 /* Plans.storyboard in Resources */,
 				0E78D26122132BEB00DB8652 /* Dashboard.storyboard in Resources */,
 				F5C16EA61B61071363B593E7 /* tos.html in Resources */,
@@ -680,6 +718,7 @@
 				0EC51C6A22209CB700A394E6 /* ConnectedShield.swift in Sources */,
 				F5C166EF9E72C7FA7D40F298 /* Theme.swift in Sources */,
 				9B08AAA02433025E008F4FF7 /* PurchaseCoordinator.swift in Sources */,
+				F90761B32C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift in Sources */,
 				DAC61A01242E8D9D0015AC35 /* PlansViewController.swift in Sources */,
 				0E0FE1412226FFCB005A0774 /* LoadingCircle.swift in Sources */,
 				F5C160A072DEC81CF741B468 /* AccessibilityIdentifier.swift in Sources */,
@@ -692,6 +731,7 @@
 				9B08AA9D2433025E008F4FF7 /* AppCoordinator.swift in Sources */,
 				F5C166837464E6D927F51DC9 /* CustomButton.swift in Sources */,
 				F5C16BBC2ACA391C03C68EDF /* HelperExtensions.swift in Sources */,
+				F90761AF2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift in Sources */,
 				F5C1613A64AB47A2EABBBF42 /* AboutViewController.swift in Sources */,
 				F5C16FF5C50803065D67B14A /* SettingsTableViewController.swift in Sources */,
 				94CA4A37221E0815001F0863 /* CountryHeaderView.swift in Sources */,
@@ -699,6 +739,7 @@
 				F5C16649309F50204A5FE91B /* DashboardViewController.swift in Sources */,
 				F5C1655E0308901631A5026F /* BaseServerTableViewController.swift in Sources */,
 				F5C16899808D7039C00ED8F8 /* FilterViewController.swift in Sources */,
+				F9F951D22C07053500188E84 /* ProgressSpinnerView.swift in Sources */,
 				F5C16DEB81921B9AEE0778CA /* ResultsServerViewController.swift in Sources */,
 				F5C16C9CD436D1227F86D3F7 /* ServerListViewController.swift in Sources */,
 				F5C166BDFD37B4DB45CE2741 /* CityModel.swift in Sources */,
@@ -708,10 +749,13 @@
 				0EDA2479222DB98700D1D41E /* PrivacyNoticeViewController.swift in Sources */,
 				45A35D47225E987D004B4602 /* DiagnosticsViewController.swift in Sources */,
 				CAA1ECC124B60DE8007197E8 /* DisconnectedShield.swift in Sources */,
+				F90761B12C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift in Sources */,
 				F5C163F791D5F561458F66D1 /* EmptyStateViewDelegate.swift in Sources */,
+				F9FBB5A12BFF7BDC00C8C9FB /* ApiManagerHelper.swift in Sources */,
 				F5C16FAF890B5C80B9A32F64 /* FilterViewControllerDelegate.swift in Sources */,
 				F5C16DF61B6AA7E4A2604BB5 /* EmptyStateView.swift in Sources */,
 				F5C16878A6952B0307E37A40 /* FilterTableHeaderView.swift in Sources */,
+				F9F951D12C07053500188E84 /* ProgressSpinnerHelper.swift in Sources */,
 				F5C16D584F3C429BFFDD4EA6 /* LoginViewController.swift in Sources */,
 				F5C16F113F9DE7E71EA21206 /* StoryboardInstantiable.swift in Sources */,
 				F5C167A17EE9354F429EC411 /* CoordinatorType.swift in Sources */,

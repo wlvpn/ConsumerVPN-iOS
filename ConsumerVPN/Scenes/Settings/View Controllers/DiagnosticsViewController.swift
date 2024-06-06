@@ -34,7 +34,7 @@ class DiagnosticsViewController: UIViewController {
         super.viewWillAppear(animated)
 
         loadDiagnosticData()
-		let logLevel = apiManager.logLevel()
+        let logLevel = ApiManagerHelper.shared.logLevel()
 		
         switch logLevel{
         case .off:
@@ -58,12 +58,12 @@ class DiagnosticsViewController: UIViewController {
         if let apiManager = AppDelegate.sharedDelegate().apiManager {
             switch sender.selectedSegmentIndex {
             case 0:
-                apiManager.setLogLevel(.off)
+                ApiManagerHelper.shared.setLogLevel(.off)
                 promptForDeleteIfNecessary()
             case 1:
-                apiManager.setLogLevel(.error)
+                ApiManagerHelper.shared.setLogLevel(.error)
             default:
-                apiManager.setLogLevel(.debug)
+                ApiManagerHelper.shared.setLogLevel(.debug)
             }
 			
 			loadDiagnosticData()
@@ -86,7 +86,7 @@ class DiagnosticsViewController: UIViewController {
             guard let data = diagText.data(using: .utf8) else { return }
             guard let filename = generateFileName() else { return }
             mailVC.addAttachmentData(data, mimeType: "text/plain", fileName: filename)
-            if let serverListData = loadServerListIfExists() {
+            if let serverListData = ApiManagerHelper.shared.loadServerListIfExists() {
                 mailVC.addAttachmentData(serverListData, mimeType: "application/json", fileName: kV3ServerListFileKey)
             }
             
@@ -101,14 +101,14 @@ class DiagnosticsViewController: UIViewController {
     // MARK: - Private functions
     
     private func loadDiagnosticData() {
-		let diagLevel = apiManager.logLevel()
+        let diagLevel = ApiManagerHelper.shared.logLevel()
 		diagnosticsLevelSegmentedControl.selectedSegmentIndex = diagLevel.rawValue
         
         // Assume no log data available, and textview.text will be replaced below if
         // log data does exist.
         diagnosticsTextView.text = "No diagnostics data to display."
         
-        if let logPath = apiManager.logFile() {
+        if let logPath = ApiManagerHelper.shared.logFile() {
             if let content = try? String(contentsOfFile: logPath),
                 content != "" {
                 diagContent = content
@@ -150,23 +150,11 @@ class DiagnosticsViewController: UIViewController {
     }
     
     private func removeDiagnosticData() {
-        apiManager.clearLogs()
+        ApiManagerHelper.shared.clearLogs()
         loadDiagnosticData()
     }
     
-    @objc private func loadServerListIfExists() -> Data? {
-        
-        if let apiAdapter = apiManager.apiAdapter as? V3APIAdapter,
-            let coreDataURL = apiAdapter.getOption(kV3CoreDataURL) as? URL {
-            let serverListURL = coreDataURL.deletingLastPathComponent().appendingPathComponent(kV3ServerListFileKey)
-            do {
-                let data = try Data(contentsOf: serverListURL)
-                return data
-            } catch {
-            }
-        }
-        return nil
-    }
+    
 }
 
 extension DiagnosticsViewController : MFMailComposeViewControllerDelegate {

@@ -11,13 +11,8 @@ import VPNKit
 
 class WLVPNTabBarController: UITabBarController {
 	
-	var apiManager: VPNAPIManager! {
-		didSet {
-			vpnConfiguration = apiManager.vpnConfiguration
-		}
-	}
+	var apiManager: VPNAPIManager!
 	
-	var vpnConfiguration: VPNConfiguration?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -112,6 +107,9 @@ extension WLVPNTabBarController: StoryboardInstantiable {
 		let _ = settingsVC.view
 		
 		tabbarController.apiManager = apiManager
+        
+        ProgressSpinnerHelper.shared.showSpinner(on: tabbarController.view)
+        
 		return tabbarController
 	}
 }

@@ -19,6 +19,10 @@
     return @"https://api.wlvpn.com/v3/";
 }
 
++ (NSArray<NSString *> *)backupURLs {
+    return @[];
+}
+
 /**
  * Builds a VPNAPIManager object for various api and connection adapter settings.
  *
@@ -45,7 +49,7 @@
     
     NSDictionary *apiAdapterOptions = @{
         kV3BaseUrlKey:          [self baseURL],
-        kV3AlternateUrlsKey:    @[],
+        kV3AlternateUrlsKey:    [self backupURLs],
         kV3ApiKey:              apiKey,
         kV3CoreDataURL:         coreDataUrl,
         kV3ServiceNameKey:      brandName
@@ -54,10 +58,15 @@
     V3APIAdapter *apiAdapter = [[V3APIAdapter alloc] initWithOptions:apiAdapterOptions];
     
     NSDictionary *connectionOptions = @{
-        kVPNManagerUsernameExtensionKey: suffix,
-        kVPNManagerBrandNameKey: brandName,
-        kVPNManagerConfigurationNameKey: configName,
-        kIKEv2KeychainServiceName: apiAdapter.passwordServiceName,
+        kVPNManagerUsernameExtensionKey:    suffix,
+        kVPNManagerBrandNameKey:            brandName,
+        kVPNManagerConfigurationNameKey:    configName,
+        kIKEv2Hostname:                     @"vpn.wlvpn.com",
+        kIKEv2RemoteIdentifier:             @"vpn.wlvpn.com",
+        kVPNSharedSecretKey:                @"vpn",
+        kIKEv2KeychainServiceName:          apiAdapter.passwordServiceName,
+        kIKEv2V3BaseUrlKey:                 [self baseURL],
+        kIKEv2V3AlternateUrlsKey:           [self backupURLs],
     };
     
     NSMutableArray *adapters = [NSMutableArray arrayWithCapacity:2];
@@ -80,8 +89,12 @@
 #endif
     
     NSDictionary *apiManagerOptions = @{
-        kBundleNameKey: bundleID,
+        kBundleNameKey:         bundleID,
         kVPNDefaultProtocolKey: defaultProtocol,
+        kCityPOPHostname:       @"wlvpn.com",
+        kBundleNameKey:         brandName,
+        kV3BaseUrlKey:          [self baseURL],
+        kV3AlternateUrlsKey:    [self backupURLs]
     };
     
     VPNAPIManager *apiManager = [[VPNAPIManager alloc] initWithAPIAdapter:apiAdapter
@@ -99,6 +112,9 @@
                                                    apiKey:(NSString *)apiKey
                                                      uuid:(NSString *)uuid {
     
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *bundleID = [infoDict objectForKey:@"CFBundleIdentifier"];
+    
     WireGuardAdapterConfiguration *wgConfig = [[WireGuardAdapterConfiguration alloc] init];
     
     wgConfig.brandName = brandName;
@@ -106,7 +122,12 @@
     wgConfig.uuid = uuid; //[apiAdapter getOption:kV3UUIDKey];
     wgConfig.apiURL = [NSString stringWithFormat:@"%@wireguard", [self baseURL]];
     wgConfig.apiKey = apiKey;
-    wgConfig.backupURL = @[];
+    wgConfig.extensionName = [bundleID stringByAppendingString:@".network-extension"];
+    NSMutableArray *alternateURLs = [NSMutableArray new];
+    for (NSString *alternateURL in [self backupURLs]) {
+        [alternateURLs addObject:[NSString stringWithFormat:@"%@wireguard", alternateURL]];
+    }
+    wgConfig.backupURL = alternateURLs;
     
     return [[WireGuardAdapter alloc] initWithConfiguration:wgConfig];
 }

@@ -49,7 +49,7 @@ extension AppCoordinator : DashboardViewControllerDelegate {
 				return
 		}
 		
-		apiManager.connect()
+        ApiManagerHelper.shared.connect()
 		from.updateStatusForState(state: .statusConnecting)
 	}
 }
@@ -84,17 +84,10 @@ extension AppCoordinator : LoginCoordinatorDelegate {
 extension AppCoordinator: VPNAccountStatusReporting {
 	
 	/// Used to Ensure Account preferences are set back to defaults
-	func statusLogoutWillBegin(_ notification: Notification) {
-		UserDefaults.standard.set(0, forKey: Theme.filterPingRangeKey)
-		UserDefaults.standard.set(0, forKey: Theme.sortOptionKey)
-		UserDefaults.standard.set(nil, forKey: Theme.lastUpdateKey)
-		UserDefaults.standard.synchronize()
-		beginLoginFlow()
-	}
+	func statusLogoutWillBegin(_ notification: Notification) {}
     
     func statusLogoutSucceeded(_ notification: Notification) {
-        self.apiManager.vpnConfiguration.onDemandConfiguration?.enabled = false
-        self.apiManager.vpnConfiguration.selectedProtocol = .wireGuard
+        beginLoginFlow()
     }
 	
 	func statusLoginSucceeded(_ notification: Notification) {}

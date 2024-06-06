@@ -21,7 +21,6 @@ class CityServerTableViewCell: UITableViewCell {
         
         // Setup Colors
         cityLabel.textColor = .primaryFont
-        contentView.backgroundColor = .clear
         
         flagImageView.layer.masksToBounds = true
         

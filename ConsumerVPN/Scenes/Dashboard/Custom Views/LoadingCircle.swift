@@ -90,7 +90,7 @@ class LoadingCircle: UIView {
         }
         
         rotationAnimation.duration = rotationAnimationDuration
-        
+        rotationAnimation.repeatDuration = .infinity
         if let delegate = completionDelegate {
             rotationAnimation.delegate = delegate
         }

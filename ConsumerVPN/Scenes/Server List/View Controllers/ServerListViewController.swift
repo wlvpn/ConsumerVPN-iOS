@@ -31,13 +31,8 @@ final class ServerListViewController: BaseServerTableViewController {
     
     
     // VPNKit Properties
-    var apiManager: VPNAPIManager! {
-        didSet {
-            vpnConfiguration = apiManager.vpnConfiguration
-        }
-    }
+    var apiManager: VPNAPIManager!
 
-    var vpnConfiguration: VPNConfiguration?
     fileprivate var expandedCountrySectionIndex: Int?
     
     /// Array consisting of ALL City objects transformed into CityModel objects.
@@ -71,16 +66,8 @@ final class ServerListViewController: BaseServerTableViewController {
     
     /// View which contains information on why the user is looking at an empty state on the table view and acts as the background when the `filteredModels` array contains 0 elements
     fileprivate var emptyStateView: EmptyStateView!
-    /// Used to determine if the reloadServers button on the Empty state view has been pressed and if so, display the status of the servers updating
-    fileprivate var serverUpdatePressed = false
     
     var presentedModally = false
-    
-    /// Used when changing onDemand settings while currently connected to reconnect the user after applying changes.
-    private var shouldReconnect = false
-    
-    /// Used when changing while currently connected to reconnect the user after applying changes.
-    var shouldReconnectOnConfigUpdate = false
     
     // MARK: Lifecycle Methods
     override func viewDidLoad() {
@@ -150,16 +137,12 @@ final class ServerListViewController: BaseServerTableViewController {
         // Listen for VPNKit Notifications
         NotificationCenter.default.addObserver(for: self)
         
-        // Do the initial table setup
-        // Fetch all of the cities from the APIManager
-        if let fetchedCities = apiManager.fetchAllCities() as? [City] {
-            
-            // Convert the fetchedCities into CityModel objects
-            let fetchedCityModels = fetchedCities.compactMap(CityModel.init)
-            
-            // Assign the initial data model to both the reference point (cityModels)
-            cityModels = fetchedCityModels
-        }
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl?.addTarget(self, action: #selector(refreshList(_:)), for: .valueChanged)
+        
+        tableView.dataSource = self
+        tableView.delegate = self
     }
     
     /// Helper method responsible for setting the accessibility labels and identifiers as well as localizations with our UI
@@ -173,13 +156,9 @@ final class ServerListViewController: BaseServerTableViewController {
         
         // provide the empty state view with the current information
         emptyStateView.searchText = searchController.searchBar.text ?? ""
-        sortedModels = cityModels.sorted(by: sortOption)
-        
-        let sections = Dictionary(grouping: self.cityModels) { $0.countryName }
-        sortedCountrySections = sections.map(CountrySection.init(country:cities:)).sorted()
         
         // reload the tableView
-        tableView.reloadData()
+        updateCities()
         
         if presentedModally {
             let closeButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(returnToDashboard))
@@ -230,6 +209,25 @@ final class ServerListViewController: BaseServerTableViewController {
     }
     
     // MARK: IBActions
+    @objc func refreshList(_ sender: AnyObject) {
+        ApiManagerHelper.shared.refreshServer { [weak self] success, error in
+            guard let `self` = self else { return }
+            if success {
+                self.updateCities()
+            } else {
+                if let updateServerError = error {
+                    self.present(UIAlertController.contactSupport(with: updateServerError), animated: true, completion: nil)
+                } else {
+                    if !ApiManagerHelper.shared.isNetworkReachable() {
+                        self.present(UIAlertController.network(), animated: true, completion: nil)
+                    }
+                    debugPrint("[ConsumerVPN] Server update failed without error")
+                }
+            }
+            self.refreshControl?.endRefreshing()
+        }
+    }
+    
     @objc func searchButtonTapped(_ sender: UIBarButtonItem) {
         searchController.searchBar.becomeFirstResponder()
     }
@@ -326,17 +324,9 @@ final class ServerListViewController: BaseServerTableViewController {
         } else {
             cityModel = resultsServerViewController.sortedCityModels[indexPath.row]
         }
-        
-        connectOnSelection { [weak self] in
-            guard let strongSelf = self else { return }
-            if let cityModel = cityModel {
-                strongSelf.vpnConfiguration?.country = cityModel.city.country
-                strongSelf.vpnConfiguration?.city = cityModel.city
-                strongSelf.vpnConfiguration?.server = nil
-            } else {
-                strongSelf.vpnConfiguration?.server = nil
-                strongSelf.vpnConfiguration?.city = nil
-                strongSelf.vpnConfiguration?.country = nil
+        if !ApiManagerHelper.shared.isVPNConnectionInProgress() {
+            connectOnSelection {
+                ApiManagerHelper.shared.selectServerWith(cityModel: cityModel)
             }
         }
     }
@@ -418,7 +408,7 @@ final class ServerListViewController: BaseServerTableViewController {
     }
     
     func connectOnSelection(updateVPNConfig: @escaping () ->()) {
-        if apiManager.isConnectedToVPN() {
+        if ApiManagerHelper.shared.isConnectedToVPN()  {
             
             let title = LocalizedString.preferencesHeader
             let message = LocalizedString.applyChangeReconnect
@@ -430,29 +420,21 @@ final class ServerListViewController: BaseServerTableViewController {
             actions.append(action)
             
             action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { [unowned self] (action) in
-                self.shouldReconnect = false
-                self.shouldReconnectOnConfigUpdate = true
-                self.apiManager.disconnect()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                    guard let strongSelf = self else { return }
+                ApiManagerHelper.shared.disconnect()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { /*[weak self] in*/
                     updateVPNConfig()
-                    strongSelf.vpnConfiguration?.onDemandConfiguration?.enabled = false
-                    strongSelf.apiManager.synchronizeConfiguration()
+                    ApiManagerHelper.shared.toggleOnDemand(enable: false, reconnect: true)
                 }
                 returnToDashboard()
             })
             actions.append(action)
             
-            if let onDemandConfig = vpnConfiguration?.onDemandConfiguration, onDemandConfig.enabled {
+            if ApiManagerHelper.shared.isOnDemandEnabled {
                 action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { [unowned self] (action) in
-                    self.shouldReconnect = false
-                    self.shouldReconnectOnConfigUpdate = false
-                    self.vpnConfiguration?.onDemandConfiguration?.enabled = false
-                    self.apiManager.disconnect()
-                    
+                    ApiManagerHelper.shared.disconnect()
                     updateVPNConfig()
-                    self.apiManager.synchronizeConfiguration()
-                    returnToDashboard()
+                    ApiManagerHelper.shared.setOnDemand(enable: false)
+                    self.returnToDashboard()
                 })
                 actions.append(action)
             }
@@ -462,26 +444,19 @@ final class ServerListViewController: BaseServerTableViewController {
             
         } else {
             updateVPNConfig()
-            if let onDemandConfig = vpnConfiguration?.onDemandConfiguration, onDemandConfig.enabled {
-                self.apiManager.synchronizeConfiguration()
+            if ApiManagerHelper.shared.isOnDemandEnabled {
+                ApiManagerHelper.shared.synchronizeConfiguration()
             } else {
-                self.apiManager.connect()
+                ApiManagerHelper.shared.connect()
             }
             returnToDashboard()
         }
     }
     
     @objc private func countrySelected(_ sender: CountryTapGesture) {
-        connectOnSelection { [weak self] in
-            guard let strongSelf = self else { return }
-            if let country = sender.country {
-                strongSelf.vpnConfiguration?.server = nil
-                strongSelf.vpnConfiguration?.city = nil
-                strongSelf.vpnConfiguration?.country = country
-            } else {
-                strongSelf.vpnConfiguration?.server = nil
-                strongSelf.vpnConfiguration?.city = nil
-                strongSelf.vpnConfiguration?.country = nil
+        if !ApiManagerHelper.shared.isVPNConnectionInProgress() {
+            connectOnSelection {
+                ApiManagerHelper.shared.selectServerWith(country: sender.country)
             }
         }
     }
@@ -527,85 +502,6 @@ final class ServerListViewController: BaseServerTableViewController {
         
         // Restore the text in the search bar
         searchController.searchBar.text = coder.decodeObject(forKey: RestorationKeys.searchBarText.rawValue) as? String
-    }
-}
-
-
-// MARK: - VPNServerStatusReporting
-extension ServerListViewController: VPNServerStatusReporting {
-    
-    /// Used to update the list of PoPs and servers with new information.
-    /// This method will be used to insert/delete any PoPs that have changed status from either online or offline to its opposite.
-    /// This method will also filter and sort the resulting Data Model applying the FilterOptions of the ServerListViewController
-    ///
-    /// - parameter notification: Notification kicked back from the VPNKit. Object property holds Array of type Server
-    func statusServerUpdateSucceeded(_ notification: Notification) {
-        if serverUpdatePressed {
-            // Set to false in the scenario the user tapped the `refresh servers` button to not show any more notifications unless pressed again
-            serverUpdatePressed = false
-        }
-        
-        // Get all of the cities from the APIManager
-        guard let fetchedCities = apiManager.fetchAllCities() as? [City] else {
-            return
-        }
-        
-        // Convert the incoming fetched Cities into the CityModel objects
-        let fetchedCityModels = fetchedCities.compactMap(CityModel.init)
-        
-        // 2. Replace base with newly updated fetched info
-        self.cityModels = fetchedCityModels
-        
-        // 3. filter/sort using filteroptions into local variable and then diff against displayed filtered info.
-        
-        // Depending on which table is being displayed (ServerList - main table, ResultsController - search table),
-        // update that data model and table
-        let searchText = searchController.searchBar.text ?? ""
-        let isSearchTableDisplayed = searchController.isActive && searchText.hasText
-        
-        if isSearchTableDisplayed {
-            resultsServerViewController.sortedCityModels = self.cityModels.sorted(by: sortOption)
-            resultsServerViewController.tableView.reloadData()
-        } else {
-            sortedModels = self.cityModels.sorted(by: sortOption)
-            tableView.reloadData()
-        }
-        
-        // Save out this moment in time for the last update
-        UserDefaults.standard.set(Date(), forKey: Theme.lastUpdateKey)
-        
-    }
-    
-    /// Used to inform the user that the last Server Update failed.
-    ///
-    /// - parameter notification: Notification kicked back from NotificationCenter. Object property holds an NSError for the cause of the failure.
-    func statusServerUpdateFailed(_ notification: Notification) {
-        
-        if serverUpdatePressed { // Only display something if the user manually attempted refresh
-            
-            // 1) If the network is reachable, tell the user they should contact support, otherwise
-            // 2) Tell them to change their network settings (This should never happen since we're responding to this when refresh is selected)
-            if apiManager.networkIsReachable {
-                guard let error = notification.object as? Error else { // Contact Support
-                    return
-                }
-                
-                // This alert is to inform the user to contact support
-                present(UIAlertController.contactSupport(with: error), animated: true, completion: nil)
-                
-            } else { // Change Settings
-                present(UIAlertController.network(), animated: true, completion: nil)
-            }
-            
-            // Set to false in the scenario the user tapped the `refresh servers` button to not show any more notifications unless pressed again
-            serverUpdatePressed = false
-            
-            // re-enable the emptyView's reloadServersButton in the case it failed
-            emptyStateView.reloadServersButton?.isEnabled = true
-        }
-        
-        // Since we failed, erase the last successful update
-        UserDefaults.standard.set(nil, forKey: Theme.lastUpdateKey)
     }
 }
 
@@ -676,20 +572,45 @@ extension ServerListViewController: EmptyStateViewDelegate {
             return
         }
         
-        // 1) If the network is reachable,
-            // a) Refresh the servers if it has been more than 5 minutes since the last successful update OR
-            // b) Inform the user the servers are already up to date, otherwise
-        // 2) Tell the user to change their network settings
-        
-        if apiManager.networkIsReachable {
-            // Has it been more than 5 minutes (300 seconds) since the last successful update?
-            let lastUpdate = UserDefaults.standard.value(forKey: Theme.lastUpdateKey) as? Date ?? Date.distantPast
-            if Date().timeIntervalSince(lastUpdate) > 300 { // Update servers
-                serverUpdatePressed = true
-                apiManager.updateServerList()
+        ApiManagerHelper.shared.refreshServer { [weak self] success, error in
+            
+            guard let `self` = self else { return  }
+            if success {
+                updateCities()
+            } else {
+                if let updateServerError = error {
+                    present(UIAlertController.contactSupport(with: updateServerError), animated: true, completion: nil)
+                } else {
+                    if !ApiManagerHelper.shared.isNetworkReachable() {
+                        self.present(UIAlertController.network(), animated: true, completion: nil)
+                    }
+                    debugPrint("[ConsumerVPN] Server update failed without error")
+                }
+                
+                emptyStateView.reloadServersButton?.isEnabled = true
             }
-        } else { // Change Network Settings
-            present(UIAlertController.network(), animated: true, completion: nil)
+        }
+    }
+    
+    func updateCities() {
+        
+        self.cityModels = ApiManagerHelper.shared.fetchCities()
+        
+        // 2. filter/sort using filteroptions into local variable and then diff against displayed filtered info.
+        let sections = Dictionary(grouping: self.cityModels) { $0.countryName }
+        sortedCountrySections = sections.map(CountrySection.init(country:cities:)).sorted()
+        
+        // Depending on which table is being displayed (ServerList - main table, ResultsController - search table),
+        // update that data model and tableter
+        let searchText = searchController.searchBar.text ?? ""
+        let isSearchTableDisplayed = searchController.isActive && searchText.hasText
+        
+        if isSearchTableDisplayed {
+            resultsServerViewController.sortedCityModels = self.cityModels.sorted(by: sortOption)
+            resultsServerViewController.tableView.reloadData()
+        } else {
+            sortedModels = self.cityModels.sorted(by: sortOption)
+            tableView.reloadData()
         }
     }
 }
@@ -708,86 +629,5 @@ extension ServerListViewController: StoryboardInstantiable {
 }
 
 // MARK: - VPNConnectionStatusReporting
-extension ServerListViewController : VPNConnectionStatusReporting {
-    func statusConnectionSucceeded(_ notification: Notification) {
-        guard let vpnConfiguration = vpnConfiguration else {
-            return
-        }
-        
-        // if autobalancing is on, reset the vpn config to nil in those areas
-        if vpnConfiguration.usingAutoselectedCity {
-            vpnConfiguration.city = nil
-        }
-    }
-    
-    func statusConnectionDidDisconnect(_ notification: Notification) {
-        if shouldReconnect {
-            shouldReconnect = false
-            apiManager.connect()
-        }
-    }
-    
-    func statusConnectionFailed(_ notification: Notification) {
-        if let error = notification.object as? Error {
-            print("Connection Failed with Error - \(error.localizedDescription)")
-        }
-    }
-    
-    func updateConfigurationSucceeded(_ notification: Notification) {
-        if shouldReconnectOnConfigUpdate {
-            shouldReconnectOnConfigUpdate = false
-            DispatchQueue.main.async { self.apiManager.connect() }
-        }
-    }
-    
-}
-
-// MARK: - VPNAccountStatusReporting
-extension ServerListViewController: VPNAccountStatusReporting {
-    
-    func statusLoginServerUpdateWillBegin(_ notification: Notification) {
-        print("Login Server List Begin")
-    }
-    
-    func statusLoginServerUpdateSucceeded(_ notification: Notification) {
-        if serverUpdatePressed {
-            // Set to false in the scenario the user tapped the `refresh servers` button to not show any more notifications unless pressed again
-            serverUpdatePressed = false
-        }
-        
-        // Get all of the cities from the APIManager
-        guard let fetchedCities = apiManager.fetchAllCities() as? [City] else {
-            return
-        }
-        
-        // Convert the incoming fetched Cities into the CityModel objects
-        let fetchedCityModels = fetchedCities.compactMap(CityModel.init)
-        
-        // 2. Replace base with newly updated fetched info
-        self.cityModels = fetchedCityModels
-        
-        // 3. filter/sort using filteroptions into local variable and then diff against displayed filtered info.
-        
-        // Depending on which table is being displayed (ServerList - main table, ResultsController - search table),
-        // update that data model and table
-        let searchText = searchController.searchBar.text ?? ""
-        let isSearchTableDisplayed = searchController.isActive && searchText.hasText
-        
-        if isSearchTableDisplayed {
-            resultsServerViewController.sortedCityModels = self.cityModels.sorted(by: sortOption)
-            resultsServerViewController.tableView.reloadData()
-        } else {
-            sortedModels = self.cityModels.sorted(by: sortOption)
-            tableView.reloadData()
-        }
-        
-        // Save out this moment in time for the last update
-        UserDefaults.standard.set(Date(), forKey: Theme.lastUpdateKey)
-    }
-    
-    func statusLoginServerUpdateFailed(_ notification: Notification) {
-        if let error = notification.object as? Error {
-            print("Login Server List Failed with Error - \(error.localizedDescription)")
-        }
-    }
+extension ServerListViewController : VPNStatusReporting {
 }
