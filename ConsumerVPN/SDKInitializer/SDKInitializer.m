@@ -15,14 +15,6 @@
 
 @implementation SDKInitializer
 
-+ (NSString *)baseURL {
-    return @"https://api.wlvpn.com/v3/";
-}
-
-+ (NSArray<NSString *> *)backupURLs {
-    return @[];
-}
-
 /**
  * Builds a VPNAPIManager object for various api and connection adapter settings.
  *
@@ -48,8 +40,6 @@
     NSURL *coreDataUrl = [NSURL fileURLWithPath:[documentsDirectory stringByAppendingPathComponent:@"VPNKit.sqlite"]];
     
     NSDictionary *apiAdapterOptions = @{
-        kV3BaseUrlKey:          [self baseURL],
-        kV3AlternateUrlsKey:    [self backupURLs],
         kV3ApiKey:              apiKey,
         kV3CoreDataURL:         coreDataUrl,
         kV3ServiceNameKey:      brandName
@@ -65,8 +55,6 @@
         kIKEv2RemoteIdentifier:             @"vpn.wlvpn.com",
         kVPNSharedSecretKey:                @"vpn",
         kIKEv2KeychainServiceName:          apiAdapter.passwordServiceName,
-        kIKEv2V3BaseUrlKey:                 [self baseURL],
-        kIKEv2V3AlternateUrlsKey:           [self backupURLs],
     };
     
     NSMutableArray *adapters = [NSMutableArray arrayWithCapacity:2];
@@ -93,8 +81,6 @@
         kVPNDefaultProtocolKey: defaultProtocol,
         kCityPOPHostname:       @"wlvpn.com",
         kBundleNameKey:         brandName,
-        kV3BaseUrlKey:          [self baseURL],
-        kV3AlternateUrlsKey:    [self backupURLs]
     };
     
     VPNAPIManager *apiManager = [[VPNAPIManager alloc] initWithAPIAdapter:apiAdapter
@@ -120,14 +106,8 @@
     wgConfig.brandName = brandName;
     wgConfig.useAPIKey = NO;
     wgConfig.uuid = uuid; //[apiAdapter getOption:kV3UUIDKey];
-    wgConfig.apiURL = [NSString stringWithFormat:@"%@wireguard", [self baseURL]];
     wgConfig.apiKey = apiKey;
     wgConfig.extensionName = [bundleID stringByAppendingString:@".network-extension"];
-    NSMutableArray *alternateURLs = [NSMutableArray new];
-    for (NSString *alternateURL in [self backupURLs]) {
-        [alternateURLs addObject:[NSString stringWithFormat:@"%@wireguard", alternateURL]];
-    }
-    wgConfig.backupURL = alternateURLs;
     
     return [[WireGuardAdapter alloc] initWithConfiguration:wgConfig];
 }
