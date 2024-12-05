@@ -210,6 +210,36 @@
 		F65D6DDF2923B6F8002EE810 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
 		F65D6DE12923B6F8002EE810 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F65D6DE22923B6F8002EE810 /* ConsumerVPNWGExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ConsumerVPNWGExtension.entitlements; sourceTree = "<group>"; };
+		F66ED5032CFF4C1A001F6DF5 /* Adapters.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Adapters.md; sourceTree = "<group>"; };
+		F66ED5042CFF4C1A001F6DF5 /* APIManager.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = APIManager.md; sourceTree = "<group>"; };
+		F66ED5052CFF4C1A001F6DF5 /* Apple Split Tunneling.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Apple Split Tunneling.md"; sourceTree = "<group>"; };
+		F66ED5062CFF4C1A001F6DF5 /* Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Changelog.md; sourceTree = "<group>"; };
+		F66ED5072CFF4C1A001F6DF5 /* Classifiers.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Classifiers.md; sourceTree = "<group>"; };
+		F66ED5082CFF4C1A001F6DF5 /* Connection.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Connection.md; sourceTree = "<group>"; };
+		F66ED5092CFF4C1A001F6DF5 /* Data Traffic Counter.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Data Traffic Counter.md"; sourceTree = "<group>"; };
+		F66ED50A2CFF4C1A001F6DF5 /* Diagnostics.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Diagnostics.md; sourceTree = "<group>"; };
+		F66ED50B2CFF4C1A001F6DF5 /* DNSUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DNSUsage.md; sourceTree = "<group>"; };
+		F66ED50C2CFF4C1A001F6DF5 /* Errors.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Errors.md; sourceTree = "<group>"; };
+		F66ED50D2CFF4C1A001F6DF5 /* Fetch.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Fetch.md; sourceTree = "<group>"; };
+		F66ED50E2CFF4C1A001F6DF5 /* Get Started.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Get Started.md"; sourceTree = "<group>"; };
+		F66ED50F2CFF4C1A001F6DF5 /* How to Get Support.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "How to Get Support.md"; sourceTree = "<group>"; };
+		F66ED5102CFF4C1A001F6DF5 /* Initializers.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Initializers.md; sourceTree = "<group>"; };
+		F66ED5112CFF4C1A001F6DF5 /* Kill Switch.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Kill Switch.md"; sourceTree = "<group>"; };
+		F66ED5122CFF4C1A001F6DF5 /* Login.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Login.md; sourceTree = "<group>"; };
+		F66ED5132CFF4C1A001F6DF5 /* Metadata.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Metadata.md; sourceTree = "<group>"; };
+		F66ED5142CFF4C1A001F6DF5 /* MultiHop Implementation .md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "MultiHop Implementation .md"; sourceTree = "<group>"; };
+		F66ED5152CFF4C1A001F6DF5 /* Notifications.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Notifications.md; sourceTree = "<group>"; };
+		F66ED5162CFF4C1A001F6DF5 /* On Demand.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "On Demand.md"; sourceTree = "<group>"; };
+		F66ED5172CFF4C1A001F6DF5 /* OpenVPN Implementation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "OpenVPN Implementation.md"; sourceTree = "<group>"; };
+		F66ED5182CFF4C1A001F6DF5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F66ED5192CFF4C1A001F6DF5 /* Traffic counter for OpenVPN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Traffic counter for OpenVPN.md"; sourceTree = "<group>"; };
+		F66ED51A2CFF4C1A001F6DF5 /* Upgrade5to6.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Upgrade5to6.md; sourceTree = "<group>"; };
+		F66ED51B2CFF4C1A001F6DF5 /* VPNConfiguration.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = VPNConfiguration.md; sourceTree = "<group>"; };
+		F66ED51C2CFF4C1A001F6DF5 /* VPNKit 5.x - 6.x Upgrade Guide.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "VPNKit 5.x - 6.x Upgrade Guide.pdf"; sourceTree = "<group>"; };
+		F66ED51D2CFF4C1A001F6DF5 /* VPNKit iOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit iOS Guide.md"; sourceTree = "<group>"; };
+		F66ED51E2CFF4C1A001F6DF5 /* VPNKit macOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit macOS Guide.md"; sourceTree = "<group>"; };
+		F66ED51F2CFF4C1A001F6DF5 /* Wireguard.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Wireguard.md; sourceTree = "<group>"; };
+		F6D15F182C734E7A00667D5E /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConfiguration.swift"; sourceTree = "<group>"; };
 		F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConnection.swift"; sourceTree = "<group>"; };
 		F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+Logger.swift"; sourceTree = "<group>"; };
@@ -279,6 +309,7 @@
 		37D732401BF103E3005733C8 = {
 			isa = PBXGroup;
 			children = (
+				F6D15F182C734E7A00667D5E /* Version.xcconfig */,
 				37D7324B1BF103E3005733C8 /* ConsumerVPN */,
 				F5C16D99863A150885260B3C /* Theme */,
 				45ACC88120BDDBE400AEF62D /* SDK */,
@@ -319,6 +350,7 @@
 				F64E01E02B2793DD002D8A1B /* VPKWireGuardExtension.xcframework */,
 				459C268425C86714009B7CC6 /* VPNKit.xcframework */,
 				459C268325C86714009B7CC6 /* VPNV3APIAdapter.xcframework */,
+				F66ED5202CFF4C1A001F6DF5 /* Documentation */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -559,6 +591,42 @@
 			path = ConsumerVPNWGExtension;
 			sourceTree = "<group>";
 		};
+		F66ED5202CFF4C1A001F6DF5 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				F66ED5032CFF4C1A001F6DF5 /* Adapters.md */,
+				F66ED5042CFF4C1A001F6DF5 /* APIManager.md */,
+				F66ED5052CFF4C1A001F6DF5 /* Apple Split Tunneling.md */,
+				F66ED5062CFF4C1A001F6DF5 /* Changelog.md */,
+				F66ED5072CFF4C1A001F6DF5 /* Classifiers.md */,
+				F66ED5082CFF4C1A001F6DF5 /* Connection.md */,
+				F66ED5092CFF4C1A001F6DF5 /* Data Traffic Counter.md */,
+				F66ED50A2CFF4C1A001F6DF5 /* Diagnostics.md */,
+				F66ED50B2CFF4C1A001F6DF5 /* DNSUsage.md */,
+				F66ED50C2CFF4C1A001F6DF5 /* Errors.md */,
+				F66ED50D2CFF4C1A001F6DF5 /* Fetch.md */,
+				F66ED50E2CFF4C1A001F6DF5 /* Get Started.md */,
+				F66ED50F2CFF4C1A001F6DF5 /* How to Get Support.md */,
+				F66ED5102CFF4C1A001F6DF5 /* Initializers.md */,
+				F66ED5112CFF4C1A001F6DF5 /* Kill Switch.md */,
+				F66ED5122CFF4C1A001F6DF5 /* Login.md */,
+				F66ED5132CFF4C1A001F6DF5 /* Metadata.md */,
+				F66ED5142CFF4C1A001F6DF5 /* MultiHop Implementation .md */,
+				F66ED5152CFF4C1A001F6DF5 /* Notifications.md */,
+				F66ED5162CFF4C1A001F6DF5 /* On Demand.md */,
+				F66ED5172CFF4C1A001F6DF5 /* OpenVPN Implementation.md */,
+				F66ED5182CFF4C1A001F6DF5 /* README.md */,
+				F66ED5192CFF4C1A001F6DF5 /* Traffic counter for OpenVPN.md */,
+				F66ED51A2CFF4C1A001F6DF5 /* Upgrade5to6.md */,
+				F66ED51B2CFF4C1A001F6DF5 /* VPNConfiguration.md */,
+				F66ED51C2CFF4C1A001F6DF5 /* VPNKit 5.x - 6.x Upgrade Guide.pdf */,
+				F66ED51D2CFF4C1A001F6DF5 /* VPNKit iOS Guide.md */,
+				F66ED51E2CFF4C1A001F6DF5 /* VPNKit macOS Guide.md */,
+				F66ED51F2CFF4C1A001F6DF5 /* Wireguard.md */,
+			);
+			path = Documentation;
+			sourceTree = "<group>";
+		};
 		F96244BE2C00959600748ADF /* SDKHelper */ = {
 			isa = PBXGroup;
 			children = (
@@ -795,6 +863,7 @@
 /* Begin XCBuildConfiguration section */
 		37D7325E1BF103E3005733C8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6D15F182C734E7A00667D5E /* Version.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -856,6 +925,7 @@
 		};
 		37D7325F1BF103E3005733C8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6D15F182C734E7A00667D5E /* Version.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -913,6 +983,7 @@
 		};
 		4556EA99204F514C00049414 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6D15F182C734E7A00667D5E /* Version.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -920,7 +991,7 @@
 				CODE_SIGN_ENTITLEMENTS = ConsumerVPN/Resources/ConsumerVPN.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = J6DC9F6B59;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -941,7 +1012,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DSECUREIT -DDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wlvpn.ios.consumervpn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -957,6 +1028,7 @@
 		};
 		4556EA9A204F514C00049414 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6D15F182C734E7A00667D5E /* Version.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -964,7 +1036,7 @@
 				CODE_SIGN_ENTITLEMENTS = ConsumerVPN/Resources/ConsumerVPN.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = J6DC9F6B59;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -985,7 +1057,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DSECUREIT -DRELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wlvpn.ios.consumervpn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1000,6 +1072,7 @@
 		};
 		F65D6DE72923B6F9002EE810 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6D15F182C734E7A00667D5E /* Version.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1011,7 +1084,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = J6DC9F6B59;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1029,7 +1102,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wlvpn.ios.consumervpn.network-extension";
@@ -1046,6 +1119,7 @@
 		};
 		F65D6DE82923B6F9002EE810 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6D15F182C734E7A00667D5E /* Version.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1057,7 +1131,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = J6DC9F6B59;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1074,7 +1148,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wlvpn.ios.consumervpn.network-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";

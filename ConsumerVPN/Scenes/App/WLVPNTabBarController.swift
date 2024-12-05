@@ -79,24 +79,47 @@ extension WLVPNTabBarController: StoryboardInstantiable {
 		serverListVC.tabBarItem = UITabBarItem(title: "Servers",
 											   image: UIImage(named: Theme.serverListTabBarIcon),
 											   tag: 1)
+        
+        
 		let serverNavC = UINavigationController(rootViewController: serverListVC)
-		serverNavC.navigationBar.barStyle = .black
-		serverNavC.navigationBar.isTranslucent = false
-		serverNavC.navigationBar.barTintColor = .serverNavigationBarBg
+        
+        let serverAppearance = UINavigationBarAppearance()
+        serverAppearance.configureWithOpaqueBackground()
+
+        serverAppearance.backgroundColor = .serverNavigationBarBg
+        serverAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor.serverNavigationBarItemTint,
+        ]
+        serverAppearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.serverNavigationBarItemTint,
+        ]
+        
+        serverNavC.navigationBar.standardAppearance = serverAppearance
 		serverNavC.navigationBar.tintColor = .serverNavigationBarItemTint
-		serverNavC.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.serverNavigationBarItemTint]
-		
+
+        
 		settingsVC.tabBarItem = UITabBarItem(title: "Settings",
 											 image: UIImage(named: Theme.settingsTabBarIcon),
 											 tag: 2)
 		let settingsNavC = UINavigationController(rootViewController: settingsVC)
-		settingsNavC.navigationBar.barStyle = .black
-		settingsNavC.navigationBar.isTranslucent = false
-		settingsNavC.navigationBar.barTintColor = .settingsNavigationBarBg
+        
+        
+        let settingAppearance = UINavigationBarAppearance()
+        settingAppearance.configureWithOpaqueBackground() // Ensures no translucency
+
+        settingAppearance.backgroundColor = .settingsNavigationBarBg // Set the desired background color
+        settingAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor.settingsNavigationBarItemTint,
+        ]
+        settingAppearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.settingsNavigationBarItemTint,
+        ]
+        
+        settingsNavC.navigationBar.standardAppearance = settingAppearance
 		settingsNavC.navigationBar.tintColor = .settingsNavigationBarItemTint
-		settingsNavC.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.settingsNavigationBarItemTint]
-		
-		tabbarController.viewControllers = [dashboardVC, serverNavC, settingsNavC]
+
+        
+        tabbarController.viewControllers = [dashboardVC, serverNavC, settingsNavC]
 		tabbarController.selectedViewController = dashboardVC
 		
 		// Accessing the view property of each tab's root view controller forces

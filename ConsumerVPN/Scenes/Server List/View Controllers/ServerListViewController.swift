@@ -75,7 +75,21 @@ final class ServerListViewController: BaseServerTableViewController {
         
         // Set up the navbar
         searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped(_:)))
-        navigationItem.rightBarButtonItem = searchButton
+        
+        
+        var isSearchBtnNeeded: Bool {
+            if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
+                return false
+            }
+            else {
+                return true
+            }
+        }
+        
+        if isSearchBtnNeeded {
+            navigationItem.rightBarButtonItem = searchButton
+        }
+        
         Bundle.main.loadNibNamed("FilterNavBar", owner: self, options: nil)
         navigationItem.titleView = filterSegmentedControl
         if #available(iOS 13.0, *) {
@@ -84,8 +98,17 @@ final class ServerListViewController: BaseServerTableViewController {
         else {
             filterSegmentedControl.tintColor = .segmentedControlTint
         }
+        
+        
+        let selectedAttributes: [NSAttributedString.Key: UIColor] = [
+            .foregroundColor: .serverNavigationBarItemTint
+        ]
+        
+        filterSegmentedControl.setTitleTextAttributes(selectedAttributes, for: .selected)
+        filterSegmentedControl.setTitleTextAttributes(selectedAttributes, for: .normal)
+        
         view.backgroundColor = .viewBackground
-		tableView.backgroundColor = .serverListBackground
+        tableView.backgroundColor = .serverListBackground
         
         // assign our remembered info about sorting from NSUserDefaults
         sortOption = fSortByOptions[UserDefaults.standard.integer(forKey: Theme.sortOptionKey)]
@@ -120,7 +143,11 @@ final class ServerListViewController: BaseServerTableViewController {
         // set some options in preparation for the searchController
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
+        searchController.searchBar.barStyle = .black
         searchController.searchBar.barTintColor = .serverListBackground
+        
+        // Customize the cancel button color
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(selectedAttributes, for: .normal)
         
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController
