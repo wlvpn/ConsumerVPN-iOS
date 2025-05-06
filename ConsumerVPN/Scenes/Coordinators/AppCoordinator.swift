@@ -87,7 +87,17 @@ extension AppCoordinator: VPNAccountStatusReporting {
 	func statusLogoutWillBegin(_ notification: Notification) {}
     
     func statusLogoutSucceeded(_ notification: Notification) {
-        beginLoginFlow()
+        if let error = notification.object as? NSError, (error.code == VPNImportError.VPNTokenExpiredError.rawValue || error.code == VPNKitLoginError.reauthenticationFailed.rawValue) {
+            let alertController = UIAlertController.alert(withTitle: "Session Expired",
+                                                          message: "Your session expired. Please log in again.",
+                                                          actions: [UIAlertAction(title: "Ok", style: .default, handler: { [weak self] action in
+                self?.beginLoginFlow()
+            })],alertType: .alert)
+            self.tabController.present(alertController, animated: true, completion: nil)
+        }
+        else {
+            self.beginLoginFlow()
+        }
     }
 	
 	func statusLoginSucceeded(_ notification: Notification) {}

@@ -357,6 +357,11 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 						}
 		}
 		)
+        
+        if let error = notification.object as? NSError {
+            present(UIAlertController.contactSupport(with: error), animated: true, completion: nil)
+        }
+        
 	}
 	
 	/// This function displays an alert to the user depending on the reason for a failed connection.
@@ -400,6 +405,20 @@ extension DashboardViewController: VPNConnectionStatusReporting {
         ProgressSpinnerHelper.shared.hideSpinner()
         updateStatusForState()
         showConfigurationUpdateFailedDialog()
+    }
+    
+    //MARK: - VPN Health Check
+    func statusConnectionHealthUpdate(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+        if let error = notification.object as? NSError {
+            UIAlertController.presentErrorAlert(error.localizedDescription, in: self)
+        } else {
+            let alertController = UIAlertController.alert(withTitle: "VPN Health Check",
+                                                          message: "Your VPN Connection is healthy!",
+                                                          actions: [UIAlertAction(title: "Ok", style: .cancel)],
+                                                          alertType: .alert)
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
 }
 
