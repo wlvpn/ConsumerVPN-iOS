@@ -56,6 +56,25 @@ Example Implementation:
   }
 ```
 
+```swift
+   func updateHelperStatusForState(state : VPNConnectionStatus? = nil) {
+      // If no state was set, retrieves apiManager helperStatus directly to determine state.
+        let connectionStatus = state ?? apiManager.helperStatus
+      // Error occurred, displays error animation and returns
+         if didFail { return }
+         switch helperStatus {
+             case .statusHelperInstallSuccess:
+                  // Handle any update 
+             case .statusHelperInstallPending:
+                  // Handle any update 
+             case .statusHelperInstallFailed:
+                  // Handle any update
+             default:
+                 // Handle any update
+       }
+  }
+```
+
 ## VPNConnectionStatusReporting
     Implement this protocol in your view controller to get VPN connection status updates.
 
@@ -202,8 +221,8 @@ Example Implementation:
 
 ```swift
    func updateStatusForState(state : VPNConnectionStatus? = nil) {
-      // If no state was set, retrieves apiManager status directly to determine state.
-        let connectionStatus = state ?? apiManager.status
+      // If no state was set, retrieves apiManager connectionStatus directly to determine state.
+        let connectionStatus = state ?? apiManager.connectionStatus
       // Error occurred, displays error animation and returns
          if didFail { return }
          switch connectionStatus {
