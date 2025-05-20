@@ -56,6 +56,25 @@ Example Implementation:
   }
 ```
 
+```swift
+   func updateHelperStatusForState(state : VPNConnectionStatus? = nil) {
+      // If no state was set, retrieves apiManager helperStatus directly to determine state.
+        let connectionStatus = state ?? apiManager.helperStatus
+      // Error occurred, displays error animation and returns
+         if didFail { return }
+         switch helperStatus {
+             case .statusHelperInstallSuccess:
+                  // Handle any update 
+             case .statusHelperInstallPending:
+                  // Handle any update 
+             case .statusHelperInstallFailed:
+                  // Handle any update
+             default:
+                 // Handle any update
+       }
+  }
+```
+
 ## VPNConnectionStatusReporting
     Implement this protocol in your view controller to get VPN connection status updates.
 
@@ -202,8 +221,8 @@ Example Implementation:
 
 ```swift
    func updateStatusForState(state : VPNConnectionStatus? = nil) {
-      // If no state was set, retrieves apiManager status directly to determine state.
-        let connectionStatus = state ?? apiManager.status
+      // If no state was set, retrieves apiManager connectionStatus directly to determine state.
+        let connectionStatus = state ?? apiManager.connectionStatus
       // Error occurred, displays error animation and returns
          if didFail { return }
          switch connectionStatus {
@@ -295,14 +314,17 @@ ViewController : VPNServerStatusReporting {
    Handles conformance to status reporting.
 
 ```markdown
-- `statusLoginWillBegin`            : Notify receiver that the login operation is about to begin.
-- `statusLoginSucceeded`            : Notify the receiver that the login operation has completed successfully. Includes the Account information.
-- `statusLoginFailed`               : Notify the receiver that the login operation has completed with a failure. Includes an NSError describing the issue.
-- `statusAutomaticLoginSuceeded`    : Notify the receiver that an automatic login operation did occur.
-- `statusLogoutWillBegin`           : Notify the receiver that the logout operation is about to begin.
-- `statusLogoutSucceeded`           : Notify the receiver that the logout operation has completed successfully.
-- `statusLogoutFailed`              : Notify the receiver that the logout operation has completed with a failure. Includes an NSError describing the issue.
-- `statusAccountExpired`            : Notify the receiver that the account is expired.
+- `statusLoginWillBegin`                    : Notify receiver that the login operation is about to begin.
+- `statusLoginSucceeded`                    : Notify the receiver that the login operation has completed successfully. Includes the Account information.
+- `statusLoginFailed`                       : Notify the receiver that the login operation has completed with a failure. Includes an NSError describing the issue.
+- `statusAutomaticLoginSuceeded`            : Notify the receiver that an automatic login operation did occur.
+- `statusLogoutWillBegin`                   : Notify the receiver that the logout operation is about to begin.
+- `statusLogoutSucceeded`                   : Notify the receiver that the logout operation has completed successfully.
+- `statusLogoutFailed`                      : Notify the receiver that the logout operation has completed with a failure. Includes an NSError describing the issue.
+- `statusAccountExpired`                    : Notify the receiver that the account is expired.
+- `statusAccountFetchConfigFailed`          : Notify the receiver that the API configuration fetch operation has failed. Object property may hold `NSError` type describing the issue.
+- `statusAccountFetchConfigSucceeded`       : Notify the receiver that the API configuration fetch operation has completed successfully.
+- `statusAccountFetchConfigWillBegin`       : Notify the receiver that the API configuration fetch operation is about to begin.
 ```
 
 

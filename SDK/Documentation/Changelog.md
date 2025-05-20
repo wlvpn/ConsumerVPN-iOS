@@ -13,10 +13,17 @@
 - Added a new `isVirtualServersSkipped` property to `VPNConfiguration`, allowing the option to skip virtual server selection when connecting to the optimal location. The default value is false.
 - Added new `getLastHandshake()` method at `WGPacketTunnelProvider` to retrieve the last successful handshake timestamp and current network status.
 - Added new `isOnDemandEnabled` property at `WGPacketTunnelProvider` to determine if the VPN connection is on-demand.
+- Introduced a new `availableEntitlements` property in `VPNAPIManager` that lists the available product entitlements.
+- Added new `updateAccountConfiguration()` method at `VPNAPIManager` to update account configuraiton.
+- Added new `vpnHandshakeFailureDetected()` method at `WGPacketTunnelProvider`. Subclasses can now override this method to receive notifications and handle VPN handshake failures according to their specific requirements.
+- Added new `helperStatus` property at `VPNAPIManager` to determine the current status of the VPN helper installation (macOS only).
+- Added new error code `VPNSystemExtensionNotInstalled`, `VPNSystemExtensionNotApproved`  on `synchronizeConfiguration` to determine the current status of the VPN helper installation (macOS only).
+
 
 ### Removed Items
 - Removed Protocol API endpoint along with `ServerProtocol` and `ProtocolType` Models.
 - Removed `icon`,`scheduledMaintenance` and 'protocols' properties from `Server` model.
+- Removed `kV3InitialServersKey` and `kV3InitialProtocolsKey` keys.
 
 ### Improvements
 - Updated OpenVPN documentation.
@@ -35,6 +42,16 @@
 - Update all APIs version from v3.1 to v3.4.
 - Resolved WireGuard Doublehop with Kill switch connection issue.
 - Resolved IKEv2 / IPSec protocol all trusted WiFi + untrusted WiFi(s) on-demand connection issue.
+- The timeout for Web service API calls has been updated to 30 seconds.
+- On `synchronizeConfiguration`, added `VPNHelperInstallSuccessNotification` if helper installation done successfully.
+- Fixes crash on device wake up with an active traffic counter.
+- Fixes incorrect VPN health check or network status for certain servers.
+- Fixes WireGueard Internet is not working after VPN Connection for certain servers.
+- Update all APIs version from v3.4 to v3.5.
+- Fixes Wi-Fi information unavailable after VPN disconnect.
+- Fixes network status not sync with available network.
+- Sends VPN health update notification on network change when using WireGuard.
+- Fixes crash on VPN health check timeout timer.
 
 ### Breaking Changes
 - The `isMultihopEnabled` flag from `VPNConfiguration` is no longer required to set for establishing a multihop connection.
@@ -186,10 +203,12 @@
 ### Renamed Items
 - Renamed kill switch methods to `activateAdapter` and `deactivateAdapter`.
 - Renamed `removeHelperWithCompletionHandler` to `renameConfiguration:withCompletion`.
+- Renamed `status` to `connectionStatus` in `VPNAPIManager`.
 
 ### Breaking Changes
 - Removal of insecure protocols requires updates to configurations using these protocols.
 - Renamed methods require updates to any implementations using the old method names.
+- Renamed `status` to  `connectionStatus` require updates to any implementations using the old property names.
 
 ## VPNKit 6.4
 

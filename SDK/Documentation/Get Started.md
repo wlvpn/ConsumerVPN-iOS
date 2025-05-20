@@ -13,6 +13,10 @@
 - iPadOS
 - macOS
 - tvOS
+
+#### Binaries File Size 
+
+> Refer to: [Binaries Size](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Binaries%20Size.md)
  
 # InitialSetup
 ## Package install

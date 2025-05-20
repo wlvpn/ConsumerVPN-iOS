@@ -29,7 +29,7 @@ extension ApiManagerHelper {
     }
     
     func getVPNConnectionStatus() -> VPNConnectionStatus {
-        return apiManager.status
+        return apiManager.connectionStatus
     }
     
     func connect() {

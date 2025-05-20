@@ -23,8 +23,14 @@ extension ApiManagerHelper {
             return
         }
         
-        apiManager.synchronizeConfiguration { success in
-            completion?(success)
+        var error:NSError? = nil
+        if apiManager.canSynchronizeConfiguration(&error) {
+            apiManager.synchronizeConfiguration { success in
+                completion?(success)
+            }
+        } else  {
+            debugPrint("Failed to synchronize configuration: \(error?.localizedDescription ?? "")")
+            completion?(false)
         }
     }
     
