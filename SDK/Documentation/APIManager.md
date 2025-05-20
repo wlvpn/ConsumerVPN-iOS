@@ -2,17 +2,19 @@
 
 ## Properties
 
-- **`isActiveUser`**        : `Bool` - Indicates whether the user is active or not.
-- **`vpnConfiguration`**    : `VPNConfiguration` object - Manages the state of the VPN configuration and API state for the app. Allows setting/getting the current user, account,                              country, city, server, etc. Also allows setting VPN connection options such as on-demand.
-- **`status`**              : `VPNConnectionStatus` object - Shows the current VPN connection status.
-- **`networkIsReachable`**  : `Bool` - Indicates if the internet is currently reachable by the device or not.
-- **`reachableViaWWAN`**    : `Bool` - Indicates if the network is currently reachable via WWAN or not.
-- **`reachableViaWiFi`**    : `Bool` - Indicates if the network is currently reachable via WiFi or not.
-- **`networkType`**         : `VPNNetworkType` object - Describes the type of network interface on the device.
-- **`captivePortalStatus`** : `CaptivePortal` object - Describes the possibility of being in a captive portal.
-- **`apiAdapter`**          : Read-only.
-- **`metadata`**            : `MetaProxy` object - Provides metadata API access. 
-- **`isLoggedIn`**          : `Bool` - Returns `YES` if the user is logged in otherwise `NO`.
+- **`isActiveUser`**            : `Bool` - Indicates whether the user is active or not.
+- **`vpnConfiguration`**        : `VPNConfiguration` object - Manages the state of the VPN configuration and API state for the app. Allows setting/getting the current user, account,                                         country,  city, server, etc. Also allows setting VPN connection options such as on-demand.
+- **`connectionStatus`**        : `VPNConnectionStatus` object - Shows the current VPN connection status.
+- **`helperStatus`**            : `VPNConnectionStatus` object – Indicates the current status of the VPN helper installation, used only for OpenVPN and WireGuard. This helps track whether the VPN helper was successfully installed, is pending, or failed. (macOS only).
+- **`networkIsReachable`**      : `Bool` - Indicates if the internet is currently reachable by the device or not.
+- **`reachableViaWWAN`**        : `Bool` - Indicates if the network is currently reachable via WWAN or not.
+- **`reachableViaWiFi`**        : `Bool` - Indicates if the network is currently reachable via WiFi or not.
+- **`networkType`**             : `VPNNetworkType` object - Describes the type of network interface on the device.
+- **`captivePortalStatus`**     : `CaptivePortal` object - Describes the possibility of being in a captive portal.
+- **`apiAdapter`**              : Read-only.
+- **`metadata`**                : `MetaProxy` object - Provides metadata API access. 
+- **`isLoggedIn`**              : `Bool` - Returns `YES` if the user is logged in otherwise `NO`.
+- **`availableEntitlements`**:  : `NSArray` - Returns array of available entitlements.
 
 Properties can be accessed using: `[APIManager object].[property]`. For example:
 
@@ -45,6 +47,22 @@ class ApiManagerHelper: NSObject {
                         connectionAdapters: adapters as! [VPNConnectionAdapterProtocol],
                                 andOptions: apiManagerOptions) 
 ```
+
+## Update Account Configuration Functions
+
+- **`updateAccountConfiguration:`**
+```objc
+ - (void)updateAccountConfigurationWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completionHandler;
+```
+  Updates the user's account configuration by fetching the latest information from the API adapter. For example:
+
+```swift
+  apiManager?.updateAccountConfiguration( completion: { success in
+    // success will be true or false
+    // After completion, the `availableEntitlements` property will be updated with the latest entitlement list.
+  })
+```
+
 
 ## Refresh Location Functions
 

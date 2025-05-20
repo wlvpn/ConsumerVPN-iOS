@@ -295,14 +295,17 @@ ViewController : VPNServerStatusReporting {
    Handles conformance to status reporting.
 
 ```markdown
-- `statusLoginWillBegin`            : Notify receiver that the login operation is about to begin.
-- `statusLoginSucceeded`            : Notify the receiver that the login operation has completed successfully. Includes the Account information.
-- `statusLoginFailed`               : Notify the receiver that the login operation has completed with a failure. Includes an NSError describing the issue.
-- `statusAutomaticLoginSuceeded`    : Notify the receiver that an automatic login operation did occur.
-- `statusLogoutWillBegin`           : Notify the receiver that the logout operation is about to begin.
-- `statusLogoutSucceeded`           : Notify the receiver that the logout operation has completed successfully.
-- `statusLogoutFailed`              : Notify the receiver that the logout operation has completed with a failure. Includes an NSError describing the issue.
-- `statusAccountExpired`            : Notify the receiver that the account is expired.
+- `statusLoginWillBegin`                    : Notify receiver that the login operation is about to begin.
+- `statusLoginSucceeded`                    : Notify the receiver that the login operation has completed successfully. Includes the Account information.
+- `statusLoginFailed`                       : Notify the receiver that the login operation has completed with a failure. Includes an NSError describing the issue.
+- `statusAutomaticLoginSuceeded`            : Notify the receiver that an automatic login operation did occur.
+- `statusLogoutWillBegin`                   : Notify the receiver that the logout operation is about to begin.
+- `statusLogoutSucceeded`                   : Notify the receiver that the logout operation has completed successfully.
+- `statusLogoutFailed`                      : Notify the receiver that the logout operation has completed with a failure. Includes an NSError describing the issue.
+- `statusAccountExpired`                    : Notify the receiver that the account is expired.
+- `statusAccountFetchConfigFailed`          : Notify the receiver that the API configuration fetch operation has failed. Object property may hold `NSError` type describing the issue.
+- `statusAccountFetchConfigSucceeded`       : Notify the receiver that the API configuration fetch operation has completed successfully.
+- `statusAccountFetchConfigWillBegin`       : Notify the receiver that the API configuration fetch operation is about to begin.
 ```
 
 

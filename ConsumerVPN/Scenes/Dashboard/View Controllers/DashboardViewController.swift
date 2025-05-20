@@ -59,6 +59,8 @@ final class DashboardViewController: UIViewController {
 	
     var shouldreconnectAfterConfigUpdate: Bool = false
     
+    private var alertVC: UIAlertController?
+    
 	override var preferredStatusBarStyle: UIStatusBarStyle {
 		return .dashboardStatusBar
 	}
@@ -410,15 +412,22 @@ extension DashboardViewController: VPNConnectionStatusReporting {
     //MARK: - VPN Health Check
     func statusConnectionHealthUpdate(_ notification: Notification) {
         debugPrint("[ConsumerVPN] \(#function) \(notification)")
-        if let error = notification.object as? NSError {
-            UIAlertController.presentErrorAlert(error.localizedDescription, in: self)
-        } else {
-            let alertController = UIAlertController.alert(withTitle: "VPN Health Check",
-                                                          message: "Your VPN Connection is healthy!",
-                                                          actions: [UIAlertAction(title: "Ok", style: .cancel)],
-                                                          alertType: .alert)
-            self.present(alertController, animated: true, completion: nil)
+        if let alert = alertVC {
+            alert.dismiss(animated: false)
         }
+        
+        var message = "Your VPN Connection is healthy!"
+        if let error = notification.object as? NSError {
+            message = error.localizedDescription
+        }
+        
+        let alertController = UIAlertController.alert(withTitle: "VPN Health Check",
+                                                      message: message,
+                                                      actions: [UIAlertAction(title: "OK", style: .cancel)],
+                                                      alertType: .alert)
+        
+        alertVC  = alertController
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 

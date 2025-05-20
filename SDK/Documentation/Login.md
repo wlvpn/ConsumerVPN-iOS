@@ -11,7 +11,7 @@
 
 ## The VPNConfiguration
   This class manages the state of the VPN configuration and API state for the app. You can set/get the current user, account, country, city, server, etc.... You can also set VPN connection options such as on-demand etc...
-  > Refer: [VPNConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNConfiguration.md)
+ > Refer: [VPNConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNConfiguration.md)
   
 
 ## API methods

@@ -22,7 +22,7 @@
 ### 1.1 Add the required permissions for the app
 
 Add the required permissions for the app in the ***project file*** and initialize the app using the Primary Objects.
-> Refer to: [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)  
+> Refer to: [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)
 > Refer to: [VPNKit macOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20macOS%20Guide.md)
 
 ### 1.2 Integrate WireGuard Network Extension
@@ -46,6 +46,7 @@ Add the required permissions for the app in the ***project file*** and initializ
 - **Handshake Timestamp:** Call `getLastHandshake()` to retrieve the timestamp of the last successful handshake and updated network status.
 - **Disconnect VPN:** Call `disconnect()` method () to terminate the VPN connection.
 - **Bypass Traffic:** Call `bypassAllTraffic()` to bypass all traffic from the VPN connection.
+- **Handshake Failure Monitoring:** Implemented a new `vpnHandshakeFailureDetected()` method in `WGPacketTunnelProvider`. Subclasses can now override this method to receive notifications and handle VPN handshake failures according to their specific requirements.
 
 ```swift
 import NetworkExtension
@@ -76,27 +77,33 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
        debugPrint("\(#function) Read: \(counter.read) and Write:\(counter.write)")
    }
    
-   // Fetches the last handshake date and network status.
-   //
-   // This method is designed to be called periodically (e.g., in a timer) to monitor the health of the network connection. 
-   // If the time elapsed since the last handshake exceeds a specified threshold, 
-   // it indicates potential connectivity issues. In such cases, the method can trigger appropriate actions like disconnecting the tunnel or bypassing traffic.
+   override func vpnHandshakeFailureDetected() {
+    // Asynchronously fetches the last handshake date and network connection status.
+    self.getLastHandshake { [weak self] lastHandshakeDate, networkStatus in
+        guard let self = self else { return }
 
-   func fetchLastHandshake() {
-    
-        // Asynchronously fetches the last handshake date and network connection status.
-        self.getLastHandshake { [weak self] lastHandshakeDate, isConnected in
-            debugPrint("\(#function) last handshake completed at: \(lastHandshakeDate) and Network Status:\(isConnected)")
-        
-            // Calculates the time interval between the current time and the last handshake date.
-            // If the interval exceeds the threshold, it indicates a potential issue with the network connection.
-            // Implement appropriate actions based on your specific requirements:
-            // Option 1: Disconnect the tunnel
-            // Option 2: Bypass all traffic if connect on demand is enable for macOS
-            // self.isOnDemandEnabled ? self.bypassAllTraffic() : self.disconnect()
-            
+        let formattedDate = lastHandshakeDate.map(String.init(describing:)) ?? "N/A"
+        debugPrint("[\(#fileID):\(#line) \(#function)] Last handshake: \(formattedDate), Network Available: \(networkStatus)")
+
+        if networkStatus {
+            // Handshake failed despite internet availability. Consider immediate action.
+            // Depending on your requirements, you might:
+            // - Disconnect the tunnel immediately.
+            // - Attempt a limited number of reconnects.
+            // - Log the failure with higher severity.
+            NSLog("[ConsumerVPN] [PacketTunnelProvider] Handshake failure detected with internet available. Last handshake: \(formattedDate). Consider immediate action.")
+            // Example: self.cancelTunnelWithError(...)
+        } else {
+            // Handshake failed and internet is unavailable. This might be a temporary network issue or check your internet connection.
+            NSLog("[ConsumerVPN] [PacketTunnelProvider] Handshake failure detected while internet is unavailable. Last handshake: \(formattedDate).")
+            // Consider: No immediate action, rely on connection retry mechanisms.
         }
-   }
+    }
+}
+    
+   
+
+  
    
 }
 ```
@@ -122,14 +129,15 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
 
  - **File:** `Info.plist`
  - **Description:** This property list file configures essential metadata and specifies the `PacketTunnelProvider` class.
-
+ 
 ##### Key Entries:
   - **`CFBundleDisplayName`**: Name of the extension.
   - **`CFBundleExecutable`**: Executable name.
   - **`CFBundleIdentifier`**: Unique identifier for the extension.
   - **`NetworkExtension`**: Defines the `NEProviderClasses` to use the `PacketTunnelProvider` class.
       Set to reference your Packet Tunnel Provider class, e.g., $(PRODUCT_MODULE_NAME).PacketTunnelProvider.
-  - **`NSSystemExtensionUsageDescription`**: Provide a description as your system extension needs access to         certain resources (e.g., "This app requires a system extension for VPN functionality").
+  - **`NSSystemExtensionUsageDescription`**: Provide a description as your system extension needs access to certain resources (e.g., "This app requires a system extension for VPN functionality").
+  - **`com.wireguard.ios.app_group_id`**: Add new key in both App and Network Extension Targets as `com.wireguard.ios.app_group_id`: `<App-Group-ID>`.
  
  iOS Example:
 ```xml
@@ -145,7 +153,7 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
         <string>$(PRODUCT_MODULE_NAME).PacketTunnelProvider</string>
     </dict>
     <key>com.wireguard.ios.app_group_id</key>
-    <string>group.com.xxxxx</string>
+    <string>App-Group-ID</string>
  </dict>
  </plist>
  ```
@@ -215,7 +223,7 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
     <true/>
     <key>com.apple.security.application-groups</key>
     <array>
-        <string>group.com.xxxxx</string>
+        <string>App-Group-ID</string>
     </array>
     <key>com.apple.security.network.client</key>
     <true/>
@@ -258,8 +266,8 @@ macOS entitlements example:
  > Refer to: [Initializers](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Initializers.md)
 
  ### Primary Objects
- > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/README%20MacOS.md)  
- > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/README%20iOS.md)
+ > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md) 
+ > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
 
 
  ## **3. Connection**
@@ -315,7 +323,7 @@ macOS entitlements example:
 
  The API throws an error code and error message. These values are listed in the **Error documentation**.
 
- > Refer: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors)
+ > Refer to: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)
 
 
  ## **6. Limitations, Features, and Compatibility**
@@ -334,7 +342,7 @@ macOS entitlements example:
  - Supports features like **Threat Protection, Multihop, KillSwitch, Connect On demand, Split Tunneling**.
 
  > For more details:  
- > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md) 
+ > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md)
  > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
 
  ### c. Compatibility

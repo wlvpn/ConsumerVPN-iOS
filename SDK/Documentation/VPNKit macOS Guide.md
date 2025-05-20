@@ -136,7 +136,7 @@ fetchedCities = apiManager.fetchAllCities()
 
 - Fetch the current location model from the `vpnConfiguration` object.
 
-> Refer: [Notifications](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
+> Refer: [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
 
 
 ### 4. Selecting a protocol
