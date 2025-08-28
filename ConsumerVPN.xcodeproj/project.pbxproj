@@ -86,7 +86,6 @@
 		F90761AF2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */; };
 		F90761B12C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */; };
 		F90761B32C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */; };
-		F95C1F282BFE25E900D2FA23 /* README iOS.md in Resources */ = {isa = PBXBuildFile; fileRef = F95C1F272BFE25E900D2FA23 /* README iOS.md */; };
 		F9F951D12C07053500188E84 /* ProgressSpinnerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F951CE2C07053500188E84 /* ProgressSpinnerHelper.swift */; };
 		F9F951D22C07053500188E84 /* ProgressSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F951CF2C07053500188E84 /* ProgressSpinnerView.swift */; };
 		F9FBB5A12BFF7BDC00C8C9FB /* ApiManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FBB5A02BFF7BDC00C8C9FB /* ApiManagerHelper.swift */; };
@@ -143,6 +142,8 @@
 		0EC51C6922209CB700A394E6 /* ConnectedShield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedShield.swift; sourceTree = "<group>"; };
 		0EDA2478222DB98700D1D41E /* PrivacyNoticeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyNoticeViewController.swift; sourceTree = "<group>"; };
 		37F4CCE21C04CDEF00F5DBA9 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		3BC2EB732E0AC02A00CB9381 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		3BC2EB752E0ACBE000CB9381 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4556EA9B204F514C00049414 /* ConsumerVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConsumerVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		459C268325C86714009B7CC6 /* VPNV3APIAdapter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VPNV3APIAdapter.xcframework; sourceTree = "<group>"; };
 		459C268425C86714009B7CC6 /* VPNKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VPNKit.xcframework; sourceTree = "<group>"; };
@@ -331,6 +332,7 @@
 		37D7324B1BF103E3005733C8 /* ConsumerVPN */ = {
 			isa = PBXGroup;
 			children = (
+				3BC2EB732E0AC02A00CB9381 /* README.md */,
 				F96244BE2C00959600748ADF /* SDKHelper */,
 				F5C16A485B528D73442652D0 /* SDKInitializer */,
 				F5C1696E25FC9AB10A07C3CC /* Scenes */,
@@ -560,6 +562,7 @@
 		F5C16D99863A150885260B3C /* Theme */ = {
 			isa = PBXGroup;
 			children = (
+				3BC2EB752E0ACBE000CB9381 /* README.md */,
 				F5C160E58DD5C2310E0B7F00 /* Theme.swift */,
 				F5C16AEAC125C79C3C5C6675 /* tos.html */,
 				F5C166F3CD7D0748F9B47F25 /* Flags.xcassets */,
@@ -746,7 +749,6 @@
 			files = (
 				4556EA92204F514C00049414 /* Localizable.stringsdict in Resources */,
 				94CA4A33221DDC39001F0863 /* FilterNavBar.xib in Resources */,
-				F95C1F282BFE25E900D2FA23 /* README iOS.md in Resources */,
 				DAC619FF242E8C2D0015AC35 /* Plans.storyboard in Resources */,
 				0E78D26122132BEB00DB8652 /* Dashboard.storyboard in Resources */,
 				F5C16EA61B61071363B593E7 /* tos.html in Resources */,

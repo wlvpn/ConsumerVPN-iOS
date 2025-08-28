@@ -1,5 +1,39 @@
 # VPNKit Changelog
 
+## VPNKit 7.1.0
+
+### New Items
+- Added new `availableFeatures` property at `Server` model to retrieve available features on a server. For more details, see [Server Features](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/ServerFeatures.md).
+- Added a new `selectedFeatures` property to `VPNConfiguration`, allowing the option to filter servers based on selected features when connecting to the optimal location.
+
+### Improvements
+- If `isVirtualServersSkipped` is true, virtual servers are skipped only when a physical server is available.
+
+## VPNKit 7.0.1
+
+### New Items
+- Added new `vpnHandshakeUpdateDetected(_ error: Error?)` method at `WGPacketTunnelProvider`. Refer at [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)
+- Added new properties to `WGPacketTunnelProvider`:
+    - `lastHandshakeDate`   : `Date?` which indicates date timestamp of the last successful handshake.
+    - `isInternetAvaialble` : `Bool` which indicates the current network status. 
+
+### Removed Items
+- Removed `vpnHandshakeFailureDetected()` method from `WGPacketTunnelProvider`.
+- Removed `getLastHandshake()` method from `WGPacketTunnelProvider`.
+
+### Improvements
+- `lastHandshakeDate` reports correct last handshake date.
+- The timeout for Web service API calls has been updated to 5 seconds.
+- Added default base URL and fallback URLs for `/account` API.
+- Updated The default Diffie-Hellman group for IKEv2 VPN configurations from Group 2 (MODP 1024) to Group 14 (MODP 2048) to comply with Apple’s latest platform security requirements.
+- Fixed no internet available notification not sent.
+- Fixed Deferred Account error code conflicts.
+- Corrected default URLs for VPNAPIManager metadata account APIs.
+
+### Breaking Changes
+- Replaced `vpnHandshakeFailureDetected()` with `vpnHandshakeUpdateDetected(_ error: Error?)` optional method at `WGPacketTunnelProvider`.
+- Replaced `getLastHandshake()` method with new `lastHandshakeDate` and `isInternetAvaialble` properties at `WGPacketTunnelProvider`.
+
 ## VPNKit 7.0.0
 
 ### New Items
@@ -18,7 +52,6 @@
 - Added new `vpnHandshakeFailureDetected()` method at `WGPacketTunnelProvider`. Subclasses can now override this method to receive notifications and handle VPN handshake failures according to their specific requirements.
 - Added new `helperStatus` property at `VPNAPIManager` to determine the current status of the VPN helper installation (macOS only).
 - Added new error code `VPNSystemExtensionNotInstalled`, `VPNSystemExtensionNotApproved`  on `synchronizeConfiguration` to determine the current status of the VPN helper installation (macOS only).
-
 
 ### Removed Items
 - Removed Protocol API endpoint along with `ServerProtocol` and `ProtocolType` Models.

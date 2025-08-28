@@ -24,6 +24,8 @@
 - `visible`                     : NSNumber - The server visibility (in the server list). Returns 1 if not under maintenance and 0 if under maintenance.
 - `city`                        : The city that contains this server.
 - `country`                     : The country that contains this server.
+- `formattedServerName`         : NSString - The first segment of the hostname, delimited by a dot (.).
+- `availableFeatures`           : NSSet<NSNumber *> - The features available on the server.
 ```
 
 ## Fetch all cities

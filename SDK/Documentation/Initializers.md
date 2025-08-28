@@ -146,7 +146,7 @@ Check the example code below to see how to initialize the **`iOS`** app with the
                                                                andOptions:apiManagerOptions];
     
     // ensure that connections are not killed off when the app dies during an active connection
-    [apiManager.vpnConfiguration setOption:@YES forKey:kVPNStayConnectedOnQuit];
+    [apiManager.vpnConfiguration setStayConnectedOnQuit:@YES];
     
     return apiManager;
 }

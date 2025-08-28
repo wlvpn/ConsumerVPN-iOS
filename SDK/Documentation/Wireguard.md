@@ -15,14 +15,14 @@
 4. [Notifications](#notifications)
 5. [Error handling](#error-handling)
 6. [Limitations, Features, and Compatibility](#limitations-features-and-compatibility)
-
+7. [Handshake Update Implementation](#handshake-update-implementation)
 
 ## 1. Project Setup
 
 ### 1.1 Add the required permissions for the app
 
 Add the required permissions for the app in the ***project file*** and initialize the app using the Primary Objects.
-> Refer to: [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)
+> Refer to: [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md) 
 > Refer to: [VPNKit macOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20macOS%20Guide.md)
 
 ### 1.2 Integrate WireGuard Network Extension
@@ -46,7 +46,7 @@ Add the required permissions for the app in the ***project file*** and initializ
 - **Handshake Timestamp:** Call `getLastHandshake()` to retrieve the timestamp of the last successful handshake and updated network status.
 - **Disconnect VPN:** Call `disconnect()` method () to terminate the VPN connection.
 - **Bypass Traffic:** Call `bypassAllTraffic()` to bypass all traffic from the VPN connection.
-- **Handshake Failure Monitoring:** Implemented a new `vpnHandshakeFailureDetected()` method in `WGPacketTunnelProvider`. Subclasses can now override this method to receive notifications and handle VPN handshake failures according to their specific requirements.
+- **Handshake Update Monitoring:** Implemented a new `vpnHandshakeUpdateDetected(error: Error?)` method in `WGPacketTunnelProvider`. Subclasses can now override this method to receive notifications and handle VPN handshake updates according to their specific requirements.
 
 ```swift
 import NetworkExtension
@@ -77,34 +77,41 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
        debugPrint("\(#function) Read: \(counter.read) and Write:\(counter.write)")
    }
    
-   override func vpnHandshakeFailureDetected() {
-    // Asynchronously fetches the last handshake date and network connection status.
-    self.getLastHandshake { [weak self] lastHandshakeDate, networkStatus in
-        guard let self = self else { return }
-
-        let formattedDate = lastHandshakeDate.map(String.init(describing:)) ?? "N/A"
-        debugPrint("[\(#fileID):\(#line) \(#function)] Last handshake: \(formattedDate), Network Available: \(networkStatus)")
-
-        if networkStatus {
-            // Handshake failed despite internet availability. Consider immediate action.
-            // Depending on your requirements, you might:
-            // - Disconnect the tunnel immediately.
-            // - Attempt a limited number of reconnects.
-            // - Log the failure with higher severity.
-            NSLog("[ConsumerVPN] [PacketTunnelProvider] Handshake failure detected with internet available. Last handshake: \(formattedDate). Consider immediate action.")
-            // Example: self.cancelTunnelWithError(...)
-        } else {
-            // Handshake failed and internet is unavailable. This might be a temporary network issue or check your internet connection.
-            NSLog("[ConsumerVPN] [PacketTunnelProvider] Handshake failure detected while internet is unavailable. Last handshake: \(formattedDate).")
-            // Consider: No immediate action, rely on connection retry mechanisms.
+   // optional
+   public override func vpnHandshakeUpdateDetected(_ error: Error?) {
+    
+        NSLog("[VPNKIT-NE] Internet Status: \(self.isInternetAvaialble) Last Handshake Date: \(self.lastHandshakeDate)")
+    
+        guard let nsError = error as NSError?,
+            let handshakeError = HandshakeError.fromNSError(nsError) else {
+            // All good, tunnel is having active connection
+            NSLog("[VPNKIT-NE] All good!!!")
+            return
+        }
+    
+        NSLog("[VPNKIT-NE] HandshakeError: \(handshakeError)")
+        
+        switch handshakeError {
+        case .failure:
+            // The handshake failed even with an active internet connection.
+            // This suggests a persistent issue with the server or account.
+            //
+            // Recommended Action: Disconnect the tunnel to prevent data leaks
+            // and notify the user.
+            // self.cancelTunnelWithError(...)
+            break
+        case .internetUnreachable:
+            // The handshake failed because there is no internet connection.
+            // This is likely a temporary issue.
+            //
+            // Recommended Action: Wait for the system's network service to
+            // restore connectivity. The tunnel will attempt to reconnect automatically.
+            break
+        default:
+            break
         }
     }
-}
     
-   
-
-  
-   
 }
 ```
 
@@ -129,7 +136,7 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
 
  - **File:** `Info.plist`
  - **Description:** This property list file configures essential metadata and specifies the `PacketTunnelProvider` class.
- 
+
 ##### Key Entries:
   - **`CFBundleDisplayName`**: Name of the extension.
   - **`CFBundleExecutable`**: Executable name.
@@ -137,7 +144,20 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
   - **`NetworkExtension`**: Defines the `NEProviderClasses` to use the `PacketTunnelProvider` class.
       Set to reference your Packet Tunnel Provider class, e.g., $(PRODUCT_MODULE_NAME).PacketTunnelProvider.
   - **`NSSystemExtensionUsageDescription`**: Provide a description as your system extension needs access to certain resources (e.g., "This app requires a system extension for VPN functionality").
-  - **`com.wireguard.ios.app_group_id`**: Add new key in both App and Network Extension Targets as `com.wireguard.ios.app_group_id`: `<App-Group-ID>`.
+  
+##### 🔹 iOS
+
+- **`com.wireguard.ios.app_group_id`**:  
+  Add this key in both **App** and **Network Extension** targets' `Info.plist` as:  
+  `com.wireguard.ios.app_group_id`: `<App-Group-ID>`
+
+##### 🔹 macOS
+
+- **`com.wireguard.macos.app_group_id`**:  
+  Add this key in both **App** and **Network Extension** targets' `Info.plist` as:  
+  `com.wireguard.macos.app_group_id`: `<App-Group-ID>`  
+  *(Optional if App Group capabilities are already added)*
+
  
  iOS Example:
 ```xml
@@ -266,7 +286,6 @@ macOS entitlements example:
  > Refer to: [Initializers](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Initializers.md)
 
  ### Primary Objects
- > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md) 
  > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
 
 
@@ -342,7 +361,6 @@ macOS entitlements example:
  - Supports features like **Threat Protection, Multihop, KillSwitch, Connect On demand, Split Tunneling**.
 
  > For more details:  
- > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md)
  > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
 
  ### c. Compatibility
@@ -350,3 +368,8 @@ macOS entitlements example:
  - **Device Compatibility:** WireGuard is compatible with both Intel and Apple Silicon Macs and iOS devices.
 
  > To get the necessary assets/SDK, please contact support@wlvpn.com
+
+## **7. Handshake Update Implementation**
+Handshake update implementation to detect VPN connection stability.
+
+> Refer to: [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)
