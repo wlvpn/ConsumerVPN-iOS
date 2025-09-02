@@ -1,12 +1,26 @@
-# ConsumerVPN for VPNKit 6
+# ConsumerVPN for iOS
 
-Please see the ConsumerVPN Client Readme document to get started.
+![Swift](https://img.shields.io/badge/swift-5.0-orange)
+![Platform iOS](https://img.shields.io/badge/platform-iOS-lightgrey)
+![Supports iOS](https://img.shields.io/badge/iOS-fat--binary-blue)
+![Supports ARM](https://img.shields.io/badge/ARM-arm64-informational)
+![XCFramework Included](https://img.shields.io/badge/XCFramework-included-success)
 
-## What's New:
-- Added `kVPNManagerConfigurationNameKey` key at connectionOptions, which value will be VPN configuration name.
-- Added `VPNDemandConfiguration` at `VPNConfiguration` to handle VPN On Demand settings.
-- Added unregister notifications on view disappear.
-- Added VPNAPIManager `cleanup()` call while application terminates.
-- Rename `kStayConnectedOnQuit` to `kVPNStayConnectedOnQuit` which ensure that connections are not killed off when the app dies during an active connection.
-- Rename `installHelperAndConnectOnInstall()` method to `synchronizeConfiguration()`, which responsible to updates VPN configuration.
-- Replace `login()` API with `loginWithRetry()` after purchase success.
+## Overview
+ConsumerVPN is a ready-to-brand application built with Swift and the WLVPN VPN SDK. It provides a foundation for your own VPN app and serves as a complete guide for integrating the WLVPN VPN SDK.(VPNkit).              
+
+📚 [Setup Instructions](https://github.com/wlvpn/ConsumerVPN-iOS/tree/main/ConsumerVPN/README.md)
+
+## 🎨 Theming & Customization
+ConsumerVPN includes a built-in theming system to help you quickly rebrand the app:
+- Customize colors, typography, and layout in `Theme.swift`
+- Replace image and icon assets in `Theme/Assets.xcassets`
+- Modify launch screen via `LaunchScreen.storyboard`
+- Update legal and onboarding screens using `tos.html` and localized strings
+
+📘 [Theming Guide](https://github.com/wlvpn/ConsumerVPN-iOS-Theme/blob/theme/Primary/Theme%20Guide.md)
+
+## SDK Documentation
+For a detailed walkthrough of WLVPN SDK features and integration steps, refer to:
+
+📚 [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)

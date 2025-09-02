@@ -21,6 +21,7 @@
 - `multihopCities`                  : [City] - The list of cities for multihop. Order is important, the first element is the entry city, the last element is the exit city.
 - `connectedServers`                : [Server] - Read only. The list of connected servers for multihop after connection.
 - `isVirtualServersSkipped`         : BOOL - If true, when establishing connnection with Optimal Location, the virtual servers won't be taken into account.
+- `serverFeatures`                  : NSSet<NSNumber *> - The best available server for the city is selected based on the provided set of VPNServerFeature enum values.
 ```
 
 # Methods
