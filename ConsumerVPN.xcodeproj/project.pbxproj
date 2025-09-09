@@ -234,9 +234,7 @@
 		F66ED5172CFF4C1A001F6DF5 /* OpenVPN Implementation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "OpenVPN Implementation.md"; sourceTree = "<group>"; };
 		F66ED5182CFF4C1A001F6DF5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F66ED5192CFF4C1A001F6DF5 /* Traffic counter for OpenVPN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Traffic counter for OpenVPN.md"; sourceTree = "<group>"; };
-		F66ED51A2CFF4C1A001F6DF5 /* Upgrade5to6.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Upgrade5to6.md; sourceTree = "<group>"; };
 		F66ED51B2CFF4C1A001F6DF5 /* VPNConfiguration.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = VPNConfiguration.md; sourceTree = "<group>"; };
-		F66ED51C2CFF4C1A001F6DF5 /* VPNKit 5.x - 6.x Upgrade Guide.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "VPNKit 5.x - 6.x Upgrade Guide.pdf"; sourceTree = "<group>"; };
 		F66ED51D2CFF4C1A001F6DF5 /* VPNKit iOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit iOS Guide.md"; sourceTree = "<group>"; };
 		F66ED51E2CFF4C1A001F6DF5 /* VPNKit macOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit macOS Guide.md"; sourceTree = "<group>"; };
 		F66ED51F2CFF4C1A001F6DF5 /* Wireguard.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Wireguard.md; sourceTree = "<group>"; };
@@ -620,9 +618,7 @@
 				F66ED5172CFF4C1A001F6DF5 /* OpenVPN Implementation.md */,
 				F66ED5182CFF4C1A001F6DF5 /* README.md */,
 				F66ED5192CFF4C1A001F6DF5 /* Traffic counter for OpenVPN.md */,
-				F66ED51A2CFF4C1A001F6DF5 /* Upgrade5to6.md */,
 				F66ED51B2CFF4C1A001F6DF5 /* VPNConfiguration.md */,
-				F66ED51C2CFF4C1A001F6DF5 /* VPNKit 5.x - 6.x Upgrade Guide.pdf */,
 				F66ED51D2CFF4C1A001F6DF5 /* VPNKit iOS Guide.md */,
 				F66ED51E2CFF4C1A001F6DF5 /* VPNKit macOS Guide.md */,
 				F66ED51F2CFF4C1A001F6DF5 /* Wireguard.md */,

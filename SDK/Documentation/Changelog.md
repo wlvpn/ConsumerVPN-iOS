@@ -1,5 +1,13 @@
 # VPNKit Changelog
 
+## VPNKit 7.1.1
+
+### Improvements
+- `sortedServer()` in `City` and `Country` now returns the latest updated server list, not cached data.
+
+### Breaking Changes
+- Renamed property from `shouldSkipVirtualServers` (getter: `isVirtualServersSkipped`) to `skipVirtualServerInLoadBalance` (getter: `shouldSkipVirtualServerInLoadBalance`) in `VPNConfiguration` class.
+
 ## VPNKit 7.1.0
 
 ### New Items
