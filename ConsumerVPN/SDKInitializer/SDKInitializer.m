@@ -87,8 +87,8 @@
                                                        connectionAdapters:adapters
                                                                andOptions:apiManagerOptions];
     
-    // ensure that connections are not killed off when the app dies during an active connection
-    [apiManager.vpnConfiguration setOption:@YES forKey:kVPNStayConnectedOnQuit];
+    // Ensures that connections are not killed off when the app dies during an active connection
+    [apiManager.vpnConfiguration setStayConnectedOnQuit:YES];
     
     return apiManager;
 }
