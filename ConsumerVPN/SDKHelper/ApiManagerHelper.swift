@@ -22,7 +22,9 @@ class ApiManagerHelper: NSObject {
     
     /// The instance of `VPNAPIManager` used to perform API operations.
     var apiManager: VPNAPIManager
-    var vpnConfiguration: VPNConfiguration?
+    var vpnConfiguration: VPNConfiguration {
+        apiManager.vpnConfiguration
+    }
     
     /// The shared singleton instance of `ApiManagerHelper`.
     static let shared = ApiManagerHelper()
@@ -35,15 +37,15 @@ class ApiManagerHelper: NSObject {
             apiKey: Theme.apiKey,
             andSuffix: Theme.usernameSuffix
         )
-        self.vpnConfiguration = apiManager.vpnConfiguration
+        
         super.init()
         NotificationCenter.default.addObserver(for: self)
     }
     
     /// Sets the default encryption to 256-bit AES if no encryption is already set.
     func setDefaultEncryption() {
-        if vpnConfiguration?.hasOption(forKey: kIKEv2Encryption) == false {
-            vpnConfiguration?.setOption(kVPNEncryptionAES256, forKey: kIKEv2Encryption)
+        if vpnConfiguration.hasOption(forKey: kIKEv2Encryption) == false {
+            vpnConfiguration.setOption(kVPNEncryptionAES256, forKey: kIKEv2Encryption)
         }
     }
     

@@ -11,11 +11,11 @@ import Foundation
 
 extension ApiManagerHelper {
     
-    var selectedProtocol: VPNProtocol { vpnConfiguration?.selectedProtocol ?? .wireGuard   }
+    var selectedProtocol: VPNProtocol { vpnConfiguration.selectedProtocol  }
     
-    var isOnDemandEnabled: Bool { vpnConfiguration?.onDemandConfiguration?.enabled ?? false }
+    var isOnDemandEnabled: Bool { vpnConfiguration.onDemandConfiguration?.enabled ?? false }
     
-    var isKillSwitchOn: Bool { return vpnConfiguration?.isKillSwitchEnabled ?? false }
+    var isKillSwitchOn: Bool { return vpnConfiguration.isKillSwitchEnabled }
     
     func synchronizeConfiguration(completion: ((_ success: Bool) -> Void)? = nil) {
         guard apiManager.isActiveUser else {
@@ -44,11 +44,11 @@ extension ApiManagerHelper {
             
             switch index {
             case 0:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.wireGuard
+                vpnConfiguration.selectedProtocol = VPNProtocol.wireGuard
             case 1:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.ikEv2
+                vpnConfiguration.selectedProtocol = VPNProtocol.ikEv2
             case 2:
-                vpnConfiguration?.selectedProtocol = VPNProtocol.ipSec
+                vpnConfiguration.selectedProtocol = VPNProtocol.ipSec
             default:
                 break
             }
@@ -61,7 +61,7 @@ extension ApiManagerHelper {
     func toggleKillSwitch(enable:Bool) {
        
         if isSafeToChangeConfiguration() {
-            self.vpnConfiguration?.isKillSwitchEnabled = enable
+            self.vpnConfiguration.isKillSwitchEnabled = enable
         } else {
             debugPrint("[ConsumerVPN]  VPN Is connected, you can't change kill switch")
         }
@@ -72,7 +72,7 @@ extension ApiManagerHelper {
     func setOnDemand(enable:Bool) {
        
         if !isVPNConnectionInProgress() {
-            guard let onDemand = vpnConfiguration?.onDemandConfiguration else {
+            guard let onDemand = vpnConfiguration.onDemandConfiguration else {
                 return
             }
             onDemand.enabled = enable
@@ -84,7 +84,7 @@ extension ApiManagerHelper {
     
     func toggleOnDemand(enable:Bool, reconnect:Bool = false, completion: ((_ success: Bool) -> Void)? = nil) {
         if !isVPNConnectionInProgress() {
-            guard let onDemand = vpnConfiguration?.onDemandConfiguration else {
+            guard let onDemand = vpnConfiguration.onDemandConfiguration else {
                 if reconnect {
                     self.connect()
                     completion?(false)
@@ -97,8 +97,8 @@ extension ApiManagerHelper {
             if reconnect {
                 if enable {
                     self.synchronizeConfiguration { success in
-                        self.connectOnDemandVPNIfPossible()
-                        completion?(true)
+                        if success  { self.connectOnDemandVPNIfPossible() }
+                        completion?(success)
                     }
                 } else {
                     self.connect()
@@ -107,8 +107,8 @@ extension ApiManagerHelper {
             } else {
                 if enable {
                     self.synchronizeConfiguration { success in
-                        self.connectOnDemandVPNIfPossible()
-                        completion?(true)
+                        if success  { self.connectOnDemandVPNIfPossible() }
+                        completion?(success)
                     }
                 }
             }
@@ -119,19 +119,19 @@ extension ApiManagerHelper {
     }
     
     func getCurrentLocationString() -> String {
-        return vpnConfiguration?.currentLocation?.location() ?? LocalizedString.loading
+        return vpnConfiguration.currentLocation?.location() ?? LocalizedString.loading
     }
     
     func getCurrentIPLocationString() -> String {
-        return vpnConfiguration?.currentLocation?.ipAddress ?? LocalizedString.loading
+        return vpnConfiguration.currentLocation?.ipAddress ?? LocalizedString.loading
     }
     
     func selectServerWith(cityModel: CityModel?) {
         
         if let cityModel = cityModel {
-            self.vpnConfiguration?.country = cityModel.city.country
-            self.vpnConfiguration?.city = cityModel.city
-            self.vpnConfiguration?.server = nil
+            self.vpnConfiguration.country = cityModel.city.country
+            self.vpnConfiguration.city = cityModel.city
+            self.vpnConfiguration.server = nil
         } else {
             resetServer()
         }
@@ -141,9 +141,9 @@ extension ApiManagerHelper {
     func selectServerWith(country: Country?) {
        
         if let country = country {
-            self.vpnConfiguration?.server = nil
-            self.vpnConfiguration?.city = nil
-            self.vpnConfiguration?.country = country
+            self.vpnConfiguration.server = nil
+            self.vpnConfiguration.city = nil
+            self.vpnConfiguration.country = country
         } else {
             resetServer()
         }
@@ -151,30 +151,27 @@ extension ApiManagerHelper {
     }
     
     private func resetServer() {
-        self.vpnConfiguration?.server = nil
-        self.vpnConfiguration?.city = nil
-        self.vpnConfiguration?.country = nil
+        self.vpnConfiguration.server = nil
+        self.vpnConfiguration.city = nil
+        self.vpnConfiguration.country = nil
     }
     
     func getCityDisplayString() -> String {
         var displayString = ""
         
-        if let vpnConfiguration = vpnConfiguration {
-            
-            if let city = vpnConfiguration.city,
-               let cityName = city.name {
-                displayString.append(cityName + ", ")
-            }
-            
-            if let country = vpnConfiguration.country,
-               let countryName = country.name {
-                displayString.append(countryName)
-            }
-       
-            if vpnConfiguration.city == nil,
-               vpnConfiguration.country == nil {
-                displayString = LocalizedString.fastestAvailable
-            }
+        if let city = vpnConfiguration.city,
+           let cityName = city.name {
+            displayString.append(cityName + ", ")
+        }
+        
+        if let country = vpnConfiguration.country,
+           let countryName = country.name {
+            displayString.append(countryName)
+        }
+   
+        if vpnConfiguration.city == nil,
+           vpnConfiguration.country == nil {
+            displayString = LocalizedString.fastestAvailable
         }
         
         return displayString

@@ -77,7 +77,7 @@ enum LocalizedString {
 	static let signUpErrorAlertTitle = NSLocalizedString("Sign Up Error", comment: "Alert Title indicating an error on Sign Up")
 	static let passwordAlertTitle = NSLocalizedString("Account Verification", comment: "Alert title indicating more information needed to verify account")
 	static let accountAlertTitle = NSLocalizedString("Account Created Successfully", comment: "Account was created successfully.")
-	
+    static let unhealthyServerAlertTitle = NSLocalizedString("Error connecting to the VPN", comment: "Alert Title indicating a root cause of an issue")
 	
 	// MARK: Messages
 	static let magicLinkSent = NSLocalizedString("In order to log in, please follow the link sent to your email.", comment: "")
@@ -128,6 +128,12 @@ enum LocalizedString {
 																  comment: "Alert Message telling the user we don't immediately know what the problem is and to contact support"), error.localizedDescription)
 	}
 	
+    static let strUnhealthyServer = NSLocalizedString("Please try again or select a different location.\n(Code: %@)", comment: "")
+    static func unhealthyServerMessageWithErrorCode(_ code: Int) -> String {
+        let codeString = String(code)
+        return String(format: strUnhealthyServer, codeString)
+    }
+    
 	// MARK: Actions
 	static let ok = NSLocalizedString("OK", comment: "Understood")
 	static let contact = NSLocalizedString("Contact", comment: "Alert Button verb contact support")

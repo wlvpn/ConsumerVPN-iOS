@@ -42,7 +42,7 @@ extension ApiManagerHelper {
     
     func disconnectOnAppTerminate() {
         if apiManager.isConnectedToVPN() {
-            if let ondemandConfiguration = vpnConfiguration?.onDemandConfiguration {
+            if let ondemandConfiguration = vpnConfiguration.onDemandConfiguration {
                 if !ondemandConfiguration.enabled { apiManager.disconnect() }
             } else {
                 apiManager.disconnect()
@@ -54,7 +54,7 @@ extension ApiManagerHelper {
     
     func connectOnDemandVPNIfPossible() {
         
-        guard let onDemandConfig = vpnConfiguration?.onDemandConfiguration, onDemandConfig.enabled  else {
+        guard let onDemandConfig = vpnConfiguration.onDemandConfiguration, onDemandConfig.enabled  else {
             return
         }
         DispatchQueue.main.async {
@@ -88,7 +88,7 @@ extension ApiManagerHelper {
             debugPrint("[ConsumerVPN] [OnDemand] \(#function)  send notification")
             NotificationCenter.default.post(name: .beginVPNConnection, object: nil)
             
-            let task = URLSession.shared.streamTask(withHostName: vpnConfiguration?.server?.hostname ?? "", port: 443)
+            let task = URLSession.shared.streamTask(withHostName: vpnConfiguration.server?.hostname ?? "", port: 443)
             task.resume()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
@@ -104,10 +104,6 @@ extension ApiManagerHelper {
 extension ApiManagerHelper: VPNConnectionStatusReporting {
     func statusConnectionSucceeded(_ notification: Notification) {
         debugPrint("[ConsumerVPN] \(#function): \(notification)")
-        guard let vpnConfiguration = vpnConfiguration else {
-            return
-        }
-        
         // if autobalancing is on, reset the vpn config to nil in those areas
         if vpnConfiguration.usingAutoselectedCity {
             vpnConfiguration.city = nil
