@@ -31,7 +31,6 @@
  
  3. Follow the [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md) or [VPNKit macOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20macOS%20Guide.md)
 
-
 - You can find the VPNKit changelog.
 
 > Refer to: [Changelog](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Changelog.md)

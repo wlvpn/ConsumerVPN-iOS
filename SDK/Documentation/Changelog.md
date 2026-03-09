@@ -1,5 +1,10 @@
 # VPNKit Changelog
 
+## VPNKit 7.1.2
+
+### Improvements
+**Security:** Fixed a macOS privilege escalation vulnerability in the OpenVPN command-line helper where insufficient validation could allow unauthorized executables to interact with the privileged helper. The SDK now enforces certificate validation and code-signing checks. Integrators must update the OpenVPN CLI tool to ensure the helper is properly updated on user systems.
+
 ## VPNKit 7.1.1
 
 ### Improvements
