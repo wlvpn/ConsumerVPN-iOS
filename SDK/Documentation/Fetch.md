@@ -104,4 +104,20 @@ Follow the below example to fetch current location
     }
 }
 ```
+#### Refetching Updated Data
 
+- When connecting to a VPN server, if the connection fails with `VPNServerUnhealthyError` or `VPNInvalidServerError`, the server is automatically removed.
+
+- This triggers a `statusConnectionFailed` callback, allowing the client to refetch updated local data by calling `fetchAllCountries()` and `fetchAllCities()`.
+
+```swift
+func statusConnectionFailed(_ notification: Notification) {
+  guard let error = notification.object as? NSError else { return }
+
+  if error.code == VPNKitConfigurationRuntimeError.serverUnhealthyError.rawValue || error.code == VPNKitConfigurationRuntimeError.invalidServerError.rawValue {
+      // Refetch updated country and city data
+      apiManager?.fetchAllCountries()
+      apiManager?.fetchAllCities()
+  }
+}
+```

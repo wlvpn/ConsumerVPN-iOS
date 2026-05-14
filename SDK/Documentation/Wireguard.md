@@ -82,16 +82,14 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
     
         NSLog("[VPNKIT-NE] Internet Status: \(self.isInternetAvaialble) Last Handshake Date: \(self.lastHandshakeDate)")
     
-        guard let nsError = error as NSError?,
-            let handshakeError = HandshakeError.fromNSError(nsError) else {
-            // All good, tunnel is having active connection
+        guard let error else {
             NSLog("[VPNKIT-NE] All good!!!")
             return
         }
     
-        NSLog("[VPNKIT-NE] HandshakeError: \(handshakeError)")
+        NSLog("[VPNKIT-NE] HandshakeError: \(error)")
         
-        switch handshakeError {
+        switch error as? HandshakeError {
         case .failure:
             // The handshake failed even with an active internet connection.
             // This suggests a persistent issue with the server or account.
@@ -107,7 +105,7 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
             // Recommended Action: Wait for the system's network service to
             // restore connectivity. The tunnel will attempt to reconnect automatically.
             break
-        default:
+        case .none:
             break
         }
     }
@@ -372,4 +370,4 @@ macOS entitlements example:
 ## **7. Handshake Update Implementation**
 Handshake update implementation to detect VPN connection stability.
 
-> Refer to: [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)
+> Refer to: [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implemention.md)

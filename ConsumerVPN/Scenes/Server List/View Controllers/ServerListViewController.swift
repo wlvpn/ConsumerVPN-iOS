@@ -9,7 +9,7 @@
 import UIKit
 import VPNKit
 
-final class ServerListViewController: BaseServerTableViewController {
+final class ServerListViewController: BaseServerTableViewController, UISearchControllerDelegate {
     
     // MARK: Types
     enum RestorationKeys: String {
@@ -68,6 +68,8 @@ final class ServerListViewController: BaseServerTableViewController {
     fileprivate var emptyStateView: EmptyStateView!
     
     var presentedModally = false
+    
+    private var shouldNavigateToDashboardOnDismiss = false
     
     // MARK: Lifecycle Methods
     override func viewDidLoad() {
@@ -139,6 +141,7 @@ final class ServerListViewController: BaseServerTableViewController {
         // Setup the SearchController and the SearchController's searchBar
         searchController = UISearchController(searchResultsController: resultsServerViewController)
         searchController.searchResultsUpdater = self
+        searchController.delegate = self
         
         // set some options in preparation for the searchController
         searchController.obscuresBackgroundDuringPresentation = false
@@ -264,7 +267,15 @@ final class ServerListViewController: BaseServerTableViewController {
     }
     
     @objc fileprivate func returnToDashboard() {
-        // go back to the dashboard
+        if searchController.isActive {
+            shouldNavigateToDashboardOnDismiss = true
+            searchController.isActive = false
+        } else {
+            navigateToDashboard()
+        }
+    }
+
+    private func navigateToDashboard() {
         if presentedModally {
             dismiss(animated: true, completion: nil)
         } else {
@@ -278,6 +289,14 @@ final class ServerListViewController: BaseServerTableViewController {
             return sortedCountrySections.count + 1
         } else {
             return 1
+        }
+    }
+    
+    // UISearchControllerDelegate
+    func didDismissSearchController(_ searchController: UISearchController) {
+        if shouldNavigateToDashboardOnDismiss {
+            navigateToDashboard()
+            shouldNavigateToDashboardOnDismiss = false
         }
     }
     

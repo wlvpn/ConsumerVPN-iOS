@@ -149,6 +149,16 @@ extension UIAlertController {
 					  alertType: .alert)
 	}
 	
+    /// Helper method for creating an alert specifically geared towards server problem
+    ///
+    /// - returns: An alert controller containing all information about the server problem
+    static func unhealthyServerWithErrorCode(_ code: Int) -> UIAlertController {
+        return .alert(withTitle: LocalizedString.unhealthyServerAlertTitle,
+                      message: LocalizedString.unhealthyServerMessageWithErrorCode(code),
+                      actions: [UIAlertAction.init(title: LocalizedString.ok, style: .default, handler: nil)],
+                      alertType: .alert)
+    }
+    
 	/// Helper method for creating an alert specifically geared towards informing the user of what went wrong and to contact support should it persist
 	///
 	/// - parameter error: Error describing what went wrong

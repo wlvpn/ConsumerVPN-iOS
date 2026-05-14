@@ -1,6 +1,6 @@
 # VPNKit Version
 ------
-The latest version of the WLVPN Apple SDK is 7.1.1
+The latest version of the WLVPN Apple SDK is 7.1.3
 
 ## Getting started
 

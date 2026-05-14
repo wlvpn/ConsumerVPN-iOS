@@ -386,7 +386,13 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 		}
 		
         if ApiManagerHelper.shared.isNetworkReachable() { // Contact Support
-			present(UIAlertController.contactSupport(with: error), animated: true, completion: nil)
+            let code = (error as NSError).code
+            if code == VPNKitConfigurationRuntimeError.serverUnhealthyError.rawValue ||  code == VPNKitConfigurationRuntimeError.invalidServerError.rawValue {
+                present(UIAlertController.unhealthyServerWithErrorCode(code), animated: true, completion: nil)
+            }
+            else {
+                present(UIAlertController.contactSupport(with: error), animated: true, completion: nil)
+            }
 		} else { // Network Connection Issue
 			present(UIAlertController.network(), animated: true, completion: nil)
 		}
