@@ -204,6 +204,7 @@ apiManager = sdk.initializeAPIManager(
   - For Build Phases confirm that the `Code Signing Identity` is set to `Developer ID Application`
   - Add new run script : Sign Internal Executables: Add following
     shell `/bin/sh`
+    
     ```
     # Type a script or drag a script file from your workspace to insert its path.
     LOCATION="${BUILT_PRODUCTS_DIR}"/"${FRAMEWORKS_FOLDER_PATH}"
@@ -241,12 +242,12 @@ int main(int argc, const char * argv[]) {
     return EXIT_FAILURE;        // ... so this should never be hit.
 }
 ```
-
 2. Add the plist `VPNHelperTool-Info.plist`
  - Set the Bundle identifier and Bundle name
  - Add `SMAuthorizedClients` key value 
  - Update `XXXXXXXXXX` with `Developer ID` certificate Team ID 
  - Please check below plist
+ 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -268,7 +269,6 @@ int main(int argc, const char * argv[]) {
 	</array>
 </dict>
 </plist>
-
 ```
 3. Add Launchd file named `VPNHelperTool-Launchd.plist`
   - Label name should match `VPNHelperTool` Bundle ID

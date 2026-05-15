@@ -174,6 +174,7 @@ The user can connect and disconnect using the API.
 - If all the server properties (country, city, and server) are left nil, then the api manager would choose the optimal location for connection.
 - If selected protocol is Wireguard, check **WireGuard System Extension** is installed or not.
 - Before connecting, you can check for the validity of the user by `apiManager.activeUser`
+
 ```swift
     if apiManager.activeUser {
         apiManager.vpnConfiguration.country = nil

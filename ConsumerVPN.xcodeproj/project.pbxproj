@@ -238,6 +238,9 @@
 		F66ED51D2CFF4C1A001F6DF5 /* VPNKit iOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit iOS Guide.md"; sourceTree = "<group>"; };
 		F66ED51E2CFF4C1A001F6DF5 /* VPNKit macOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit macOS Guide.md"; sourceTree = "<group>"; };
 		F66ED51F2CFF4C1A001F6DF5 /* Wireguard.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Wireguard.md; sourceTree = "<group>"; };
+		F6A529FE2F9BDA9300494772 /* Binaries Size.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Binaries Size.md"; sourceTree = "<group>"; };
+		F6A529FF2F9BDA9300494772 /* Handshake Update Implemention.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Handshake Update Implemention.md"; sourceTree = "<group>"; };
+		F6A52A002F9BDA9300494772 /* ServerFeatures.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ServerFeatures.md; sourceTree = "<group>"; };
 		F6D15F182C734E7A00667D5E /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConfiguration.swift"; sourceTree = "<group>"; };
 		F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConnection.swift"; sourceTree = "<group>"; };
@@ -611,6 +614,9 @@
 				F66ED5102CFF4C1A001F6DF5 /* Initializers.md */,
 				F66ED5112CFF4C1A001F6DF5 /* Kill Switch.md */,
 				F66ED5122CFF4C1A001F6DF5 /* Login.md */,
+				F6A529FE2F9BDA9300494772 /* Binaries Size.md */,
+				F6A529FF2F9BDA9300494772 /* Handshake Update Implemention.md */,
+				F6A52A002F9BDA9300494772 /* ServerFeatures.md */,
 				F66ED5132CFF4C1A001F6DF5 /* Metadata.md */,
 				F66ED5142CFF4C1A001F6DF5 /* MultiHop Implementation .md */,
 				F66ED5152CFF4C1A001F6DF5 /* Notifications.md */,

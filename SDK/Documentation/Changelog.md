@@ -1,5 +1,22 @@
 # VPNKit Changelog
 
+## VPNKit 7.1.3
+
+### Improvements
+- Enhanced `IKEv2` error handling to gracefully manage `VPNServerUnhealthyError` and `VPNInvalidServerError`
+- When connecting to a VPN server, if the connection fails with `VPNServerUnhealthyError` or `VPNInvalidServerError`, that server is now automatically removed to prevent future connection attempts to unhealthy or invalid servers. See [Fetch](../Documentation/Fetch.md#refetching-updated-data) for details on refetching updated data.
+- Fixed an issue where the SDK was unable to retrieve stored keychain values when the iOS device was locked.
+- Fixed crash occurring during retrieval of stored keychain values.
+- Rename coredata model version files without whitespaces.
+- Updated all APIs version from v3.4 to v3.5. Also refactored refresh token code.
+- Retrieve and send the exact account status when synchronizeConfiguration() fails due to invalid account.
+- Reset last server update date on user logout to ensure fresh server sync on next login.
+- Changed URLSession cache policy to disable cache writes
+
+### New Items
+- Added a `clientManagesSystemExtension` flag to `WireGuardAdapterConfiguration` indicating that WireGuard system extension installation is managed by the macOS client application using Apple APIs.
+- Added support for simulators for tvOS to test UI/UX (actual connection won't happen on simulators, just a mock connection).
+
 ## VPNKit 7.1.2
 
 ### Improvements
@@ -93,7 +110,6 @@
 - Fixes crash on device wake up with an active traffic counter.
 - Fixes incorrect VPN health check or network status for certain servers.
 - Fixes WireGueard Internet is not working after VPN Connection for certain servers.
-- Update all APIs version from v3.4 to v3.5.
 - Fixes Wi-Fi information unavailable after VPN disconnect.
 - Fixes network status not sync with available network.
 - Sends VPN health update notification on network change when using WireGuard.

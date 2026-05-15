@@ -195,6 +195,7 @@ The user can connect and disconnect using the API.
 - You can select the vpn server by setting the VPN configuration either by country, city or server from the available server list.
 - If all the server properties (country, city, and server) are left nil, then the api manager would choose the optimal location for connection.
 - Before connecting, you can check for the validity of the user by `apiManager.activeUser`
+
 ```swift
     if apiManager.activeUser {
         apiManager.vpnConfiguration.country = nil
