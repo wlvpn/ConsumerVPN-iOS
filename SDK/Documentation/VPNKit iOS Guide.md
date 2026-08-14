@@ -15,7 +15,7 @@ The framework provides APIs to login, fetch servers, backup data in a database, 
     2. [Fetching the servers](#fetching-the-servers)
     3. [Fetching the location](#fetching-the-location)
     4. [Selecting a protocol](#selecting-a-protocol)
-    5. [Synchronize the configuration](synchronize-the-configuration)
+    5. [Synchronize the configuration](#synchronize-the-configuration)
     6. [Perform a VPN connection](#perform-a-vpn-connection)
     7. [Error handling](#error-handling)
     8. [Notification handling](#notification-handling)
@@ -130,11 +130,11 @@ fetchedCities = apiManager.fetchAllCities()
 
 ### 3. Fetching the location
 - Fetch the current location by listening to the `VPNConfigurationStatusReporting` notification named 'statusCurrentLocationDidChange'
-    - It contains VPNCurrentLocationModel object as a notification object.
+    - It contains `VPNCurrentLocationModel` object as a notification object.
 
 - Fetch the current location model from the `vpnConfiguration` object.
 
-> Refer: [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
+> Refer: [Notifications](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Notifications.md)
 
 
 ### 4. Selecting a protocol
@@ -148,6 +148,8 @@ apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.wireGuard
 apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.ikEv2
 // If IPSec selected
 apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.ipSec
+// If OpenVPN selected
+apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.openvpn
 ```
 
 

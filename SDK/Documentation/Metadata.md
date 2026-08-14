@@ -64,8 +64,8 @@ Get all associated metadata for currently logged in user
 
 
 Update all associated metadata for currently logged in user
-```objc
 
+```objc
 [apiManager.metadata updateCollection:updateValues completion:^(NSDictionary<NSString *, NSString *> * _Nullable result, NSError * _Nullable error) {
     if (error != nil) {
         // Handle the error
@@ -77,8 +77,8 @@ Update all associated metadata for currently logged in user
 
 
 Clear all associated metadata for currently logged in user
-```objc
 
+```objc
 [apiManager.metadata clearCollection:^(NSError * _Nullable error) {
     if (error != nil) {
         // Handle the error
@@ -123,29 +123,29 @@ Internal server error
 Example error handling
 
 ```swift
-        if ([exception.domain isEqualToString:MetaServiceErrorDomain]) {
-            switch (exception.code) {
-                case MetaErrorCodeErrorWithStatusCode: {
-                    NSInteger statusCode = [[exception.userInfo objectForKey:@"statusCode"] integerValue];
-                    NSString *description = [exception.userInfo objectForKey:@"description"];
-                    // Handle MetaErrorCodeErrorWithStatusCode. See HTTP Status Codes
-                    break;
-                }
-                case MetaErrorCodeUnexpectedResponse:
-                    // Handle MetaErrorCodeUnexpectedResponse
-                    break;
-                case MetaErrorCodeRequestFailed:
-                    // Handle MetaErrorCodeRequestFailed
-                    break;
-                case MetaErrorCodeInvalidURL:
-                    // Handle MetaErrorCodeInvalidURL
-                    break;
-                case MetaErrorCodeMetaserviceNotAvailable:
-                    // Handle MetaErrorCodeMetaserviceNotAvailable
-                    break;
-                default:
-                    // Handle other errors
-                    break;
+    if ([exception.domain isEqualToString:MetaServiceErrorDomain]) {
+        switch (exception.code) {
+            case MetaErrorCodeErrorWithStatusCode: {
+                NSInteger statusCode = [[exception.userInfo objectForKey:@"statusCode"] integerValue];
+                NSString *description = [exception.userInfo objectForKey:@"description"];
+                // Handle MetaErrorCodeErrorWithStatusCode. See HTTP Status Codes
+                break;
             }
+            case MetaErrorCodeUnexpectedResponse:
+            // Handle MetaErrorCodeUnexpectedResponse
+            break;
+            case MetaErrorCodeRequestFailed:
+            // Handle MetaErrorCodeRequestFailed
+            break;
+            case MetaErrorCodeInvalidURL:
+            // Handle MetaErrorCodeInvalidURL
+            break;
+            case MetaErrorCodeMetaserviceNotAvailable:
+            // Handle MetaErrorCodeMetaserviceNotAvailable
+            break;
+            default:
+            // Handle other errors
+            break;
         }
+    }
 ```

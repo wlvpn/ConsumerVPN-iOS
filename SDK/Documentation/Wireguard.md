@@ -22,9 +22,9 @@
 ### 1.1 Add the required permissions for the app
 
 Add the required permissions for the app in the ***project file*** and initialize the app using the Primary Objects.
-> Refer to: [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md) 
-> Refer to: [VPNKit macOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20macOS%20Guide.md)
-
+ > Refer to: [README MacOS Guide](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/Documentation/VPNKit%20macOS%20Guide.md)
+ > Refer to: [README iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)
+ 
 ### 1.2 Integrate WireGuard Network Extension
 
 #### 1.2.1 Set Up the Network Extension Target
@@ -43,10 +43,14 @@ Add the required permissions for the app in the ***project file*** and initializ
 ##### Key Points:
 - **Initialization:** In the initializer, you can configure settings for traffic monitoring (optional).
 - **Traffic Monitoring:** Override `vpnDidReceiveTrafficDataCounter` to handle and debug traffic data if traffic monitoring is enabled.
-- **Handshake Timestamp:** Call `getLastHandshake()` to retrieve the timestamp of the last successful handshake and updated network status.
-- **Disconnect VPN:** Call `disconnect()` method () to terminate the VPN connection.
+- **Handshake Timestamp:** Read the `lastHandshakeDate` property to retrieve the timestamp of the last successful handshake.
+- **Disconnect VPN:** Call `disconnect()` to terminate the VPN connection. The SDK clears `isOnDemandEnabled` and `includeAllNetworks` on the underlying `NETunnelProviderManager` so iOS does not re-spawn the extension.
 - **Bypass Traffic:** Call `bypassAllTraffic()` to bypass all traffic from the VPN connection.
-- **Handshake Update Monitoring:** Implemented a new `vpnHandshakeUpdateDetected(error: Error?)` method in `WGPacketTunnelProvider`. Subclasses can now override this method to receive notifications and handle VPN handshake updates according to their specific requirements.
+- **Connect-On-Demand status:** Read the `isOnDemandEnabled` property to check whether Connect-On-Demand is currently enabled on the provider.
+- **Kill switch status:** Read the `isKillSwitchEnabled` property to check whether the kill switch (`includeAllNetworks`) is enabled. Use this from `vpnHandshakeUpdateDetected(_:)` to decide whether a `captivePortalLikely` recovery requires an explicit `disconnect()` call (kill switch on) or whether the SDK will auto-recover once the user signs in (kill switch off).
+- **Roaming event verbosity:** `notifyRoamingOnce` (default `true`) debounces `.roaming` to one notification per roam episode. Set to `false` for verbose mode if you want a `.roaming` event on every handshake retry inside the post-roam window — useful for telemetry / diagnostics.
+- **Live internet status:** `isInternetAvailable` is computed from the live `NWPath.Status` (no cache), so it is always safe to use as the authoritative reachability signal — including from inside `vpnHandshakeUpdateDetected(_:)`.
+- **Handshake Update Monitoring:** Override `vpnHandshakeUpdateDetected(_ error: Error?)` to receive structured notifications about handshake health. The SDK classifies failures into `HandshakeError` cases — including `roaming`, `staleSession`, `handshakeTimeout`, and `captivePortalLikely` — so the app can react appropriately. `captivePortalLikely` is debounced to a single notification per episode and is cleared automatically on a successful handshake or a fresh network path change.
 
 ```swift
 import NetworkExtension
@@ -79,34 +83,40 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
    
    // optional
    public override func vpnHandshakeUpdateDetected(_ error: Error?) {
-    
-        NSLog("[VPNKIT-NE] Internet Status: \(self.isInternetAvaialble) Last Handshake Date: \(self.lastHandshakeDate)")
-    
-        guard let error else {
+
+        NSLog("[VPNKIT-NE] Internet Status: \(self.isInternetAvailable) Last Handshake Date: \(String(describing: self.lastHandshakeDate))")
+
+        guard let nsError = error as NSError?,
+              let handshakeError = HandshakeError.fromNSError(nsError) else {
+            // All good, tunnel is having active connection.
             NSLog("[VPNKIT-NE] All good!!!")
             return
         }
-    
-        NSLog("[VPNKIT-NE] HandshakeError: \(error)")
-        
-        switch error as? HandshakeError {
-        case .failure:
-            // The handshake failed even with an active internet connection.
-            // This suggests a persistent issue with the server or account.
-            //
-            // Recommended Action: Disconnect the tunnel to prevent data leaks
-            // and notify the user.
-            // self.cancelTunnelWithError(...)
+
+        NSLog("[VPNKIT-NE] HandshakeError: \(handshakeError)")
+
+        switch handshakeError {
+        case .failure, .internetUnreachable, .roaming, .staleSession, .handshakeTimeout:
+            // Transient or informational classifications. The SDK / OS will
+            // typically recover on their own. Surface to the UI as needed.
             break
-        case .internetUnreachable:
-            // The handshake failed because there is no internet connection.
-            // This is likely a temporary issue.
-            //
-            // Recommended Action: Wait for the system's network service to
-            // restore connectivity. The tunnel will attempt to reconnect automatically.
+        case .tunnelCancelled:
+            // OpenVPN-only today; WireGuard does not currently emit this case.
             break
-        case .none:
-            break
+        case .captivePortalLikely:
+            // Repeated handshake failures after a network path change while the
+            // OS still reports connectivity — the current network most likely
+            // requires HTTP sign-in (captive portal). With the kill switch on,
+            // iOS's captive sign-in sheet is blocked; call `disconnect()` so
+            // the SDK clears `includeAllNetworks` and lets iOS present it. With
+            // the kill switch off, no app action is required.
+            if self.isKillSwitchEnabled {
+                #if os(macOS)
+                self.disconnect { _ in }
+                #elseif os(iOS) || os (tvOS)
+                // App target needs to call `apiManager.disconnect()`
+                #endif
+            }
         }
     }
     
@@ -155,7 +165,6 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
   Add this key in both **App** and **Network Extension** targets' `Info.plist` as:  
   `com.wireguard.macos.app_group_id`: `<App-Group-ID>`  
   *(Optional if App Group capabilities are already added)*
-
  
  iOS Example:
 ```xml
@@ -284,6 +293,7 @@ macOS entitlements example:
  > Refer to: [Initializers](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Initializers.md)
 
  ### Primary Objects
+ > Refer to: [README macOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md)  
  > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
 
 
@@ -340,7 +350,7 @@ macOS entitlements example:
 
  The API throws an error code and error message. These values are listed in the **Error documentation**.
 
- > Refer to: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)
+ > Refer: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)
 
 
  ## **6. Limitations, Features, and Compatibility**
@@ -359,6 +369,7 @@ macOS entitlements example:
  - Supports features like **Threat Protection, Multihop, KillSwitch, Connect On demand, Split Tunneling**.
 
  > For more details:  
+ > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md)
  > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
 
  ### c. Compatibility
@@ -370,4 +381,4 @@ macOS entitlements example:
 ## **7. Handshake Update Implementation**
 Handshake update implementation to detect VPN connection stability.
 
-> Refer to: [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implemention.md)
+> Refer to: [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)

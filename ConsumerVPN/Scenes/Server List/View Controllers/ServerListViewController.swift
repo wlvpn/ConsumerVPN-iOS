@@ -69,6 +69,7 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
     
     var presentedModally = false
     
+    var reconnectionBlock: (() -> Void)?
     private var shouldNavigateToDashboardOnDismiss = false
     
     // MARK: Lifecycle Methods
@@ -467,7 +468,7 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
             
             action = UIAlertAction(title: LocalizedString.reconnect, style: .default,handler: { [unowned self] (action) in
                 ApiManagerHelper.shared.disconnect()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { /*[weak self] in*/
+                self.reconnectionBlock = {
                     updateVPNConfig()
                     ApiManagerHelper.shared.toggleOnDemand(enable: false, reconnect: true)
                 }
@@ -478,8 +479,10 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
             if ApiManagerHelper.shared.isOnDemandEnabled {
                 action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive,handler: { [unowned self] (action) in
                     ApiManagerHelper.shared.disconnect()
-                    updateVPNConfig()
-                    ApiManagerHelper.shared.setOnDemand(enable: false)
+                    self.reconnectionBlock = {
+                        updateVPNConfig()
+                        ApiManagerHelper.shared.setOnDemand(enable: false)
+                    }
                     self.returnToDashboard()
                 })
                 actions.append(action)
@@ -676,4 +679,19 @@ extension ServerListViewController: StoryboardInstantiable {
 
 // MARK: - VPNConnectionStatusReporting
 extension ServerListViewController : VPNStatusReporting {
+}
+
+//MARK: VpnConnection Status Reporting
+extension ServerListViewController: VPNConnectionStatusReporting {
+    
+    func statusConnectionDidDisconnect(_ notification: Notification) {
+        
+        if let reconnectBlock = reconnectionBlock {
+            reconnectBlock()
+        }
+        
+        reconnectionBlock = nil
+        
+    }
+    
 }

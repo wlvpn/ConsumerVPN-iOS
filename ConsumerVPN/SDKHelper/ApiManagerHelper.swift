@@ -31,6 +31,7 @@ class ApiManagerHelper: NSObject {
     
     /// Private initializer to ensure the singleton pattern.
     private override init() {
+        let shouldUseDefaultLogLevel = UserDefaults.standard.object(forKey: kVPNCurrentLogLevelKey) == nil
         self.apiManager =  SDKInitializer.initializeAPIManager(
             withBrandName: Theme.brandName,
             configName: Theme.configName,
@@ -39,6 +40,9 @@ class ApiManagerHelper: NSObject {
         )
         
         super.init()
+        if shouldUseDefaultLogLevel {
+            apiManager.setLogLevel(.off)
+        }
         NotificationCenter.default.addObserver(for: self)
     }
     

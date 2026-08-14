@@ -66,9 +66,43 @@ enum LocalizedString {
 		return String.localizedStringWithFormat(NSLocalizedString("Rate %@", comment: "Static Text informing the user they can rate the product"), product)
 	}
 	
+	// MARK: - Diagnostics View Controller
+	static let diagnosticsTitle = NSLocalizedString("Diagnostics", comment: "Title for the diagnostics screen")
+	static let diagnosticsDescription = NSLocalizedString("Diagnostics are useful to help correct connectivity and VPN performance issues.", comment: "Description explaining the purpose of diagnostics")
+	static let diagnosticsAdvancedDescription = NSLocalizedString("Advanced mode is used to diagnose connectivity issues\nand only needs to be enabled when engaging with support.", comment: "Description explaining when advanced diagnostics should be enabled")
+	static let diagnosticsLogLevelOff = NSLocalizedString("Off", comment: "Diagnostics logging level that disables logging")
+	static let diagnosticsLogLevelNormal = NSLocalizedString("Normal", comment: "Diagnostics logging level for standard logging")
+	static let diagnosticsLogLevelAdvanced = NSLocalizedString("Advanced", comment: "Diagnostics logging level for verbose logging")
+	static let diagnosticsLoggingDisabled = NSLocalizedString("Diagnostics logging is disabled. Select Normal or Advanced to start collecting diagnostic data.", comment: "Message shown when diagnostics logging is disabled")
+	static let diagnosticsNoData = NSLocalizedString("No diagnostics data to display.", comment: "Message shown when diagnostics logging is enabled but no log data exists")
+	static let diagnosticsNotSharedTitle = NSLocalizedString("Diagnostics Not Shared", comment: "Alert title shown when diagnostics sharing fails")
+	static let diagnosticsNotSharedMessage = NSLocalizedString("The diagnostics file could not be prepared for sharing.", comment: "Alert message shown when diagnostics sharing fails")
+	static let diagnosticsDeleteTitle = NSLocalizedString("Delete Diagnostics Data", comment: "Alert title asking the user to confirm diagnostics deletion")
+	static let diagnosticsDeleteMessage = NSLocalizedString("Are you sure you want to delete the diagnostics file?", comment: "Alert message asking the user to confirm diagnostics deletion")
+	static let diagnosticsAppEventsLog = NSLocalizedString("App events", comment: "Header for diagnostics app event log section")
+	static let diagnosticsVPNKitLog = NSLocalizedString("VPNKit log", comment: "Header for diagnostics VPNKit log section")
+	static let diagnosticsDeviceInformation = NSLocalizedString("Device Information", comment: "Header for diagnostics device information")
+	static let diagnosticsDeviceModel = NSLocalizedString("Device model", comment: "Label for the diagnostics device model value")
+	static let diagnosticsDeviceID = NSLocalizedString("Device ID", comment: "Label for the diagnostics device identifier value")
+	static let diagnosticsIOSVersion = NSLocalizedString("iOS version", comment: "Label for the diagnostics iOS version value")
+	static let diagnosticsVPNKitVersion = NSLocalizedString("VPNKit version", comment: "Label for the diagnostics VPNKit version value")
+	static let unavailable = NSLocalizedString("Unavailable", comment: "Fallback shown when a value is unavailable")
+	static let unknown = NSLocalizedString("Unknown", comment: "Fallback shown when a value is unknown")
+
+	static func diagnosticsDeviceInfo(deviceModel: String, deviceID: String, iOSVersion: String, vpnKitVersion: String) -> String {
+		return """
+		\(diagnosticsDeviceInformation)
+		\(diagnosticsDeviceModel): \(deviceModel)
+		\(diagnosticsDeviceID): \(deviceID)
+		\(diagnosticsIOSVersion): \(iOSVersion)
+		\(diagnosticsVPNKitVersion): \(vpnKitVersion)
+		"""
+	}
+
 	// MARK: - Alerts
 	// MARK: Titles
 	static let networkSettingsAlertTitle = NSLocalizedString("Network Settings", comment: "Alert Title indicating a root cause of an issue")
+    static let accountLimitReachedAlertTitle = NSLocalizedString("Account Limit Reached", comment: "Alert Title indicating account cap has been reached")
 	static let logoutAlertTitle = NSLocalizedString("Logout?", comment: "")
 	static let loginErrorAlertTitle = NSLocalizedString("Login Failed", comment: "A Login Error has occurred")
 	static let signUpAlertTitle = NSLocalizedString("Sign Up Failed", comment: "A Sign Up Error has occurred")
@@ -138,6 +172,7 @@ enum LocalizedString {
 	static let ok = NSLocalizedString("OK", comment: "Understood")
 	static let contact = NSLocalizedString("Contact", comment: "Alert Button verb contact support")
 	static let cancel = NSLocalizedString("Cancel", comment: "")
+	static let delete = NSLocalizedString("Delete", comment: "")
 	static let disconnect = NSLocalizedString("Disconnect and Apply", comment: "")
 	static let reconnect = NSLocalizedString("Apply and Reconnect", comment: "")
 	static let logout = NSLocalizedString("Logout", comment: "")
@@ -168,7 +203,7 @@ enum LocalizedString {
 	* "VPNConnectionFailedNoInternet" = "No Internet Connection. Please check your network settings.";
 	*
 	*/
-	/// Localized String of **Your account is expired. Please update your information, or contact support. 
+	/// Localized String of **Your account is expired. Please update your information, or contact support.
 	/// You may still attempt to connect.**
 	static let accountExpired = NSLocalizedString("AccountExpiredMessage", comment: "Alert user that their account is expired and they should update their information or contact support to proceed.")
 	/// Localized String of **Invalid VPN Configuration**

@@ -22,6 +22,7 @@
 - `connectedServers`                        : [Server] - Read only. The list of connected servers for multihop after connection.
 - `shouldSkipVirtualServerInLoadBalance`    : BOOL - If true, when establishing connnection with Optimal Location, the virtual servers won't be taken into account.
 - `serverFeatures`                          : NSSet<NSNumber *> - The best available server for the city is selected based on the provided set of VPNServerFeature enum values.
+- `openVPNSettings`                         : VPNOpenVPNSettings - An object for OpenVPN options like port, protocol type, scramble, etc.
 ```
 
 # Methods
@@ -56,3 +57,14 @@
    Description: Verify that the current configuration is a valid and connectable configuration.
    Parameter: error Message containing the error.
 ```
+
+# Implementation notes:
+
+Implementation regarding On Demand can be found:
+> Refer: [VPNOnDemandConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/On%20Demand.md)
+
+Implementation regarding OpenVPN can be found:
+> Refer: [VPNOpenVPNSettings](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNOpenVPNSettings.md)
+   
+Errors based on error codes can be found:
+> Refer: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)

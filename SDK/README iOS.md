@@ -36,9 +36,9 @@ The application has no external dependencies. It includes a copy of CocoaLumberj
 
 
 # Project Setup
-1. Copy the VPNKit SDKs (VPNKit, VPNV3APIAdapter) from iOS_Fat (for simulator/development) or iOS_ARM (for production releases) or XCFrameworks to the SDK folder of the project.
+1. Copy the VPNKit SDKs (`VPNKit.xcframework`, `VPNV3APIAdapter.xcframework`) from the SDK package to the `SDK` folder of the project.
     
-2. Copy the VPNKitNetworkExtensionAdapters SDKs (VPKWireGuardAdapter, VPKWireGuardExtension) from iOS_ARM (for production releases) or macOS to the SDK folder of the project.
+2. Copy the VPNKitNetworkExtensionAdapters SDKs (`VPKWireGuardAdapter.xcframework`, `VPKWireGuardExtension.xcframework`, `VPKOpenVPNAdapter.xcframework`, `VPKOpenVPNNetworkExtension.xcframework`) from the SDK package to the `SDK` folder of the project.
 
 - You can find the VPNKit changelog in its subfolder.
         
@@ -69,8 +69,8 @@ The `VPNAPIManager` is the primary object you will use to interact with `VPNKit`
 ##### Adapters
 There are two types of adapters in VPNKit: `Connection Adapters` and `API Adapters`.
 An API Adapter is used to connect to an API. The only adapter you will need to worry about is the V3APIAdapter. This connects to the current version of the VPN backend and will handle retrieval of API resources. 
-A Connection Adapter is used to connect to specific VPN protocols. The main adapter usable on iOS, macOS and tvOS is the `NEVPNManagerAdapter`. This adapter interfaces with the Apple provided NEVPNManager interface, to provide system supported VPN connections.
- It supports IKEv2 and IPSec based connections. Due to limitations with iOS, this is the only adapter we support on iOS. The simulator for iOS does not support VPN connections. On the simulator, we simulate connections with the VPNConnectionTestAdapter. This can also be used to support UI tests in the iOS simulator.
+A Connection Adapter is used to connect to specific VPN protocols. The SDK includes adapters for Apple VPN protocols through `NEVPNManagerAdapter`, WireGuard through `VPKWireGuardAdapter`, and OpenVPN through `VPKOpenVPNAdapter`.
+The Network Extension modules `VPKWireGuardExtension` and `VPKOpenVPNNetworkExtension` support packet tunnel implementations for their respective protocols. The simulator for iOS does not support real VPN connections. On the simulator, connections are simulated with the `VPNConnectionTestAdapter`, which can also be used to support UI tests.
   
 > Refer: [Adapters](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Adapters.md)
 

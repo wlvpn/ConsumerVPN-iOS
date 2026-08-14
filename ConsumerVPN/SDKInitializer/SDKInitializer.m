@@ -10,6 +10,7 @@
 @import VPNV3APIAdapter;
 @import VPKWireGuardExtension;
 @import VPKWireGuardAdapter;
+@import VPKOpenVPNAdapter;
 
 #import "SDKInitializer.h"
 
@@ -57,7 +58,7 @@
         kIKEv2KeychainServiceName:          apiAdapter.passwordServiceName,
     };
     
-    NSMutableArray *adapters = [NSMutableArray arrayWithCapacity:2];
+    NSMutableArray *adapters = [NSMutableArray arrayWithCapacity:3];
     
     NSNumber *defaultProtocol = [NSNumber numberWithInt:VPNProtocolIKEv2];
     
@@ -70,10 +71,19 @@
     id <VPNConnectionAdapterProtocol> connectionAdapter = [[NEVPNManagerAdapter alloc] initWithOptions:connectionOptions];
     [adapters addObject:connectionAdapter];
     WireGuardAdapter *wireGuardAdapter = [self createWireGuardAdapterWithBrandName:brandName
-                                                                            apiKey:apiKey
-                                                                              uuid:[apiAdapter getOption:kV3UUIDKey]];
-    [adapters addObject:wireGuardAdapter];
-    defaultProtocol = [NSNumber numberWithInt:VPNProtocolWireGuard];
+                                                                            apiKey:apiKey];
+    if (wireGuardAdapter) {
+        [adapters addObject:wireGuardAdapter];
+        defaultProtocol = [NSNumber numberWithInt:VPNProtocolWireGuard];
+    }
+    
+    OpenVPNAdapter *openVPNAdapter = [self createOpenVPNAdapterWithBrandName:brandName
+                                                                              apiKey:apiKey
+                                                                            reseller:suffix];
+    if (openVPNAdapter) {
+        [adapters addObject:openVPNAdapter];
+    }
+
 #endif
     
     NSDictionary *apiManagerOptions = @{
@@ -95,8 +105,7 @@
 
 #if !TARGET_OS_SIMULATOR
 + (WireGuardAdapter *)createWireGuardAdapterWithBrandName:(NSString *)brandName
-                                                   apiKey:(NSString *)apiKey
-                                                     uuid:(NSString *)uuid {
+                                                   apiKey:(NSString *)apiKey {
     
     NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
     NSString *bundleID = [infoDict objectForKey:@"CFBundleIdentifier"];
@@ -105,12 +114,40 @@
     
     wgConfig.brandName = brandName;
     wgConfig.useAPIKey = NO;
-    wgConfig.uuid = uuid; //[apiAdapter getOption:kV3UUIDKey];
     wgConfig.apiKey = apiKey;
     wgConfig.extensionName = [bundleID stringByAppendingString:@".network-extension"];
     
+    if ([wgConfig validate] != WireGuardAdapterConfigurationErrorNone) {
+        NSLog(@"Wireguard Configuration not valid");
+        return nil;
+    }
+
     return [[WireGuardAdapter alloc] initWithConfiguration:wgConfig];
 }
 #endif
+
++ (OpenVPNAdapter *)createOpenVPNAdapterWithBrandName:(NSString *)brandName
+                                               apiKey:(NSString *)apiKey
+                                             reseller:(NSString *)reseller {
+    
+    NSString *extensionName = [NSString stringWithFormat:@"%@.openvpnextension", [[NSBundle mainBundle] bundleIdentifier]];
+    
+    OpenVPNAdapterConfiguration *openVPNConfig = [[OpenVPNAdapterConfiguration alloc] initWithBrandName:brandName
+                                                                                      configurationName:brandName
+                                                                                              useAPIKey:false
+                                                                                     useSystemExtension:false
+                                                                                                 apiURL:nil
+                                                                                              backupURL:nil
+                                                                                                 apiKey:apiKey
+                                                                                          extensionName:extensionName
+                                                                                               reseller:reseller];
+    if ([openVPNConfig validate] != OpenVPNAdapterConfigurationErrorNone) {
+        NSLog(@"OpenVPN Configuration not valid");
+        return nil;
+    }
+
+    return [[OpenVPNAdapter alloc] initWithConfiguration:openVPNConfig];
+}
+
 
 @end

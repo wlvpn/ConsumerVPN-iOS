@@ -27,7 +27,7 @@ class VPNManager: NSObject, VPNStatusReporting {
 ```
 
 # VPNHelperStatusReporting
-   Implement this protocol in your VPNManager to get the status updates for Helper or System Extention Installation.
+   Implement this protocol in your VPNManager to get the status updates for System Extention Installation.
 
 ```markdown
 - `statusHelperInstallSuccess`      : Notifies the receiver that the helper or system extention is installed. Includes the current VPNConfiguration.
@@ -86,6 +86,7 @@ Example Implementation:
 - `connectionShouldConnect`         : Notifies the receiver that the connection should connect.
 - `networkConnectionStatusChanged`  : Notifies the receiver that the network connection status has been changed.
 - `statusConnectionHealthUpdate`    : Notifies the receiver that the VPN connection is healthy or not.
+- `statusQuantumResistenceFailed`   : Notifies the receiver that the quantum connection was not successful. Includes an NSError describing the issue.
 ```
 
 Example Implementation:
@@ -176,6 +177,12 @@ ViewController: VPNConnectionStatusReporting {
     func statusConnectionHealthUpdate(_ notification: Notification) {
         // Handle VPN connection health update in here
     }
+    
+    func statusQuantumResistenceFailed(_ notification: Notification) {
+        // Handle any update in here
+    }
+    
+
 }
 
 ```
@@ -202,8 +209,8 @@ Example Implementation:
 
 ```swift
    func updateStatusForState(state : VPNConnectionStatus? = nil) {
-      // If no state was set, retrieves apiManager status directly to determine state.
-        let connectionStatus = state ?? apiManager.status
+      // If no state was set, retrieves apiManager connectionStatus directly to determine state.
+        let connectionStatus = state ?? apiManager.connectionStatus
       // Error occurred, displays error animation and returns
          if didFail { return }
          switch connectionStatus {
@@ -215,6 +222,25 @@ Example Implementation:
                   // Handle any update 
              case .statusConnected:
                  // Handle any update
+             default:
+                 // Handle any update
+       }
+  }
+```
+
+```swift
+   func updateHelperStatusForState(state : VPNConnectionStatus? = nil) {
+      // If no state was set, retrieves apiManager helperStatus directly to determine state.
+        let connectionStatus = state ?? apiManager.helperStatus
+      // Error occurred, displays error animation and returns
+         if didFail { return }
+         switch helperStatus {
+             case .statusHelperInstallSuccess:
+                  // Handle any update 
+             case .statusHelperInstallPending:
+                  // Handle any update 
+             case .statusHelperInstallFailed:
+                  // Handle any update
              default:
                  // Handle any update
        }

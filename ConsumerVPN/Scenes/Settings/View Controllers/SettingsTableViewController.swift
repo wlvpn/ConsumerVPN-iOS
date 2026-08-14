@@ -33,9 +33,9 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
     /// This should have a value through dependency injection. If this doesn't have a value, something went wrong and we should crash
     var apiManager : VPNAPIManager!
 
-        
     var loginCoordinator: LoginCoordinator?
     
+    var reconnectionBlock: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,6 +121,8 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
             protocolSegmentControl.selectedSegmentIndex = 1
         case .ipSec:
             protocolSegmentControl.selectedSegmentIndex = 2
+        case .openVPN:
+            protocolSegmentControl.selectedSegmentIndex = 3
         default:
             protocolSegmentControl.selectedSegmentIndex = 0
         }
@@ -149,8 +151,7 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
                 action = UIAlertAction(title: LocalizedString.reconnect, style: .default) {  (action) in
                     ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
                     ApiManagerHelper.shared.disconnect()
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) { [weak self] in
-                        guard let self = self else { return }
+                    self.reconnectionBlock = {
                         ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
                         ApiManagerHelper.shared.toggleOnDemand(enable: sender.isOn, reconnect: true) { success in
                             DispatchQueue.main.async {
@@ -167,9 +168,11 @@ class SettingsTableViewController: UITableViewController, VPNStatusReporting {
                     action = UIAlertAction(title: LocalizedString.disconnect, style: .destructive) {  (action) in
                         ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController?.view ?? self.view)
                         ApiManagerHelper.shared.disconnect()
-                        ApiManagerHelper.shared.setOnDemand(enable: false)
-                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) {
-                            sender.isEnabled = true
+                        self.reconnectionBlock = {
+                            ApiManagerHelper.shared.setOnDemand(enable: false)
+                            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) {
+                                sender.isEnabled = true
+                            }
                         }
                         
                     }
@@ -244,6 +247,10 @@ extension SettingsTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 1 && indexPath.row == 3 && !(ApiManagerHelper.shared.selectedProtocol == .openVPN){
+            return 0
+        }
+
         return 44
     }
     
@@ -261,7 +268,7 @@ extension SettingsTableViewController {
             }
         case 1: // Connection Settings
             switch indexPath.row {
-            case 3:
+            case 4:
                 ApiManagerHelper.shared.refreshServer { [weak self] success, error in
                     guard let `self` = self else { return  }
                     if success {
@@ -308,6 +315,12 @@ extension SettingsTableViewController : VPNConnectionStatusReporting {
     func statusConnectionDidDisconnect(_ notification: Notification) {
         configureUIForSelectedState()
         ProgressSpinnerHelper.shared.hideSpinner()
+        
+        if let reconnectBlock = reconnectionBlock {
+            reconnectBlock()
+        }
+        
+        reconnectionBlock = nil
     }
     
     func statusConnectionFailed(_ notification: Notification) {
@@ -340,6 +353,7 @@ extension SettingsTableViewController: VPNConfigurationStatusReporting {
                 self.alwaysOnSwitch.isEnabled = true
                 self.protocolSegmentControl.isEnabled = true
                 self.killSwitch.isEnabled = true
+                self.tableView.reloadData()
             }
             
         }

@@ -1,61 +1,77 @@
 # VPNKit Binaries Size
-------
-The binaries size after been build for sharing sligthly change from the final size once they are embeded and build into the clients.
-Differences in binaries size can be checked as follows:
 
-### Binaries File Raw Size
+The binary sizes after being built for sharing slightly change from the final size once they are embedded and built into the clients. Differences in binary sizes can be checked as follows.
 
-###### iOS ARM
+## Binaries File Raw Size
 
-- VPNV3APIAdapter       -> 315 KB
-- VPNKit                -> 941 KB
-- VPKWireGuardAdapter   -> 634 KB
-- VPKWireGuardExtension -> 3.2 MB
+### iOS ARM
 
-Total: 4.1668 MB
+| Binary | Size |
+| --- | --- |
+| VPNV3APIAdapter | 315 KB |
+| VPNKit | 941 KB |
+| VPKWireGuardAdapter | 634 KB |
+| VPKWireGuardExtension | 3.2 MB |
+| VPKOpenVPNAdapter | 900 KB |
+| VPKOpenVPNExtension | 2.9 MB |
+| **Total** | **8.825 MB** |
 
-###### macOS
+### macOS
 
-- VPNV3APIAdapter       -> 594 KB
-- VPNKit                -> 1.9 MB
-- VPKWireGuardAdapter   -> 1.3 MB
-- VPKWireGuardExtension -> 6.5 MB
-- VPNHelperAdapter      -> 671 KB
+| Binary | Size |
+| --- | --- |
+| VPNV3APIAdapter | 594 KB |
+| VPNKit | 1.9 MB |
+| VPKWireGuardAdapter | 1.3 MB |
+| VPKWireGuardExtension | 6.5 MB |
+| VPKOpenVPNAdapter | 900 KB |
+| VPKOpenVPNExtension | 2.9 MB |
+| **Total** | **14.059 MB** |
 
-Total: 11.998 MB
+### tvOS
 
-###### tvOS
+| Binary | Size |
+| --- | --- |
+| VPNV3APIAdapter | 299 KB |
+| VPNKit | 877 KB |
+| VPKWireGuardAdapter | 587 KB |
+| VPKWireGuardExtension | 3.1 MB |
+| VPKOpenVPNAdapter | 900 KB |
+| VPKOpenVPNExtension | 2.9 MB |
+| **Total** | **8.601 MB** |
 
-- VPNV3APIAdapter       -> 299 KB
-- VPNKit                -> 877 KB
-- VPKWireGuardAdapter   -> 587 KB
-- VPKWireGuardExtension -> 3.1 MB
+## File Size After Client Built
 
-Total: 4.937 MB
+### iOS (IPA)
 
-#### File Size After Client Built
+| Binary | Size |
+| --- | --- |
+| VPNKit | 728 KB |
+| VPNV3APIAdapter | 428 KB |
+| VPKWireGuardAdapter | 436 KB |
+| VPKWireGuardExtension | 2.9 MB |
+| VPKOpenVPNAdapter | 900 KB |
+| VPKOpenVPNExtension | 2.9 MB |
+| **Total** | **8.234 MB** |
 
-###### iOS(IPA)
+### macOS (APP)
 
-- VPNV3APIAdapter       -> 428 KB
-- VPNKit                -> 728 KB
-- VPKWireGuardExtension -> 2.9 MB
-- VPKWireGuardAdapter   -> 436 KB
+| Binary | Size |
+| --- | --- |
+| VPNKit | 1.4 MB |
+| VPNV3APIAdapter | 668 KB |
+| VPKWireGuardAdapter | 900 KB |
+| VPKWireGuardExtension | 2.9 MB |
+| VPKOpenVPNAdapter | 900 KB |
+| VPKOpenVPNExtension | 2.9 MB |
+| **Total** | **9.610 MB** |
 
-Total: 4.5616 MB
- 
-###### macOS(APP)
+### tvOS (IPA)
 
-- VPNV3APIAdapter       -> 668 KB
-- VPNKit                -> 1.4 MB
-- VPKWireGuardAdapter   -> 900 KB
-- VPNHelperAdapter      -> 9.3 MB
-
-Total: 12.513 MB
- 
-###### tvOS(IPA)
-
-- VPNV3APIAdapter       -> 412 KB
-- VPNKit                -> 668 KB
-
-Toal: 1080 KB
+| Binary | Size |
+| --- | --- |
+| VPNV3APIAdapter | 412 KB |
+| VPNKit | 668 KB |
+| VPKOpenVPNAdapter | 900 KB |
+| VPKOpenVPNExtension | 2.9 MB |
+| **Total** | **4.834 MB** |

@@ -138,8 +138,6 @@ If session expires, the **VPNLogoutSucceededNotification** notification will be 
 
 ```    
 
-
-
 # Implementation notes:
     
  SDK performs an automatic login if the user was previously logged in and did not logged out. Please check **VPNAutomaticLoginSucceededNotification** notification

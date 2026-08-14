@@ -5,7 +5,7 @@
 ![Supports iOS](https://img.shields.io/badge/iOS-fat--binary-blue)
 ![Supports ARM](https://img.shields.io/badge/ARM-arm64-informational)
 ![XCFramework Included](https://img.shields.io/badge/XCFramework-included-success)
-[![VPNKit 7.1.3](https://img.shields.io/badge/VPNKit-7.1.3-brightgreen)](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/README.md)
+[![VPNKit 7.2.0](https://img.shields.io/badge/VPNKit-7.2.0-brightgreen)](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/README.md)
 
 ConsumerVPN is a ready-to-brand application built with Swift and the WLVPN VPN SDK. It provides a foundation for your own VPN app and serves as a complete guide for integrating the WLVPN VPN SDK.(VPNKit).
 
@@ -22,7 +22,7 @@ ConsumerVPN is a ready-to-brand application built with Swift and the WLVPN VPN S
 4. [Info.plist](#4-infoplist)
 5. [Setting Up Framework Search Paths](#5-setting-up-framework-search-paths)
 6. [Setting Up Permissions](#6-setting-up-permissions-entitlements-and-capabilities)
-7. [WireGuard Integration](#7-wireguard-integration)
+7. [WireGuard and OpenVPN Integration](#7-wireguard-and-openvpn-integration)
 8. [VPNKit Initializer](#8-vpnkit-initializer)
 9. [Key Files](#9-key-files)
 10. [Customizing Your App's Look](#10-customizing-your-apps-look-theme-integration)
@@ -78,16 +78,16 @@ This project uses a "Theme" submodule to control the look and feel of your app (
 
 ## 3. Adding the WLVPN SDK (VPNKit)
 
-You will receive a folder named `VPNKit` from your WLVPN account manager. This folder contains files (called `.xcframework` files) that are essential for the VPN functionality.
+You will receive the VPNKit SDK files from your WLVPN account manager. These `.xcframework` files are essential for the VPN functionality.
 
-**For iOS apps, you only need the `.xcframework` files found inside the `VPNKit/XCFramework` subfolder.**
+**For iOS apps, copy the required `.xcframework` files from the provided SDK package into this project's `SDK` folder.**
 
 ### How to Add Them to Your Project:
 
 1.  **Open your Xcode project:** Navigate to the `consumervpn-ios` folder you downloaded, and double-click the file `ConsumerVPN.xcodeproj`.
 2.  **Drag and Drop:**
-    * Locate the `VPNKit/XCFramework` folder you received from your WLVPN account manager.
-    * **Drag** all the `.xcframework` files directly into the folder named **`SDK`** ,visible in the Xcode Project Navigator (the left-hand panel in Xcode).
+    * Locate the `.xcframework` files you received from your WLVPN account manager.
+    * **Drag** the required `.xcframework` files directly into the folder named **`SDK`** ,visible in the Xcode Project Navigator (the left-hand panel in Xcode).
     * When a prompt appears, make sure to check **"Copy items if needed"** and select your app target. This ensures the files are copied into your project.
 3.  **Configure in Xcode:**
     * In Xcode, select your main app project in the Project Navigator (the very top item in the left panel).
@@ -100,8 +100,11 @@ You will receive a folder named `VPNKit` from your WLVPN account manager. This f
 
     | Framework or Extension                 | Embed Setting          |
     |----------------------------------------|------------------------|
+    | ConsumerVPNOpenVPNExtension.appex      | Embed Without Signing  |
     | ConsumerVPNWGExtension.appex           | Embed Without Signing  |
     | NetworkExtension.framework             | Do Not Embed           |
+    | VPKOpenVPNAdapter.xcframework          | Embed & Sign           |
+    | VPKOpenVPNNetworkExtension.xcframework | Embed & Sign           |
     | VPKWireGuardAdapter.xcframework        | Embed & Sign           |
     | VPKWireGuardExtension.xcframework      | Embed & Sign           |
     | VPNKit.xcframework                     | Embed & Sign           |
@@ -184,16 +187,19 @@ Your app uses a file named `.entitlements` to declare these system permissions. 
 
 To verify this: Check under "Signing and Capabilities > Entitlements" in Xcode for both your main app and any associated extension targets.
 
-## 7. WireGuard Integration
+## 7. WireGuard and OpenVPN Integration
 
-The WireGuard, a modern VPN protocol, support is implemented using `NEPacketTunnelProvider`, which allows the app to manage its own VPN connection .
+WireGuard and OpenVPN support are implemented using `NEPacketTunnelProvider`, which allows the app to manage its own VPN connection.
 The project includes:
 - A dedicated WireGuard adapter: `VPKWireGuardAdapter.xcframework`
 - A WireGuard extension: `VPKWireGuardExtension.xcframework`
+- A dedicated OpenVPN adapter: `VPKOpenVPNAdapter.xcframework`
+- An OpenVPN Network Extension SDK: `VPKOpenVPNNetworkExtension.xcframework`
 - The necessary entitlements and capabilities to support packet-level routing
-The WireGuard extension is included as `ConsumerVPNWGExtension.appex` and needs to be properly set up within your app.
+The WireGuard extension is included as `ConsumerVPNWGExtension.appex`, and the OpenVPN extension is included as `ConsumerVPNOpenVPNExtension.appex`. Both extensions need to be properly set up within your app.
 
-Refer: [WireGuard Integration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Wireguard.md)
+- Refer: [WireGuard Integration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Wireguard.md)
+- Refer: [OpenVPN+NE Integration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/OpenVPN+NE%20Implementation.md)
 
 ## 8. VPNKit Initializer
 
@@ -211,6 +217,8 @@ Import these in your bridging headers:
 ```swift
 @import VPNKit;
 @import VPNV3APIAdapter;
+@import VPKOpenVPNAdapter;
+@import VPKOpenVPNNetworkExtension;
 @import VPKWireGuardAdapter;
 @import VPKWireGuardExtension;
 ```

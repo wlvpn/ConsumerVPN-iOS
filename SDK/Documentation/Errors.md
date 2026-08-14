@@ -66,6 +66,8 @@
 - VPNMultihopAPIVersionNotSupported    = 1319: Multihop API Version is not supported error 
 - VPNMultihopNotAvailable              = 1320: Multihop API not available error
 - VPNSystemExtensionNotInstalled       = 1321: System extension not installed
+- VPNSystemExtensionNotApproved        = 1322: System extension not approved
+- VPNSystemExtensionDisabled           = 1323: System extension disabled
 - VPNConfigurationRuntimeErrorMax      = 1400: Generic configuration run-time error
 
 ## `VPNKitAdapterError - Adapter Errors 5000`

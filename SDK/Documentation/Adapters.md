@@ -5,7 +5,6 @@ A Connection Adapter is used to connect to specific VPN protocols. The main adap
 
 # Connection Adapter
   A ConnectionAdapter must be allowed to receive options from the owning application.
-  
   `(id)initWithOptions:(NSDictionary *)options;`
     parameter: options - A dictionary containing configuration parameters to customize the adapter’s behavior. Keys and values are expected to be defined by the owning application.
     Supported keys: 
@@ -18,7 +17,7 @@ A Connection Adapter is used to connect to specific VPN protocols. The main adap
         DES and 3DES are not used by the SDK under any conditions.
         All default settings are compliant with Apple’s IKEv2 security requirements as of iOS 26 and macOS 15.
         
-    Refer to: [Initializers](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Initializers.md)
+Refer to: [Initializers](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Initializers.md)
 
 ## Properties
  1. `connectedDate`: NSDate - Set when the VPN is connected else nil.

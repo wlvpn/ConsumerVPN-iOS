@@ -165,6 +165,14 @@ extension UIAlertController {
 	///
 	/// - returns: An alert controller containing all information about the error and contact support
 	static func contactSupport(with error: Error) -> UIAlertController {
+        let nsError = error as NSError
+        if nsError.domain == "VPNKitErrorDomain", nsError.code == 1500 {
+            return .alert(withTitle: LocalizedString.accountLimitReachedAlertTitle,
+                          message: nsError.localizedDescription,
+                          actions: [UIAlertAction(title: LocalizedString.ok, style: .default, handler: nil)],
+                          alertType: .alert)
+        }
+
 		let alertTitle = LocalizedString.somethingWentWrongTitle
 		let alertMessage = LocalizedString.contactSupport(with: error)
 		

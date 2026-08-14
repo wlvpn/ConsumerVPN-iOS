@@ -7,21 +7,20 @@
 -  `Note`: 
     macOS app never suspends and they can access data traffic continuously. But in iOS if app is suspended no data traffic will be received
 
-```
-  #import <Foundation/Foundation.h>
+```objc
+#import <Foundation/Foundation.h>
  
-   @interface VPNBandwidthModel : NSObject
-   
-      @property (strong) NSNumber *totalUpload;
-      @property (strong) NSNumber *totalDownload;
-      @property (strong) NSNumber *lastUpload;
-      @property (strong) NSNumber *lastDownload;
-   
-  @end
+@interface VPNBandwidthModel : NSObject
+
+@property (strong) NSNumber *totalUpload;
+@property (strong) NSNumber *totalDownload;
+@property (strong) NSNumber *lastUpload;
+@property (strong) NSNumber *lastDownload;
+
+@end
 ```
 
-
-```
+```swift
 extension ViewController :  VPNConnectionStatusReporting {
     func statusNetworkMonitorUpdate(notification: Notification) {
         var dataLastUploadSize: UInt = 0

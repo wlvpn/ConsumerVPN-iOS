@@ -373,12 +373,7 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 	/// - parameter notification: Notification object kicked back from the VPNKit. The notification's `object` property is an NSError describing the reason for failure
 	func statusConnectionFailed(_ notification: Notification) {
         debugPrint("[ConsumerVPN] \(#function) \(notification)")
-		updateStatusForState(didFail: true)
-		
-		// Removes error animation after 5 seconds
-		DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5), execute: { [weak self] in
-			self?.updateStatusForState()
-		})
+        updateStatusForState(state: .statusDisconnected)
 		
 		guard let error = notification.object as? Error else {
 			print("Connection Failed with No Error")

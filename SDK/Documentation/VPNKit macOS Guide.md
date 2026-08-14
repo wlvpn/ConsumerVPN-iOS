@@ -81,12 +81,11 @@ An initialized `VPNAPIManager` object for various API and connection adapter set
 ```swift
 import VPNKit
 import VPNV3APIAdapter
-import VPNHelperAdapter
+import VPKOpenVPNAdapter
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 var apiManager: VPNAPIManager!
-let privilegedHelperManager = VPNPrivilegedHelperManager(helperName: <#openVPNToolBundleId>, andBrandName: <#brand name>)
 
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Initialize the APIManager using helper Objc object.
@@ -124,7 +123,7 @@ func login(username : String, password: String) {
 ### 2. Fetching the servers
 ```swift
 // Fetch all of the cities from the APIManager
-fetchedCities = apiManager.fetchAllCities() 
+let fetchedCities = apiManager.fetchAllCities() 
 ```
 
 > Refer: [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
@@ -136,7 +135,7 @@ fetchedCities = apiManager.fetchAllCities()
 
 - Fetch the current location model from the `vpnConfiguration` object.
 
-> Refer: [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
+> Refer: [Notifications](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Notifications.md)
 
 
 ### 4. Selecting a protocol
@@ -152,10 +151,8 @@ On changing the protocol listen to the notification as given in example:
     apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.ikEv2
     // If IPSec selected
     apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.ipSec
-    // If OpenVPN UDP selected
-    apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.openVPN_UDP
-    // If OpenVPN TCP selected
-    apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.openVPN_TCP
+    // If OpenVPN selected
+    apiManager.vpnConfiguration.selectedProtocol = VPNProtocol.openVPN
 }
 
 extension VPNManager: VPNConfigurationStatusReporting {

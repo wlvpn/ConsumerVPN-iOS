@@ -35,11 +35,13 @@ class ApiManagerHelper: NSObject {
 ## Initialization
 
 - **`initWithAPIAdapter:connectionAdapter:andOptions:`**
+
 ```objc
   - (instancetype _Nullable)initWithAPIAdapter:(NSObject<VPNAPIAdapterProtocol> * _Nonnull)apiAdapter
        connectionAdapter:(NSObject<VPNConnectionAdapterProtocol> * _Nonnull)connectionAdapter
               andOptions:(NSDictionary * _Nonnull)options
 ```
+
   Initializes the `APIManager` with the provided `APIAdapter` and `ConnectionAdapter`. Both of these objects must conform to their respective protocols. This method also allows you to pass in customization options to be used by the manager. For example:
 
 ```swift
@@ -51,6 +53,7 @@ class ApiManagerHelper: NSObject {
 ## Update Account Configuration Functions
 
 - **`updateAccountConfiguration:`**
+
 ```objc
  - (void)updateAccountConfigurationWithCompletion:(void (^_Nullable)(BOOL success, NSError * _Nullable error))completionHandler;
 ```
@@ -67,45 +70,50 @@ class ApiManagerHelper: NSObject {
 ## Refresh Location Functions
 
 - **`refreshLocationWithCompletion:`**
+
 ```objc
   - (void)refreshLocationWithCompletion:(void (^_Nullable)(VPNCurrentLocationModel * _Nullable locationModel,
                                                             NSError * _Nullable reachabilityError))completionHandler;
 ```
-  Refreshes the user's current location using the API adapter. For example:
 
-```swift
+  Refreshes the user's current location using the API adapter. For example:
+  
+  ```swift
   apiManager.refreshLocation(completion: { location, error in
       //Location will be user's current location or VPN server location.
   })
-```
+  ```
 
 ## Update Server List
 
 - **`updateServerList`**
+
 ```objc
   - (void)updateServerList;
 ```
   Fetches the server list and stores it as a current list of servers. For example:
 
-```swift
-  func refreshServer() async -> Bool {
-      guard apiManager.networkIsReachable else { return false }
-      let success = await apiManager.updateServerList()
+    ```swift
+    func refreshServer() async -> Bool {
+        guard apiManager.networkIsReachable else { return false }
+        let success = await apiManager.updateServerList()
       
-      return success
-  }
-```
+        return success
+    }
+    ```
 
 ## Fetch Country Functions
 
 - **`fetchAllCountries`**
+
 ```objc
   - (NSArray * _Nonnull)fetchAllCountries;
 ```
+
   Returns an array with all available Countries. For example:
 
 ```swift
-  apiManager.fetchAllCountries()
+  let countries = apiManager.fetchAllCountries()
 ```
 
 > Refer : [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
@@ -113,13 +121,15 @@ class ApiManagerHelper: NSObject {
 ## Fetch All Cities
 
 - **`fetchAllCities`**
+
 ```objc
   - (NSArray * _Nonnull)fetchAllCities;
 ```
+
   Returns an array with all available Cities. For example:
 
 ```swift
-  apiManager.fetchAllCities()
+let cities = apiManager.fetchAllCities()
 ```
 
 > Refer : [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md)
@@ -127,10 +137,12 @@ class ApiManagerHelper: NSObject {
 ## Connection Functions
 
 - **`synchronizeConfiguration`**
+
 ```objc
   - (void)synchronizeConfiguration;
   - (void)synchronizeConfigurationWithCompletion:(void(^_Nullable)(BOOL success))completion;
 ```
+  
   Use these methods to commit configuration changes to the currently active adapter. For example:
 
 ```swift
@@ -140,9 +152,11 @@ class ApiManagerHelper: NSObject {
 ```
 
 - **`connect`**
+
 ```objc
   - (void)connect;
 ```
+
   Connect to the VPN with the provided `VPNConfiguration`. For example:
   
 ```swift
@@ -150,6 +164,7 @@ class ApiManagerHelper: NSObject {
 ```
 
 - **`disconnect`**
+
 ```objc
   - (void)disconnect;
 ```
@@ -160,6 +175,7 @@ class ApiManagerHelper: NSObject {
 ```
 
 - **`isConnectedToVPN`**
+
 ```objc
   - (BOOL)isConnectedToVPN;
 ```
@@ -170,6 +186,7 @@ class ApiManagerHelper: NSObject {
 ```
 
 - **`isConnectingToVPN`**
+
 ```objc
   - (BOOL)isConnectingToVPN;
 ```
@@ -180,6 +197,7 @@ class ApiManagerHelper: NSObject {
 ```
 
 - **`isDisconnectingFromVPN`**
+
 ```objc
   - (BOOL)isDisconnectingFromVPN;
 ```
@@ -190,6 +208,7 @@ class ApiManagerHelper: NSObject {
 ```
 
 - **`isDisconnectedFromVPN`**
+
 ```objc
   - (BOOL)isDisconnectedFromVPN;
 ```
@@ -202,12 +221,14 @@ class ApiManagerHelper: NSObject {
 > Refer : [Connection](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Connection.md)
 
 - **`resetConfiguration`**
+
 ```objc
   - (void)resetConfiguration;
 ```
   Removes and resets the current configuration to address issues.
 
 - **`refreshConfiguration`**
+
 ```objc
   - (void)refreshConfiguration;
 ```
@@ -222,6 +243,7 @@ class ApiManagerHelper: NSObject {
 ## Captive Portal Functions
 
 - **`updateCaptivePortalStatus:`**
+
 ```objc
   - (void)updateCaptivePortalStatus:(void (^_Nullable)(CaptivePortal newStatus))completion;
 ```
@@ -230,12 +252,14 @@ class ApiManagerHelper: NSObject {
 ## Protocol Helpers
 
 - **`supportedProtocols`**
+
 ```objc
   - (NSArray * _Nonnull)supportedProtocols;
 ```
   Returns an array of supported protocols from all connection adapters.
 
 - **`protocolForString:`**
+
 ```objc
 - (VPNProtocol)protocolForString:(NSString * _Nonnull)protocolString;
 ```
@@ -244,12 +268,14 @@ class ApiManagerHelper: NSObject {
 ## Plugin Support
 
 - **`addPlugin:forKey:`**
+
 ```objc
   - (void)addPlugin:(id<VPNPluginProtocol> _Nonnull)plugin forKey:(NSString * _Nonnull)key;
 ```
   Adds a plugin to the `VPNAPIManager`.
 
 - **`getPlugin:`**
+
 ```objc
   - (id<VPNPluginProtocol> _Nonnull)getPlugin:(NSString * _Nonnull)key;
 ```
@@ -258,28 +284,32 @@ class ApiManagerHelper: NSObject {
 ## System Extension Helpers (macOS only)
 
 - **`systemExtensionInstalled`**
+
 ```objc
   - (BOOL)systemExtensionInstalled;
 ```
-  Checks if the WireGuard system extension is installed or not. If it is then the WireGuard protocol can connect; otherwise, call the **installSystemExtension** function.
+  Checks if the WireGuard/OpenVPN system extension is installed or not. If it is then the WireGuard protocol can connect; otherwise, call the **installSystemExtension** function.
 
 - **`systemExtensionApprovalPending`**
+
 ```objc
   - (BOOL)systemExtensionApprovalPending;
 ```
-  Checks if the WireGuard system extension is pending for user approval. If true, the WireGuard protocol cannot connect then you should show alert to notify user.
+  Checks if the WireGuard/OpenVPN system extension is pending for user approval. If true, the WireGuard/OpenVPN protocol cannot connect then you should show alert to notify user.
 
 - **`installSystemExtension`**
+
 ```objc
   - (void)installSystemExtension;
 ```
-  **installSystemExtension()** function installs the WireGuard system extension. The installation status will be reported as a notification (`VPNHelperInstallSuccessNotification` or `VPNHelperInstallFailedNotification` with an error as the notification object).
+  **installSystemExtension()** function installs the WireGuard/OpenVPN system extension. The installation status will be reported as a notification (`VPNHelperInstallSuccessNotification` or `VPNHelperInstallFailedNotification` with an error as the notification object).
 
 - **`uninstallSystemExtension`**
+
 ```objc
   - (void)uninstallSystemExtension;
 ```
-  Uninstalls the WireGuard system extension.
+  Uninstalls the WireGuard/OpenVPN system extension.
 
 For example:
 
@@ -309,12 +339,18 @@ extension ViewController: VPNHelperStatusReporting {
         if vpnConfiguration.selectedProtocol == .wireGuard  {
             // WireGuard System Extention installed successfully and available to connect.
         }
+        if vpnConfiguration.selectedProtocol == .openVPN  {
+            // OpenVPN System Extention installed successfully and available to connect.
+        }
     }
     
     func statusHelperInstallPending(_ notification: Notification) {
         guard let vpnConfiguration = vpnConfiguration else {return}
         if vpnConfiguration.selectedProtocol == .wireGuard  {
             // WireGuard System Extention installation pending so cannot connect.
+        }
+        if vpnConfiguration.selectedProtocol == .openVPN  {
+            // OpenVPN System Extention installation pending so cannot connect.
         }
     }
     
@@ -323,63 +359,24 @@ extension ViewController: VPNHelperStatusReporting {
         if vpnConfiguration.selectedProtocol == .wireGuard  {
             // WireGuard System Extention installation failed so cannot connect.
         }
-    }
-}
-```
-
-## Privileged Helper (macOS only)
-
- - **`isHelperInstalled`**
-  This function drives helper installation. It can, synchronously or asynchronously, determine if the helper is installed. Once your adapter determines if the helper is installed, it should call the completion handler. This function is used by multiple methods in the VPNAPIManager. Each function that calls it may provide a different completion handler.
-```objc
-- (BOOL)isHelperInstalled;
-```
- - **`installPrivilegedHelper()`**
-  Installs the **OpenVPN** privileged helper. The installation status will be reported as a notification (`VPNHelperInstallSuccessNotification` or `VPNHelperInstallFailedNotification` with an error as the notification). On connecting without the helper installation, a `VPNHelperInstallPendingNotification` notification will be sent.
-
-For example:
-
-```swift
-class ViewController : NSWindowController {
-    /// The instance of `VPNAPIManager` used to perform API operations.
-    var apiManager: VPNAPIManager
-    
-    // Initialized privileged helper manager with the provided helper tool name
-    var privilegedHelperManager: VPNPrivilegedHelperManager?
-    
-    func canOpenVPNConnect() {
-        if !(privilegedHelperManager?.isHelperInstalled()) {
-            apiManager.installPrivilegedHelper()
-            return false
-        }
         
-        return true
-    }
-}
-
-extension ViewController: VPNHelperStatusReporting {
-    func statusHelperInstallSuccess(_ notification: Notification) {
-        guard let vpnConfiguration = apiManager.vpnConfiguration else {return}
-        if vpnConfiguration.selectedProtocol == .openVPN_TCP
-            || vpnConfiguration.selectedProtocol == .openVPN_UDP {
-            // OpneVPN Helper installed successfully and available to connect.
-        }
-    }
-    
-    func statusHelperInstallPending(_ notification: Notification) {
-        guard let vpnConfiguration = apiManager.vpnConfiguration else {return}
-        if vpnConfiguration.selectedProtocol == .openVPN_TCP
-            || vpnConfiguration.selectedProtocol == .openVPN_UDP {
-            // OpneVPN Helper installation pending so cannot connect.
-        }
-    }
-    
-    func statusHelperInstallFailed(_ notification: Notification) {
-        guard let vpnConfiguration = apiManager.vpnConfiguration else {return}
-        if vpnConfiguration.selectedProtocol == .openVPN_TCP
-            || vpnConfiguration.selectedProtocol == .openVPN_UDP {
-            // OpneVPN Helper installation failed so cannot connect.
+        if vpnConfiguration.selectedProtocol == .openVPN  {
+            // OpenVPN System Extention installation failed so cannot connect.
         }
     }
 }
 ```
+
+# Implementation notes:
+
+Implementation regarding VPN Configuration can be found:
+> Refer: [VPNConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNConfiguration.md)
+
+Implementation regarding On Demand can be found:
+> Refer: [VPNOnDemandConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/On%20Demand.md)
+
+Implementation regarding OpenVPN Settings can be found:
+> Refer: [VPNOpenVPNSettings](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNOpenVPNSettings.md)
+   
+Errors based on error codes can be found:
+> Refer: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)

@@ -49,6 +49,8 @@ extension ApiManagerHelper {
                 vpnConfiguration.selectedProtocol = VPNProtocol.ikEv2
             case 2:
                 vpnConfiguration.selectedProtocol = VPNProtocol.ipSec
+            case 3:
+                vpnConfiguration.selectedProtocol = VPNProtocol.openVPN
             default:
                 break
             }
@@ -56,6 +58,11 @@ extension ApiManagerHelper {
         } else {
             debugPrint("[ConsumerVPN] VPN Is connected, you can't change protocol switch")
         }
+    }
+    
+    func updateOpenVPNPort(_ port: UInt) {
+       
+        vpnConfiguration.openVPNSettings.port = port
     }
     
     func toggleKillSwitch(enable:Bool) {
