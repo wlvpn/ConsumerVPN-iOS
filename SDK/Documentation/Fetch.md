@@ -26,6 +26,7 @@
 - `country`                     : The country that contains this server.
 - `formattedServerName`         : NSString - The first segment of the hostname, delimited by a dot (.).
 - `availableFeatures`           : NSSet<NSNumber *> - The features available on the server.
+- `dedicatedIPAddress`          : NSString - The Dedicated IP address of the dedicated IP server.
 ```
 
 ## Fetch all cities
@@ -121,3 +122,7 @@ func statusConnectionFailed(_ notification: Notification) {
   }
 }
 ```
+
+## Dedicated IP Servers
+
+> Refer to: [Dedicated IP Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Dedicated%20IP%20Implementation.md)

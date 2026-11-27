@@ -78,10 +78,10 @@ class LoginViewController: UIViewController {
 		
 		usernameTextField.attributedPlaceholder = NSAttributedString(string: LocalizedString.username, attributes: [NSAttributedString.Key.foregroundColor: UIColor.loginFieldText])
 		usernameTextField.textColor = .loginFieldText
-		
+        
 		passwordTextField.attributedPlaceholder = NSAttributedString(string: LocalizedString.password, attributes: [NSAttributedString.Key.foregroundColor: UIColor.loginFieldText])
 		passwordTextField.textColor = .loginFieldText
-		
+        
 		forgotButton.setTitleColor(.loginFieldText, for: .normal)
 		forgotButton.isHidden = Theme.hideForgotPasswordButton
 		

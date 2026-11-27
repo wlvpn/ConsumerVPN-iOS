@@ -50,13 +50,39 @@ class BaseServerTableViewController: UITableViewController {
         cell.cityLabel.text = "\(cityModel.name), \(cityModel.countryName)"
         cell.flagImageView.isHidden = false
         cell.flagImageView.image = cityModel.flagImage
+        cell.cityLabel.textColor = UIColor.white
         print("\(cityModel.name), \(cityModel.countryName) - \(cityModel.flagImage.debugDescription)")
 //        cell.shapeFlagToCircle()
     }
     
+    func configureDedicatedServer(_ cell: CityServerTableViewCell, forCityModel cityModel: CityModel) {
+        
+        // configure cell...
+        guard let server = cityModel.filteredServers.first else { return}
+        let ipAddress = server.dedicatedIPAddress ?? "N/A"
+        let isInMaintainance = (server.maintenance ?? 0) == 1
+        
+        cell.cityLabel.text = "\(cityModel.name), \(cityModel.countryID) - \(ipAddress)"
+        cell.flagImageView.isHidden = false
+        if isInMaintainance {
+            cell.flagImageView.image = UIImage(named: "server_off")?.withRenderingMode(.alwaysTemplate)
+            cell.flagImageView.tintColor = UIColor(named: "server_off_color")
+            cell.cityLabel.textColor = UIColor(named: "server_off_color")
+        } else {
+            cell.flagImageView.image = cityModel.flagImage
+            cell.flagImageView.tintColor = .appWideTint
+            cell.cityLabel.textColor = UIColor.white
+        }
+        
+        print("\(cityModel.name), \(cityModel.countryName) - \(cityModel.flagImage.debugDescription)")
+//        cell.shapeFlagToCircle()
+    }
+    
+    
     func configureCityOnly(_ cell: CityServerTableViewCell, forCityModel cityModel: CityModel) {
         cell.cityLabel.text = "\(cityModel.name)"
         cell.flagImageView.isHidden = true
+        cell.cityLabel.textColor = UIColor.white
     }
     
     func configure(_ header: CountryHeaderView, forCountrySection countrySection: CountrySection) {
@@ -76,7 +102,7 @@ class BaseServerTableViewController: UITableViewController {
         cell.flagImageView.isHidden = false
         cell.flagImageView.image = UIImage(named: "fastest-available")?.withRenderingMode(.alwaysTemplate)
         cell.flagImageView.tintColor = .appWideTint
-//        cell.shapeFlagToSquare()
+        cell.cityLabel.textColor = UIColor.white
     }
     
     func configureBestAvailable(_ header: CountryHeaderView) {
@@ -86,4 +112,5 @@ class BaseServerTableViewController: UITableViewController {
         header.flagImageView.contentMode = .scaleAspectFit
         header.cityButton.isHidden = true
     }
+    
 }

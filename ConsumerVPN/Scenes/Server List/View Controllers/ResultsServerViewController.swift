@@ -10,6 +10,7 @@ import UIKit
 
 class ResultsServerViewController: BaseServerTableViewController {
 
+    var isDedicatedServerSelected: Bool = false
     // MARK: Properties
     var sortedCityModels: [CityModel] = [] {
         didSet {
@@ -63,9 +64,13 @@ class ResultsServerViewController: BaseServerTableViewController {
             abort()
         }
         
-        let cityModel = sortedCityModels[indexPath.row]
-        configure(cell, forCityModel: cityModel)
         
+        let cityModel = sortedCityModels[indexPath.row]
+        if isDedicatedServerSelected {
+            configureDedicatedServer(cell, forCityModel: cityModel)
+        } else {
+            configure(cell, forCityModel: cityModel)
+        }
         return cell
     }
 

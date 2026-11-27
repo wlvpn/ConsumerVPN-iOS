@@ -48,7 +48,7 @@ Implementation regarding VPN Configuration can be found:
 > Refer: [VPNConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNConfiguration.md)
 
 Implementation regarding On Demand can be found:
-> Refer: [VPNOnDemandConfiguration](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/On%20Demand.md)
-   
+> Refer: [On Demand](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/On%20Demand.md)
+
 Errors based on error codes can be found:
 > Refer: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)

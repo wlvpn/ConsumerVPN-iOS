@@ -1,7 +1,7 @@
 # Metadata - getCollection: Method
 
 Description
-The getCollection: method is a part of the metadata property within the apiManager instance. It is designed to retrieve a collection of data asynchronously. This method utilizes a block-based approach to handle the results of the data retrieval operation.
+The getCollection: method is a part of the VPNAPIManager class. It is designed to retrieve a collection of metadata asynchronously. This method utilizes a block-based approach to handle the results of the data retrieval operation and automatically handles token expiration errors.
 
 Parameters
 result: A dictionary containing key-value pairs of string data, representing the collection retrieved. This parameter is nullable.
@@ -9,7 +9,7 @@ result: A dictionary containing key-value pairs of string data, representing the
 error: An NSError object indicating any error that occurred during the data retrieval process. This parameter is nullable.
 
 ```objc
-    [apiManager.metadata getCollection:^(NSDictionary<NSString *,NSString *> * _Nullable result, NSError * _Nullable error) {
+    [apiManager getCollection:^(NSDictionary<NSString *,NSString *> * _Nullable result, NSError * _Nullable error) {
         
     }];
 ```
@@ -17,7 +17,7 @@ error: An NSError object indicating any error that occurred during the data retr
 # Metadata - updateCollection: Method
 
 Description
-The updateCollection:completion: method is a part of the current class and facilitates the update of a collection of data. It operates asynchronously, using a block-based approach to handle the results of the update operation.
+The updateCollection:completion: method is a part of the VPNAPIManager class and facilitates the update of a collection of metadata. It operates asynchronously, using a block-based approach to handle the results of the update operation and automatically handles token expiration errors.
 
 Parameters
 values: A dictionary containing the data to be used for updating the collection.
@@ -25,7 +25,7 @@ values: A dictionary containing the data to be used for updating the collection.
 completion: A block that is executed upon completion of the update operation, providing the updated collection as a dictionary and any encountered errors. This block takes two parameters: result, a dictionary with string keys and values representing the updated collection, and error, an NSError object indicating any error that occurred during the update process.
 
 ```objc
-    [apiManager.metadata updateCollection:(nonnull NSDictionary *) completion:^(NSDictionary<NSString *,NSString *> * _Nullable result, NSError * _Nullable error) {
+    [apiManager updateCollection:(nonnull NSDictionary *) completion:^(NSDictionary<NSString *,NSString *> * _Nullable result, NSError * _Nullable error) {
         
     }];
 ```
@@ -33,13 +33,13 @@ completion: A block that is executed upon completion of the update operation, pr
 # Metadata - clearCollection: Method
 
 Description
-The clearCollection: method is a part of the current class and is designed to clear or delete an entire collection of data. This method operates asynchronously and employs a block-based approach to handle the results of the clear operation.
+The clearCollection: method is a part of the VPNAPIManager class and is designed to clear or delete an entire collection of metadata. This method operates asynchronously and employs a block-based approach to handle the results of the clear operation and automatically handles token expiration errors.
 
 Parameters
 completion: A block that is executed upon completion of the clear operation, providing any encountered errors. This block takes one parameter: error, an NSError object indicating any error that occurred during the clear process.
 
 ```objc
-    [apiManager.metadata clearCollection:^(NSError * _Nullable error) {
+    [apiManager clearCollection:^(NSError * _Nullable error) {
         
     }];
 ```
@@ -53,7 +53,7 @@ Methods:
 
 Get all associated metadata for currently logged in user
 ```objc
-[apiManager.metadata getCollection:^(NSDictionary<NSString *,NSString *> * _Nullable result, NSError * _Nullable error) {
+[apiManager getCollection:^(NSDictionary<NSString *,NSString *> * _Nullable result, NSError * _Nullable error) {
     if (error != nil) {
         // Handle the error
     } else {
@@ -66,7 +66,7 @@ Get all associated metadata for currently logged in user
 Update all associated metadata for currently logged in user
 
 ```objc
-[apiManager.metadata updateCollection:updateValues completion:^(NSDictionary<NSString *, NSString *> * _Nullable result, NSError * _Nullable error) {
+[apiManager updateCollection:updateValues completion:^(NSDictionary<NSString *, NSString *> * _Nullable result, NSError * _Nullable error) {
     if (error != nil) {
         // Handle the error
     } else {
@@ -79,7 +79,7 @@ Update all associated metadata for currently logged in user
 Clear all associated metadata for currently logged in user
 
 ```objc
-[apiManager.metadata clearCollection:^(NSError * _Nullable error) {
+[apiManager clearCollection:^(NSError * _Nullable error) {
     if (error != nil) {
         // Handle the error
     } else {

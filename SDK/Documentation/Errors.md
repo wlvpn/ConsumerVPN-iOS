@@ -32,9 +32,11 @@
 - VPNLoginTooManyAttemptsError         = 1023: Invalid credentials on login
 - VPNReauthenticationFailed            = 1024: User reauthentication failed
 - VPNLoginInvalidUserError             = 1040: Invalid or Expired user account
+- VPNKitCertificateError               = 1050: Certificate validation failed, usually caused by system clock/time issues
 - VPNKitLoginErrorDomainBlocked        = 1060: Used if the connection appears to be blocked; usually related to China, UAE or Turkey.
 - VPNConnectionFailedNoInternet        = 1070: The user has no internet
 - VPNLoginOAuthProvisionError          = 1080: The request could not provision OAuth
+- VPNKitGenericNetworkError            = 1090: Generic network error for unhandled NSURLError cases
 
 ## `VPNKitServerErrorServer: Loading Errors 1100 - 1199`
 - VPNKitServerLoadError                = 1121: Unable to load servers
@@ -73,6 +75,14 @@
 ## `VPNKitAdapterError - Adapter Errors 5000`
 - VPNKitInvalidAdapter                 = 5000: Invalid adapter
 - VPNKitInvalidApiClient               = 5001: Invalid api client
+
+## `VPNKitQuantumResistanceError - Quantum Resistance Errors 6000 - 6099`
+- VPNQuantumResistanceGenericFailure         = 6000: Generic quantum resistance failure
+- VPNQuantumResistancePeerKeyPrepareFailed   = 6001: Peer key prepare failed
+- VPNQuantumResistanceMLKEMEncapsulationFailed = 6002: ML-KEM encapsulation failed
+- VPNQuantumResistancePeerKeyApplyFailed     = 6003: Peer key apply failed
+- VPNQuantumResistanceEndpointNotSupported   = 6005: The server's key endpoint answered HTTP 405, so it does not offer the transition. Reported with `VPNQuantumResistenceFailedNotification` (`statusQuantumResistenceFailed`). Unlike other quantum resistance failures, VPNKit neither retries on another server nor disconnects: the classical WireGuard connection is kept and no connection failure is reported.
+- VPNQuantumResistanceServerRetriesExhausted = 6004: The quantum-resistant transition failed and the server retries were exhausted or not possible. Delivered as the error of `VPNConnectionFailedNotification` (`statusConnectionFailed`). Its `localizedDescription` is a user-presentable message, and the technical reason is in `VPNQuantumResistanceFailureReasonKey`. `userInfo` contains `VPNQuantumResistanceFailureReasonKey`, `VPNQuantumResistanceFailureCityKey` and `VPNQuantumResistanceFailureAttemptKey` (the number of failures during the connection attempt).
 
 ## `VPNKitUserAccountValidationErrors: User Account Validation Errors 1500`
 - VPNKitAccountErrorBase               = 1500: Invalid account

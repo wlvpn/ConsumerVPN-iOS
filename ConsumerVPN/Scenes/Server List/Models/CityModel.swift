@@ -40,19 +40,34 @@ final class CityModel: CityModelSorting {
     /// List of servers that contain the search text the user provided
     var filteredServers: [Server]
     
-    init?(city: City) {
+    var isDedicatedServer: Bool = false
+    /// When showing dedicated servers, keep the specific server this row represents.
+    private let dedicatedServer: Server?
+    
+    init?(city: City, _ isDedicatedServer: Bool = false, server: Server?) {
         
         // check if we have a name and our country has a name.
         // If not, return nil as we need that information
         guard let name = city.name,
             let countryName = city.country?.name,
             let flagImage = city.country?.flagImage,
-            let countryID = city.country?.countryID,
-            let servers = city.sortedServers() as? [Server]
+            let countryID = city.country?.countryID
             else {
                 return nil
         }
         
+        let servers: [Server]
+
+        if isDedicatedServer {
+            guard let server else { return nil }
+            servers = [server]
+        } else {
+            guard let sortedServers = city.sortedServers() as? [Server] else { return nil }
+            servers = sortedServers
+        }
+        
+        self.isDedicatedServer = isDedicatedServer
+        self.dedicatedServer = isDedicatedServer ? server : nil
         
         self.name = name
         self.countryName = countryName
@@ -74,11 +89,14 @@ extension CityModel {
     func filter(withName searchText: String = "") {
         
         // If we don't have a valid list of servers, return
-        guard let sortedServers = city.sortedServers() as? [Server] else {
-            return
+        if isDedicatedServer {
+            filteredServers = dedicatedServer.map { [$0] } ?? []
+        } else {
+            guard let sortedServers = city.sortedServers() as? [Server] else {
+                return
+            }
+            filteredServers = sortedServers
         }
-        
-        filteredServers = sortedServers
         
         // Filter our servers based on the name only if the name is not contained within the city's name,
         // the country's name, or the countryID

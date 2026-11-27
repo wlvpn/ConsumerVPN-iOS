@@ -21,7 +21,8 @@ enum LocalizedString {
 	// MARK: - General
 	static let loading = NSLocalizedString("Loading...", comment: "Label shown for loading to indicate indeterminate progress")
 	static let fastestAvailable = NSLocalizedString("Fastest Available", comment: "Cell allowing the user to let the app choose the optimal city, country for the connection")
-	
+    static let dedicatedIP = NSLocalizedString("Dedicated IP", comment: "")
+    static let publicIP = NSLocalizedString("Public IP", comment: "")
 	// MARK: - Dashboard
 	static let aes256 = NSLocalizedString("AES-256", comment: "Label indicating the current encryption level of the connection")
 	static let aes128 = NSLocalizedString("AES-128", comment: "Label indicating the current encryption level of the connection")
@@ -112,8 +113,9 @@ enum LocalizedString {
 	static let passwordAlertTitle = NSLocalizedString("Account Verification", comment: "Alert title indicating more information needed to verify account")
 	static let accountAlertTitle = NSLocalizedString("Account Created Successfully", comment: "Account was created successfully.")
     static let unhealthyServerAlertTitle = NSLocalizedString("Error connecting to the VPN", comment: "Alert Title indicating a root cause of an issue")
-	
+    static let serverUnderMaintenanceTitle = NSLocalizedString("Server in maintenance", comment: "Alert Title indicating Server in maintenance")
 	// MARK: Messages
+    static let serverUnderMaintenanceMessage = NSLocalizedString("The location is currently unavailable. Please try again later.", comment: "Alert message indicating Server in maintenance")
 	static let magicLinkSent = NSLocalizedString("In order to log in, please follow the link sent to your email.", comment: "")
 	static let logoutAlertMessageConnected = NSLocalizedString("Logging out will disconnect you from the VPN. Are you sure you would like to logout?", comment: "")
 	static let logoutAlertMessageDisconnected = NSLocalizedString("Are you sure you would like to logout?", comment: "")
@@ -170,6 +172,7 @@ enum LocalizedString {
     
 	// MARK: Actions
 	static let ok = NSLocalizedString("OK", comment: "Understood")
+    static let close = NSLocalizedString("Close", comment: "")
 	static let contact = NSLocalizedString("Contact", comment: "Alert Button verb contact support")
 	static let cancel = NSLocalizedString("Cancel", comment: "")
 	static let delete = NSLocalizedString("Delete", comment: "")

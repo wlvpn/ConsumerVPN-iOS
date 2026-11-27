@@ -133,12 +133,22 @@ extension ApiManagerHelper {
         return vpnConfiguration.currentLocation?.ipAddress ?? LocalizedString.loading
     }
     
-    func selectServerWith(cityModel: CityModel?) {
+    func getCurrentIPLocationDescriptionString() -> String {
+        return isServerDedicated()
+            ? LocalizedString.dedicatedIP
+            : LocalizedString.publicIP
+    }
+    
+    func isServerDedicated() -> Bool {
+        vpnConfiguration.server?.dedicatedIPAddress?.isEmpty == false
+    }
+    
+    func selectServerWith(cityModel: CityModel?, server: Server? = nil) {
         
         if let cityModel = cityModel {
             self.vpnConfiguration.country = cityModel.city.country
             self.vpnConfiguration.city = cityModel.city
-            self.vpnConfiguration.server = nil
+            self.vpnConfiguration.server = server
         } else {
             resetServer()
         }
@@ -166,20 +176,21 @@ extension ApiManagerHelper {
     func getCityDisplayString() -> String {
         var displayString = ""
         
-        if let city = vpnConfiguration.city,
-           let cityName = city.name {
-            displayString.append(cityName + ", ")
-        }
-        
-        if let country = vpnConfiguration.country,
-           let countryName = country.name {
-            displayString.append(countryName)
-        }
-   
-        if vpnConfiguration.city == nil,
-           vpnConfiguration.country == nil {
-            displayString = LocalizedString.fastestAvailable
-        }
+            
+            if let city = vpnConfiguration.city,
+               let cityName = city.name {
+                displayString.append(cityName + ", ")
+            }
+            
+            if let country = vpnConfiguration.country,
+               let countryID = country.countryID {
+                displayString.append(countryID)
+            }
+       
+            if vpnConfiguration.city == nil,
+               vpnConfiguration.country == nil {
+                displayString = LocalizedString.fastestAvailable
+            }
         
         return displayString
     }

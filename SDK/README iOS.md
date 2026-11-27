@@ -20,9 +20,9 @@ The application has no external dependencies. It includes a copy of CocoaLumberj
 
 # Minimum Requirements
 ##### Operating Systems
-- iOS    13.0 +
-- iPadOS 13.0 +
-- macOS  10.15 +
+- iOS    15.0 +
+- iPadOS 15.0 +
+- macOS  12.0 +
 - tvOS   17.0 +
 
 ##### Access

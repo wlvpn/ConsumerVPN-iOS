@@ -94,6 +94,7 @@
 		F65D6DDD2923B6F8002EE810 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37F4CCE21C04CDEF00F5DBA9 /* NetworkExtension.framework */; };
 		F65D6DE02923B6F8002EE810 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65D6DDF2923B6F8002EE810 /* PacketTunnelProvider.swift */; };
 		F65D6DE52923B6F8002EE810 /* ConsumerVPNWGExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F65D6DDC2923B6F8002EE810 /* ConsumerVPNWGExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F6D3779430B7483A0034365A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D3779330B748330034365A /* SceneDelegate.swift */; };
 		F90761AF2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */; };
 		F90761B12C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */; };
 		F90761B32C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */; };
@@ -268,6 +269,11 @@
 		F6A529FE2F9BDA9300494772 /* Binaries Size.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Binaries Size.md"; sourceTree = "<group>"; };
 		F6A52A002F9BDA9300494772 /* ServerFeatures.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ServerFeatures.md; sourceTree = "<group>"; };
 		F6D15F182C734E7A00667D5E /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		F6D3778A30B7277A0034365A /* VPNKit macOS Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "VPNKit macOS Guide.md"; sourceTree = "<group>"; };
+		F6D3778B30B7277A0034365A /* Dedicated IP Implementation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Dedicated IP Implementation.md"; sourceTree = "<group>"; };
+		F6D3778C30B7277A0034365A /* VPNOpenVPNSettings.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = VPNOpenVPNSettings.md; sourceTree = "<group>"; };
+		F6D3779230B742400034365A /* Bypass Traffic Implementation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Bypass Traffic Implementation.md"; sourceTree = "<group>"; };
+		F6D3779330B748330034365A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		F90761AE2C05BBF300F5F816 /* ApiManagerHelper+VPNConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConfiguration.swift"; sourceTree = "<group>"; };
 		F90761B02C05BC1B00F5F816 /* ApiManagerHelper+VPNConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+VPNConnection.swift"; sourceTree = "<group>"; };
 		F90761B22C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ApiManagerHelper+Logger.swift"; sourceTree = "<group>"; };
@@ -324,6 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				9C1DDDC33AF4346F5C19F2B0 /* AppDelegate.swift */,
+				F6D3779330B748330034365A /* SceneDelegate.swift */,
 				0E65D4952215CF01006FAEA3 /* TabBar.storyboard */,
 				0E78D2782213737E00DB8652 /* WLVPNTabBarController.swift */,
 			);
@@ -658,10 +665,14 @@
 				F66ED5032CFF4C1A001F6DF5 /* Adapters.md */,
 				F66ED5042CFF4C1A001F6DF5 /* APIManager.md */,
 				F66ED5052CFF4C1A001F6DF5 /* Apple Split Tunneling.md */,
+				F6D3779230B742400034365A /* Bypass Traffic Implementation.md */,
+				F6D3778A30B7277A0034365A /* VPNKit macOS Guide.md */,
 				F66ED5062CFF4C1A001F6DF5 /* Changelog.md */,
 				F66ED5072CFF4C1A001F6DF5 /* Classifiers.md */,
 				F66ED5082CFF4C1A001F6DF5 /* Connection.md */,
 				F66ED5092CFF4C1A001F6DF5 /* Data Traffic Counter.md */,
+				F6D3778B30B7277A0034365A /* Dedicated IP Implementation.md */,
+				F6D3778C30B7277A0034365A /* VPNOpenVPNSettings.md */,
 				F66ED50A2CFF4C1A001F6DF5 /* Diagnostics.md */,
 				F9F156C32FD97B0E001D6B20 /* Handshake Update Implementation.md */,
 				F9F156C42FD97B0E001D6B20 /* MultiHop Implementation.md */,
@@ -883,6 +894,7 @@
 				F90761B32C05BC6D00F5F816 /* ApiManagerHelper+Logger.swift in Sources */,
 				DAC61A01242E8D9D0015AC35 /* PlansViewController.swift in Sources */,
 				0E0FE1412226FFCB005A0774 /* LoadingCircle.swift in Sources */,
+				F6D3779430B7483A0034365A /* SceneDelegate.swift in Sources */,
 				F5C160A072DEC81CF741B468 /* AccessibilityIdentifier.swift in Sources */,
 				F5C16B6D4584A213F3F77164 /* AccessibilityLabel.swift in Sources */,
 				F5C1648CE1768156E859742A /* LocalizedString.swift in Sources */,
@@ -1022,7 +1034,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "$(SRCROOT)/ConsumerVPN/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1078,7 +1090,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "$(SRCROOT)/ConsumerVPN/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1120,6 +1132,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DSECUREIT -DDEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wlvpn.ios.consumervpn;
@@ -1131,6 +1144,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
 		};
@@ -1164,6 +1178,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -DSECUREIT -DRELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wlvpn.ios.consumervpn;
@@ -1174,6 +1189,7 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(PROJECT_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
 		};
@@ -1212,6 +1228,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1226,6 +1243,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
 		};
@@ -1263,6 +1281,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wlvpn.ios.consumervpn.openvpnextension;
@@ -1274,6 +1293,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
 		};
@@ -1303,12 +1323,13 @@
 				INFOPLIST_FILE = ConsumerVPNWGExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ConsumerVPNWGExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 NetProtect. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1321,6 +1342,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Debug;
 		};
@@ -1349,12 +1371,13 @@
 				INFOPLIST_FILE = ConsumerVPNWGExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ConsumerVPNWGExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 NetProtect. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wlvpn.ios.consumervpn.network-extension";
@@ -1364,6 +1387,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 17.0;
 			};
 			name = Release;
 		};

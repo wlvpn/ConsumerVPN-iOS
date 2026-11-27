@@ -26,8 +26,6 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
     // MARK: IBOutlets and Variables
     @IBOutlet weak var filterSegmentedControl: UISegmentedControl!
     
-    /// Button which makes the search bar the first responder for searching
-    var searchButton: UIBarButtonItem!
     
     
     // VPNKit Properties
@@ -49,6 +47,7 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
             }
         }
     }
+    fileprivate var dedicatedServerList:[CityModel] = []
     
     fileprivate var sortedCountrySections = [CountrySection]()
     
@@ -72,26 +71,13 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
     var reconnectionBlock: (() -> Void)?
     private var shouldNavigateToDashboardOnDismiss = false
     
+    private var activeCityModels: [CityModel] {
+        return filterSegmentedControl.selectedSegmentIndex == 2 ? dedicatedServerList : cityModels
+    }
+    
     // MARK: Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set up the navbar
-        searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchButtonTapped(_:)))
-        
-        
-        var isSearchBtnNeeded: Bool {
-            if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
-                return false
-            }
-            else {
-                return true
-            }
-        }
-        
-        if isSearchBtnNeeded {
-            navigationItem.rightBarButtonItem = searchButton
-        }
         
         Bundle.main.loadNibNamed("FilterNavBar", owner: self, options: nil)
         navigationItem.titleView = filterSegmentedControl
@@ -115,9 +101,6 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
         
         // assign our remembered info about sorting from NSUserDefaults
         sortOption = fSortByOptions[UserDefaults.standard.integer(forKey: Theme.sortOptionKey)]
-        
-        // setup accessibility and localization
-        setupAccessibilityAndLocalization()
         
         // Setup the Empty State View
         if let emptyStateView = Bundle.main.loadNibNamed(EmptyStateView.nibName, owner: self, options: nil)?.first as? EmptyStateView {
@@ -155,10 +138,10 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
         
         if #available(iOS 11.0, *) {
             navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
         } else {
+            searchController.searchBar.sizeToFit()
             tableView.tableHeaderView = searchController.searchBar
-            // Shift the searchBar to just under the navigation bar (not visible by default)
-            tableView.contentOffset = CGPoint(x: 0, y: searchController.searchBar.frame.height)
         }
         
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.primaryText]
@@ -174,12 +157,6 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
         
         tableView.dataSource = self
         tableView.delegate = self
-    }
-    
-    /// Helper method responsible for setting the accessibility labels and identifiers as well as localizations with our UI
-    fileprivate func setupAccessibilityAndLocalization() {
-        searchButton.accessibilityLabel = AccessibilityLabel.searchButton
-//        filterButton.accessibilityLabel = AccessibilityLabel.filterButton
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -259,12 +236,9 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
         }
     }
     
-    @objc func searchButtonTapped(_ sender: UIBarButtonItem) {
-        searchController.searchBar.becomeFirstResponder()
-    }
-    
     @IBAction func filterSelected(_ sender: Any) {
-        tableView.reloadData()
+        applyCurrentFiltersAndReload()
+        resultsServerViewController.isDedicatedServerSelected = filterSegmentedControl.selectedSegmentIndex == 2
     }
     
     @objc fileprivate func returnToDashboard() {
@@ -314,8 +288,10 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
                 } else {
                     return 0
                 }
-            } else {
+            } else if filterSegmentedControl.selectedSegmentIndex == 1 {
                 return sortedModels.count + 1
+            } else {
+                return sortedModels.count
             }
         } else {
             return sortedModels.count
@@ -338,17 +314,25 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
             if (filterSegmentedControl.selectedSegmentIndex == 0) {
                 cityModel = sortedCountrySections[indexPath.section - 1].cities[indexPath.row]
                 configureCityOnly(cell, forCityModel: cityModel!)
-            } else {
+            }  else if (filterSegmentedControl.selectedSegmentIndex == 1) {
                 if indexPath.row == 0 {
                     configureBestAvailable(cell)
                 } else {
                     cityModel = sortedModels[indexPath.row - 1]
                     configure(cell, forCityModel: cityModel!)
                 }
+            } else {
+                cityModel = sortedModels[indexPath.row]
+                configureDedicatedServer(cell, forCityModel: cityModel!)
             }
         } else {
             cityModel = resultsServerViewController.sortedCityModels[indexPath.row]
-            configure(cell, forCityModel: cityModel!)
+            if filterSegmentedControl.selectedSegmentIndex == 2 {
+                configureDedicatedServer(cell, forCityModel: cityModel!)
+            } else {
+                configure(cell, forCityModel: cityModel!)
+            }
+            
         }
         
         return cell
@@ -363,19 +347,51 @@ final class ServerListViewController: BaseServerTableViewController, UISearchCon
         if tableView === self.tableView {
             if filterSegmentedControl.selectedSegmentIndex == 0 {
                 cityModel = sortedCountrySections[indexPath.section - 1].cities[indexPath.row]
-            } else {
+            } else if  filterSegmentedControl.selectedSegmentIndex == 1 {
                 if indexPath.row != 0 {
                     cityModel = sortedModels[indexPath.row - 1]
                 }
+            } else {
+                cityModel = sortedModels[indexPath.row]
             }
         } else {
             cityModel = resultsServerViewController.sortedCityModels[indexPath.row]
         }
-        if !ApiManagerHelper.shared.isVPNConnectionInProgress() {
-            connectOnSelection {
-                ApiManagerHelper.shared.selectServerWith(cityModel: cityModel)
+        if filterSegmentedControl.selectedSegmentIndex == 2 {
+            guard let server = cityModel?.filteredServers.first else { return}
+            if server.maintenance == 1 {
+                    showServerInMaintainanceMessage()
+                    return;
+            } else {
+                if !ApiManagerHelper.shared.isVPNConnectionInProgress() {
+                    connectOnSelection {
+                        ApiManagerHelper.shared.selectServerWith(cityModel: cityModel, server: server)
+                    }
+                }
+            }
+        } else  {
+            if !ApiManagerHelper.shared.isVPNConnectionInProgress() {
+                connectOnSelection {
+                    ApiManagerHelper.shared.selectServerWith(cityModel: cityModel)
+                }
             }
         }
+        
+    }
+    
+    
+    func showServerInMaintainanceMessage() {
+        
+        
+        let title = LocalizedString.serverUnderMaintenanceTitle
+        let message = LocalizedString.serverUnderMaintenanceMessage
+        let action = UIAlertAction(title: LocalizedString.close, style: .cancel,handler: { (action) in
+           
+        })
+
+        let alert = UIAlertController.alert(withTitle: title, message: message, actions: [action], alertType: .alert)
+        present(alert, animated: true, completion: nil)
+        
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -567,6 +583,10 @@ extension ServerListViewController: FilterViewControllerDelegate {
 
 // MARK: - UISearchBarDelegate
 extension ServerListViewController: UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        resultsServerViewController.isDedicatedServerSelected = filterSegmentedControl.selectedSegmentIndex == 2
+    }
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
@@ -582,34 +602,7 @@ extension ServerListViewController: UISearchBarDelegate {
 // MARK: - UISearchResultsUpdating
 extension ServerListViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        
-        // Just because the searchController is active does not mean its content is displayed. Because of this, we should only work with it if
-            // it is both active and the searchBar has text
-        
-        // Strip out all the leading and trailing spaces
-        let searchText = searchController.searchBar.text ?? ""
-        let strippedString = searchText.trimmingCharacters(in: .whitespaces).lowercased()
-        let isSearchTableDisplayed = searchController.isActive && strippedString.hasText
-        
-        if isSearchTableDisplayed {
-            // Filter our reference point down using what options the user has set and pass off to the search results controller
-            guard let resultsController = searchController.searchResultsController as? ResultsServerViewController else {
-                return
-            }
-            resultsController.sortedCityModels = cityModels.filtered(withName: strippedString)
-                                                           .sorted(by: sortOption)
-            
-            // reload the table with the changes
-            resultsController.tableView.reloadData()
-            
-        } else {
-            // Filter our reference point down using only the filter options and sort options and display on main table view
-            sortedModels = cityModels.filtered(withName: strippedString)
-                                     .sorted(by: sortOption)
-            
-            // reload our table with the changes
-            tableView.reloadData()
-        }
+        applyCurrentFiltersAndReload()
     }
 }
 
@@ -644,21 +637,33 @@ extension ServerListViewController: EmptyStateViewDelegate {
     func updateCities() {
         
         self.cityModels = ApiManagerHelper.shared.fetchCities()
-        
+        self.dedicatedServerList = ApiManagerHelper.shared.fetchDedicatedServerList()
         // 2. filter/sort using filteroptions into local variable and then diff against displayed filtered info.
         let sections = Dictionary(grouping: self.cityModels) { $0.countryName }
         sortedCountrySections = sections.map(CountrySection.init(country:cities:)).sorted()
         
-        // Depending on which table is being displayed (ServerList - main table, ResultsController - search table),
-        // update that data model and tableter
+        applyCurrentFiltersAndReload()
+    }
+}
+
+private extension ServerListViewController {
+    func applyCurrentFiltersAndReload() {
+        // Just because the searchController is active does not mean its content is displayed. Because of this, we should only work with it if
+        // it is both active and the searchBar has text
         let searchText = searchController.searchBar.text ?? ""
-        let isSearchTableDisplayed = searchController.isActive && searchText.hasText
+        let strippedString = searchText.trimmingCharacters(in: .whitespaces).lowercased()
+        let isSearchTableDisplayed = searchController.isActive && strippedString.hasText
         
         if isSearchTableDisplayed {
-            resultsServerViewController.sortedCityModels = self.cityModels.sorted(by: sortOption)
-            resultsServerViewController.tableView.reloadData()
+            guard let resultsController = searchController.searchResultsController as? ResultsServerViewController else {
+                return
+            }
+            resultsController.sortedCityModels = activeCityModels.filtered(withName: strippedString)
+                                                              .sorted(by: sortOption)
+            resultsController.tableView.reloadData()
         } else {
-            sortedModels = self.cityModels.sorted(by: sortOption)
+            sortedModels = activeCityModels.filtered(withName: strippedString)
+                                          .sorted(by: sortOption)
             tableView.reloadData()
         }
     }

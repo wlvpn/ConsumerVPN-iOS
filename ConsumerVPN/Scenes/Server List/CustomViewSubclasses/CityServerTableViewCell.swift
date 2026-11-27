@@ -27,10 +27,6 @@ class CityServerTableViewCell: UITableViewCell {
         setupAccesibilityAndLocalization()
     }
     
-    func shapeFlagToSquare() {
-        flagImageView.layer.cornerRadius = 0.0
-    }
-    
     func shapeFlagToCircle() {
         flagImageView.layer.cornerRadius = flagImageView.frame.size.width / 2.0
     }

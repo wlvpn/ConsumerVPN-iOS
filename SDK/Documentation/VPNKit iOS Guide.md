@@ -15,7 +15,7 @@ The framework provides APIs to login, fetch servers, backup data in a database, 
     2. [Fetching the servers](#fetching-the-servers)
     3. [Fetching the location](#fetching-the-location)
     4. [Selecting a protocol](#selecting-a-protocol)
-    5. [Synchronize the configuration](#synchronize-the-configuration)
+    5. [Synchronize the configuration](synchronize-the-configuration)
     6. [Perform a VPN connection](#perform-a-vpn-connection)
     7. [Error handling](#error-handling)
     8. [Notification handling](#notification-handling)

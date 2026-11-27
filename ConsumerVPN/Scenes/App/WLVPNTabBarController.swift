@@ -68,7 +68,8 @@ extension WLVPNTabBarController: StoryboardInstantiable {
 					 settingsVC: UIViewController) -> WLVPNTabBarController {
 		
 		let tabbarController = instantiateInitial()
-		
+        tabbarController.view.backgroundColor = .serverNavigationBarBg
+        tabbarController.tabBar.isTranslucent = false
 		// To ensure tab bar items load properly (including active tint color for
 		// the selected tab), the tab bar items are configured here rather than
 		// within each view controller class.
@@ -93,8 +94,15 @@ extension WLVPNTabBarController: StoryboardInstantiable {
         serverAppearance.largeTitleTextAttributes = [
             .foregroundColor: UIColor.serverNavigationBarItemTint,
         ]
-        
+        serverNavC.navigationBar.isTranslucent = false
         serverNavC.navigationBar.standardAppearance = serverAppearance
+        if #available(iOS 13.0, *) {
+            serverNavC.navigationBar.scrollEdgeAppearance = serverAppearance
+            serverNavC.navigationBar.compactAppearance = serverAppearance
+            if #available(iOS 15.0, *) {
+                serverNavC.navigationBar.compactScrollEdgeAppearance = serverAppearance
+            }
+        }
 		serverNavC.navigationBar.tintColor = .serverNavigationBarItemTint
 
         
@@ -114,8 +122,15 @@ extension WLVPNTabBarController: StoryboardInstantiable {
         settingAppearance.largeTitleTextAttributes = [
             .foregroundColor: UIColor.settingsNavigationBarItemTint,
         ]
-        
+        settingsNavC.navigationBar.isTranslucent = false
         settingsNavC.navigationBar.standardAppearance = settingAppearance
+        if #available(iOS 13.0, *) {
+            settingsNavC.navigationBar.scrollEdgeAppearance = settingAppearance
+            settingsNavC.navigationBar.compactAppearance = settingAppearance
+            if #available(iOS 15.0, *) {
+                settingsNavC.navigationBar.compactScrollEdgeAppearance = settingAppearance
+            }
+        }
 		settingsNavC.navigationBar.tintColor = .settingsNavigationBarItemTint
 
         
