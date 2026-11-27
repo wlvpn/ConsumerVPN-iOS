@@ -24,6 +24,10 @@
 		<string>group.com.wlvpn.ios.consumervpn</string>
 		<string>group.com.wlvpn.wireguardtest.ios</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.wlvpn.ios.consumervpn</string>
+	</array>
 	<key>com.apple.security.network.client</key>
 	<true/>
 </dict>

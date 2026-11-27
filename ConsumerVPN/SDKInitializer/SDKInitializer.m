@@ -100,6 +100,9 @@
     // Ensures that connections are not killed off when the app dies during an active connection
     [apiManager.vpnConfiguration setStayConnectedOnQuit:YES];
     
+    // Post Quantum resistance for WireGuard
+    [apiManager.vpnConfiguration.postQuantumResistanceSettings setQuantumResistanceEnabled:NO];
+    
     return apiManager;
 }
 
@@ -111,11 +114,11 @@
     NSString *bundleID = [infoDict objectForKey:@"CFBundleIdentifier"];
     
     WireGuardAdapterConfiguration *wgConfig = [[WireGuardAdapterConfiguration alloc] init];
-    
+
     wgConfig.brandName = brandName;
     wgConfig.useAPIKey = NO;
+    wgConfig.extensionName = [NSString stringWithFormat:@"%@.network-extension", bundleID];
     wgConfig.apiKey = apiKey;
-    wgConfig.extensionName = [bundleID stringByAppendingString:@".network-extension"];
     
     if ([wgConfig validate] != WireGuardAdapterConfigurationErrorNone) {
         NSLog(@"Wireguard Configuration not valid");

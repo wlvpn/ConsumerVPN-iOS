@@ -20,7 +20,9 @@
 - `isMultihopEnabled`                       : BOOL - If true multihop is enabled and maximum 2 cities are supported as entry and exit.
 - `multihopCities`                          : [City] - The list of cities for multihop. Order is important, the first element is the entry city, the last element is the exit city.
 - `connectedServers`                        : [Server] - Read only. The list of connected servers for multihop after connection.
-- `shouldSkipVirtualServerInLoadBalance`    : BOOL - If true, when establishing connnection with Optimal Location, the virtual servers won't be taken into account.
+- `shouldSkipVirtualServerInLoadBalance`    : BOOL - If true, when establishing connection with Optimal Location, the virtual servers won't be taken into account.
+- `shouldUseAPIBasedServerSelection`        : BOOL - If true, API-based server selection is used when establishing a connection to the Optimal Location. If false, the local load-balancing algorithm is used directly.
+- `postQuantumResistanceSettings`           : VPNPostQuantumResistanceSettings - The post-quantum resistance (WireGuard) settings: `quantumResistanceEnabled` (default NO). See [Quantum-resistant server retry](#quantum-resistant-server-retry).
 - `serverFeatures`                          : NSSet<NSNumber *> - The best available server for the city is selected based on the provided set of VPNServerFeature enum values.
 - `openVPNSettings`                         : VPNOpenVPNSettings - An object for OpenVPN options like port, protocol type, scramble, etc.
 ```
@@ -68,3 +70,19 @@ Implementation regarding OpenVPN can be found:
    
 Errors based on error codes can be found:
 > Refer: [Errors](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Errors.md)
+
+# Quantum-resistant server retry
+
+When `postQuantumResistanceSettings.quantumResistanceEnabled` is `true` and the WireGuard quantum-resistant (PQR) transition fails after the tunnel connected, VPNKit disconnects, moves to another server in the same city and reconnects.
+
+- **Requirements**: WireGuard protocol, with `quantumResistanceEnabled` set to `true` in `postQuantumResistanceSettings`. There is no separate switch for the disconnect or the retry. The retry continues from the disconnect that the adapter performs when the transition fails. The adapter reads `quantumResistanceEnabled` from these settings each time a connection starts.
+- **HTTP 405**: if the server's key endpoint answers HTTP 405 (`VPNQuantumResistanceEndpointNotSupported (6005)`), there is no retry and no disconnect: the classical WireGuard connection is kept and the connected state is released. The error is reported through `VPNQuantumResistenceFailedNotification` only.
+- **Order**: the adapter's own internal PQR retries run first. A server retry only starts once they are exhausted.
+- **Server choice**: the failing server is dropped for the rest of the connection attempt and the least loaded remaining server of the city (honouring `serverFeatures`) is used. At most 3 server retries are made.
+- **User-selected server**: if the user picked a specific server (a server was already set on `VPNConfiguration` when `connect` was called), no retry is made.
+- **Connection state**: the app stays in its connecting state until the transition has a verdict. `VPNConnectionSucceededNotification` is held until the transition completes, and `VPNConnectionDidBeginNotification`, `VPNConnectionWillDisconnectNotification` and `VPNConnectionDidDisconnectNotification` are not delivered between retry attempts. The disconnect of the last failed tunnel is not delivered either: hosts go from connecting straight to the connection failure below.
+- **Cancelling**: a user-initiated `disconnect:` or a new `connect` cancels the retry loop and resets its state.
+- **Retry failed**: when no retry is possible or the 3 retries are exhausted, VPNKit posts `VPNConnectionFailedNotification` once per connection attempt, only if the user is left disconnected. It replaces the disconnect of the failed tunnel, so hosts must reset their connection state when they handle it. The error has code `VPNQuantumResistanceServerRetriesExhausted (6004)`, so hosts can tell it apart from other connection failures. If the connection stays up without quantum resistance (HTTP 405), the connected state is released and no failure notification is posted.
+- **Safety timeouts**: the connected notification is held for at most 60 seconds without a verdict, and retry suppression lasts at most 90 seconds.
+
+Failed attempts are reported by the adapter through `VPNQuantumResistenceFailedNotification` on every failure, including a failure on a user-selected server. The 6004 error carries the reason, the city and the number of failures in `VPNQuantumResistanceFailureReasonKey`, `VPNQuantumResistanceFailureCityKey` and `VPNQuantumResistanceFailureAttemptKey`.

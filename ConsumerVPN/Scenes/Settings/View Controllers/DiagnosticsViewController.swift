@@ -36,7 +36,7 @@ class DiagnosticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		apiManager = AppDelegate.sharedDelegate().apiManager
+		apiManager = ApiManagerHelper.shared.apiManager
 
         navigationItem.rightBarButtonItems = [shareBarButtonItem, deleteBarButtonItem]
         configureLocalizedText()

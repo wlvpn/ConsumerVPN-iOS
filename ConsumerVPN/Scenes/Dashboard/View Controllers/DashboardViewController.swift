@@ -89,7 +89,7 @@ final class DashboardViewController: UIViewController {
 		
 		view.backgroundColor = .viewBackground
         connectButton.layer.cornerRadius = 8.0
-        connectButton.layer.borderWidth = 2.0
+        connectButton.layer.borderWidth = 0.0
 		setConnectButton()
 		
 		locationSelectionLabel.textColor = .primaryFont
@@ -98,11 +98,11 @@ final class DashboardViewController: UIViewController {
 		
 		visibleLocationImageView.tintColor = .appWideTint
 		visibleLocationDescriptionLabel.textColor = .primaryText
-		visibleLocationLabel.textColor = .secondaryText
+		visibleLocationLabel.textColor = .appWideTint
 		
 		ipAddressImageView.tintColor = .appWideTint
 		ipAddressDescriptionLabel.textColor = .primaryText
-		ipAddressLabel.textColor = .secondaryText
+		ipAddressLabel.textColor = .appWideTint
 		
         shieldImageView.image = ApiManagerHelper.shared.isConnectedToVPN() ? ConnectedShield.imageOfArtboard() : DisconnectedShield.imageOfArtboard()
 		shieldImageView.alpha = 1
@@ -135,12 +135,14 @@ final class DashboardViewController: UIViewController {
 		super.viewWillAppear(animated)
 		
         ipAddressLabel.text = ApiManagerHelper.shared.getCurrentIPLocationString()
+        ipAddressDescriptionLabel.text = ApiManagerHelper.shared.getCurrentIPLocationDescriptionString()
         visibleLocationLabel.text = ApiManagerHelper.shared.getCityDisplayString()
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		ipAddressLabel.text = LocalizedString.loading
+        ipAddressDescriptionLabel.text = ApiManagerHelper.shared.getCurrentIPLocationDescriptionString()
 		visibleLocationLabel.text = LocalizedString.loading
 	}
 	
@@ -235,6 +237,7 @@ final class DashboardViewController: UIViewController {
 			self.shieldImageView.alpha = 1.0
 			self.loadingCircle.alpha = 0
 			self.ipAddressLabel.text = ApiManagerHelper.shared.getCurrentIPLocationString()
+            self.ipAddressDescriptionLabel.text = ApiManagerHelper.shared.getCurrentIPLocationDescriptionString()
             self.visibleLocationLabel.text = ApiManagerHelper.shared.getCityDisplayString()
             self.setDisconnectButton()
         } completion: { [weak self] success in
@@ -246,19 +249,17 @@ final class DashboardViewController: UIViewController {
 	
     private func setDisconnectButton() {
         self.connectButton.setTitle("Disconnect", for: .normal)
-        self.connectButton.setTitleColor(.disconnectButtonText, for: .normal)
-        self.connectButton.tintColor = .disconnectButtonText
-        self.connectButton.layer.borderColor = UIColor.disconnectButtonBorder.cgColor
-        self.connectButton.backgroundColor = .disconnectButtonBg
+        self.connectButton.setTitleColor(.primaryFont, for: .normal)
+        self.connectButton.tintColor = .primaryFont
+        self.connectButton.backgroundColor = .disconnectRed
         self.connectButton.alpha = 1.0
     }
     
     private func setConnectButton() {
         self.connectButton.setTitle("Connect", for: .normal)
-        self.connectButton.setTitleColor(.connectButtonText, for: .normal)
-        self.connectButton.tintColor = .connectButtonText
-        self.connectButton.layer.borderColor = UIColor.connectButtonBorder.cgColor
-        self.connectButton.backgroundColor = .connectButtonBg
+        self.connectButton.setTitleColor(.primaryFont, for: .normal)
+        self.connectButton.tintColor = .primaryFont
+        self.connectButton.backgroundColor = .appWideTint
         self.connectButton.alpha = 1.0
     }
     
@@ -436,12 +437,20 @@ extension DashboardViewController: VPNConnectionStatusReporting {
 extension DashboardViewController : VPNConfigurationStatusReporting {
 	func statusCurrentCityDidChange(_ notification: Notification) {
         debugPrint("[ConsumerVPN] \(#function) \(notification)")
-        locationSelectionButton.setTitle(ApiManagerHelper.shared.getCityDisplayString(), for: .normal)
+       
+        var buttonTitle = ""
+        if ApiManagerHelper.shared.isServerDedicated() {
+            buttonTitle = ApiManagerHelper.shared.getCurrentIPLocationDescriptionString() + " - " + ApiManagerHelper.shared.getCityDisplayString()
+        } else {
+            buttonTitle = ApiManagerHelper.shared.getCityDisplayString()
+        }
+        locationSelectionButton.setTitle(buttonTitle, for: .normal)
 	}
 	
 	func statusCurrentLocationDidChange(_ notification: Notification) {
         debugPrint("[ConsumerVPN] \(#function) \(notification)")
         ipAddressLabel.text = ApiManagerHelper.shared.getCurrentIPLocationString()
+        ipAddressDescriptionLabel.text = ApiManagerHelper.shared.getCurrentIPLocationDescriptionString()
 		visibleLocationLabel.text = ApiManagerHelper.shared.getCityDisplayString()
 	}
 }
@@ -531,6 +540,21 @@ extension DashboardViewController: VPNAccountStatusReporting {
 		alertController.addAction(okAction)
 		present(alertController, animated: true, completion: nil)
 	}
+    
+    
+    func statusAccountFetchDedicatedIPServersFailed(_ notification: Notification) {
+        if let error = notification.object as? NSError {
+            debugPrint("\(#function) [  fetched] - \(error.localizedDescription)")
+            let alertController = UIAlertController(title: "Dedicated IP Servers not fetched", message: error.localizedDescription, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func statusAccountFetchDedicatedIPServersSucceeded(_ notification: Notification) {
+        debugPrint("[ConsumerVPN] \(#function) \(notification)")
+    }
     
     func statusLogoutWillBegin(_ notification: Notification) {
         ProgressSpinnerHelper.shared.showSpinner(on: self.tabBarController!.view)

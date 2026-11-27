@@ -1,12 +1,81 @@
 # VPNKit Changelog
 
+## VPNKit 7.3.0
+
+### New Items
+- Added a new method that uses an API endpoint to determine the optimal connection location instead of relying on a locally defined algorithm. If the API request fails, the SDK falls back to the locally defined algorithm for the connection.
+- Added a new `useAPIBasedServerSelection` property (getter: `shouldUseAPIBasedServerSelection`) to the `VPNConfiguration` class. When enabled, API-based server selection is used when connecting to an optimal server location.
+- Added the following networkSettings methods to `WGPacketTunnelProvider`:
+    - `willStartWireGuard(networkSettings:)`: Override this method to modify network settings (DNS, routes, IP configuration, etc.) before WireGuard Go starts and VPN traffic begins. Returns the modified network settings or the original settings if no changes are required.
+    - `willStopWireGuard(networkSettings:)`: Override this method to modify network settings before WireGuard Go stops during VPN bypass. Returns the modified network settings or the original settings if no changes are required.
+- Added a `dedicatedIPsCount` property to `VPNAPIManager`, populated from the account configuration response, to expose the number of dedicated IP servers available on the account.
+- Added `fetchDedicatedIPsServerListWithCompletion:` to `VPNAPIManager` to explicitly fetch and persist the dedicated IP server list. Refer to [Dedicated IP Implementation](../Documentation/Dedicated%20IP%20Implementation.md).
+- Added `VPNDedicatedIPServersUpdateWillBeginNotification`, `VPNDedicatedIPServersUpdateSucceededNotification`, and `VPNDedicatedIPServersUpdateFailedNotification` notifications, along with corresponding `VPNServerStatusReporting` delegate methods `statusDedicatedIPServersUpdateWillBegin:`, `statusDedicatedIPServersUpdateSucceeded:`, and `statusDedicatedIPServersUpdateFailed:`.
+- Added OpenVPN support for macOS 10.15 and later.
+- Added `VPNKitCertificateError` (1050) error code to handle certificate validation failures (NSURLError -1202, `NSURLErrorServerCertificateUntrusted`).
+- Added `VPNKitGenericNetworkError` (1090) error code to handle unhandled network errors instead of incorrectly categorizing them as domain blocking errors.
+- Added the `VPNPostQuantumResistanceSettings` class, held by `VPNConfiguration.postQuantumResistanceSettings`. It holds `quantumResistanceEnabled` (default NO). When it is enabled and the WireGuard quantum-resistant transition fails after connecting, VPNKit disconnects and retries on another server of the same city (up to 3 times), skips the retry when the user selected a specific server, and keeps the app in its connecting state until the transition has a verdict. If every attempt fails the connection stays down and the connection failure is reported. A server whose key endpoint answers HTTP 405 is the exception: no retry and no disconnect, the classical WireGuard connection is kept. Refer to [VPNConfiguration](../Documentation/VPNConfiguration.md#quantum-resistant-server-retry).
+- Added `VPNQuantumResistenceCompletedNotification` with the optional `statusQuantumResistenceCompleted:` delegate method. It is posted when the quantum-resistant transition completes without failing and reports how through `VPNQuantumResistanceCompletionResult` (`Succeeded`, `Disabled` when `quantumResistanceEnabled` is false, `AlreadyCompleted`) under `VPNQuantumResistanceCompletionResultKey` in the userInfo.
+- When the quantum-resistant server retries fail and the user is left disconnected, VPNKit posts `VPNConnectionFailedNotification` once with an `NSError` of the new code `VPNQuantumResistanceServerRetriesExhausted (6004)` (`userInfo` carries the reason, city and failure count), so hosts reset and show their usual connection error. Also added the `VPNQuantumResistanceServerRetriesExhausted (6004)` error and `VPNQuantumResistanceFailureAttemptKey`.
+
+### Breaking Changes
+- Renamed `allowReadPackets` to `allowDataUsageMetering` in `WGPacketTunnelProvider` and `OVPacketTunnelProvider` for improved semantic clarity. Clients must update all references from `allowReadPackets` to `allowDataUsageMetering`.
+- Removed `VPNAccountFetchDedicatedIPServersSucceededNotification` and `VPNAccountFetchDedicatedIPServersFailedNotification`, along with their `VPNAccountStatusReporting` delegate methods `statusAccountFetchDedicatedIPServersSucceeded:` and `statusAccountFetchDedicatedIPServersFailed:`. Use the new `VPNDedicatedIPServersUpdate*` notifications and `VPNServerStatusReporting` delegate methods instead.
+- Removed `MetaProxy` class. The metadata collection management methods (`getCollection:`, `clearCollection:`, and `updateCollection:completion:`) are now part of `VPNAPIManager` directly via a new `VPNAPIManager (MetadataHandling)` category. Clients must update all references from `apiManager.metadata.getCollection:` to `apiManager.getCollection:`, `apiManager.metadata.clearCollection:` to `apiManager.clearCollection:`, and `apiManager.metadata.updateCollection:completion:` to `apiManager.updateCollection:completion:`. The new methods include automatic token expiration error handling (VPNRefreshTokenExpired and VPNAccessTokenExpiredError).
+- Renamed `checkUserAccountStatus:completionHandler:` to `getUserAccountStatus:completionHandler:` in `VPNAPIAdapterProtocol`, `V3APIAdapter`, and all related implementations. Clients must update all references to use the new method name.
+- Moved `quantumResistanceEnabled` from `WireGuardAdapterConfiguration` to `VPNConfiguration.postQuantumResistanceSettings`. Clients must remove `wgConfig.quantumResistanceEnabled` and set `vpnConfiguration.postQuantumResistanceSettings.quantumResistanceEnabled` instead. The WireGuard adapter reads it each time a connection starts.
+- Removed `wgConfig.allowDisconnectOnQuantumResistanceFailure`. A failed quantum-resistant transition now always disconnects and is retried on another server, except for HTTP 405 which keeps the connection. Clients must stop setting it.
+- Update minimum deployment target for iOS 15.0, macOS 12.0 and tvOS 17.0 onwards.
+
+### Improvements
+- Improved NSURLError mapping in `NSError+V3APIAdapter` to properly categorize network errors. Certificate validation failures (NSURLError -1202) now map to `VPNKitCertificateError` instead of being lumped into domain blocking errors. Unknown network errors now map to `VPNKitGenericNetworkError` instead of incorrectly being categorized as `VPNKitLoginErrorDomainBlocked`.
+- Fixed `updateServerListWithCompletion:` not invoking its completion handler when an anonymous login's refresh token was invalid.
+- Fixed a crash on iOS 27 (`EXC_BREAKPOINT`, `snapshot_get_value_as_object called on NULL`) during login, token login, token refresh, reauthentication and `updateUser:` when the stored `User` row could no longer be loaded. The stored user is now re-loaded with `existingObjectWithID:error:` and a new `User` is created if it cannot be loaded.
+- Fixed `V3APIAdapter` keeping a reference to the old, storeless Core Data context after logout on iOS and macOS. `defaultContext` is now refreshed after the persistent store is reset on all platforms, not only tvOS.
+- Renamed the internal `EncryptionTransformer` class to `VPNEncryptionTransformer` to avoid a class name collision with the system `CallHistory` framework. The registered value transformer name and the encrypted data format are unchanged, so no data migration is needed.
+- Block internet connection during the quantum resistant transition.
+- Fixed a WireGuard connection failing with error 40 (`VPNKitConnectionError`) on the first connect after an app launch or update. `WireGuardAdapter` initial setup could run several times at once, and a run that was still in progress removed the VPN profile that the connect had just saved as orphaned. Initial setup now runs only once, concurrent callers wait for it to finish, and `configurationDidChange` waits for initial setup before generating and saving the WireGuard configuration.
+- Fixed the WireGuard keychain cleanup in `Keychain.deleteReferences(except:)` never removing stale entries. The keychain query did not return item attributes, so unused WireGuard configuration entries were left in the keychain.
+- Hardened initial setup in `NEVPNManagerAdapter` and `OpenVPNAdapter` in the same way. Initial setup now runs only once, callers that arrive while it is in progress wait for it to finish, and a failed setup is retried by the next caller instead of being treated as done. `OpenVPNAdapter.configurationDidChange` now waits for initial setup before installing the OpenVPN configuration.
+- Fixed an OpenVPN connect failure not being reported. If saving the profile or starting the tunnel failed, the error was dropped and no error status was sent; it is now reported through the status handler.
+- Fixed Core Data recovery when the on-disk store can't be opened by this SDK version (for example, a store already migrated by a newer SDK). On iOS and macOS, `VPNCoreDataManager initWithPath:error:` previously deleted the store but never re-added it, because the persistent store coordinator had already been set to `nil`, so the data manager and `V3APIAdapter.defaultContext` ended up `nil`. The store is now recreated on a fresh coordinator. On tvOS, `initWithPersistentContainer:` now deletes the incompatible store (including its `-wal` and `-shm` files) and reloads it once, and returns `nil` with the error set if the reload fails. The local cache (servers, cities, the stored user and favorites) is rebuilt after the next login or server list update.
+- Disabled post quantum resistence by default for Wireguard protocol.
+- Fixed duplicate `VPNHelperInstallSuccessNotification` notifications during synchronizeConfiguration after successful helper installation.
+- Fixed OpenVPN on demand rules not update or reset.
+- Fixed OpenVPN failing to start on macOS 10.15 due to missing app-group container directories. The required directories are now created on demand before the logger and `ca.pem` write, resolving the "Unable to open log file" error and the subsequent tunnel start failure.
+- Fixed OpenVPN start errors not being reported to the app on macOS 12 and earlier, leaving the SDK stuck in a "connecting" state with no failure notification. The error is now surfaced via `VPNConnectionFailed` with the correct error code, and a stale connecting state after a failed start is cleaned up when `disconnect()` is called.
+- Fixed OpenVPN tunnel errors raised internally (e.g. session disposal) not being persisted on below macOS 13. The error is now written to the shared error file in `reallyDisposeTunnel`, ensuring the app-side adapter can recover the correct failure reason in all error paths, not just `startTunnel`.
+- Improved the `VPNConnectionFailedNotification` error for connection adapter errors that do not match a known case. The `VPNKitConnectionError` now includes the original error's code and description in `NSLocalizedFailureReasonErrorKey` instead of a generic message only, which makes these failures diagnosable.
+- Fixed `VPNConnectionDidDisconnectNotification` not being sent when `disconnect:` was called on an already-disconnected session with a non-user-initiated flag. This could leave the host app stuck in a stale connecting/failed UI state after an On Demand auth-failure loop. The notification is now always sent in this path regardless of whether the disconnect was user-initiated.
+- Fixed multiple VPN connection notifications sent during the WireGuard post-quantum resistance flow.
+- Fixed an issue where the WireGuard post-quantum resistance VPN connection status would fall out of sync upon system unlock or status changes.
+- Fixed sometimes black listed WiFi SSIDs not connecting on-demand VPN.
+- Retry API mirrors on non-reachability network error codes.
+
+## VPNKit 7.2.1
+
+### New Items
+- Added `allowBypassAllTraffic` on both `WGPacketTunnelProvider` and `OVPacketTunnelProvider`, as the public WireGuard/OpenVPN bypass control. Set it to `true` to bypass all traffic after the tunnel starts, and set it back to `false` to restore the WireGuard tunnel routes and DNS settings from the active tunnel configuration.
+- Added the following dedicated-IP fetch methods to `VPNAPIManager`:
+    - `fetchServersWithDedicatedIPs`
+    - `fetchCitiesWithDedicatedIPs`
+    - `fetchCountriesWithDedicatedIPs`
+- Added the `sortedDedicatedIPServers()` method to the `City` and `Country` Core Data models to return the most recently updated list of dedicated IP servers, sorted by hostname.
+
+### Breaking Changes
+- Deprecated direct client use of `bypassAllTraffic(completion:)`; the WireGuard/OpenVPN method is no longer part of the public provider API. Clients calling `bypassAllTraffic()` directly must migrate to `allowBypassAllTraffic` (`true` to bypass all traffic, `false` to restore VPN routing). This is a breaking change for WireGuard/OpenVPN packet tunnel subclasses or app-extension code that referenced the method directly.
+
+### Improvements
+- Fixed a crash where `-[NSManagedObjectContext setParentContext:]` was called from an NSURLSession background thread with a `NSMainQueueConcurrencyType` parent context, triggering an `NSInternalInconsistencyException` in CoreData's thread checker. The parent context assignment is now always performed on the main queue via a private `privateContext` helper on `V3APIAdapter`, and `VPNCoreDataManager.childManager` is guarded with the same pattern.
+- Reduce OpenVPN UDP network access latency during Wi-Fi to cellular interface switching.
+
 ## VPNKit 7.2.0
 
 ### New Items
 - Added `VPNOpenVPNSettings` class which holds port, protocol types, etc under `VPNConfiguration`. refer to [VPNOpenVPNSettings](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNOpenVPNSettings.md)
 - Added `OpenVPN` support for iOS using Network Extension. refer to [OpenVPN+NE Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/OpenVPN+NE%20Implementation.md)
-- Added `OpenVPN` support for macOS using Network Extension. refer to [OpenVPN+NE Implementation](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/Documentation/OpenVPN+NE%20Implementation.md)
-- Implemented OpenVPN handshake update functionality. refer to [VPNOpenVPNSettings](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)
+- Added `OpenVPN` support for macOS using Network Extension. refer to [OpenVPN+NE Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/OpenVPN+NE%20Implementation.md)
+- Implemented OpenVPN handshake update functionality. refer to [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)
 - Added a `quantumResistanceEnabled` flag to `WireGuardAdapterConfiguration` to toggle the quantum-resistant transition. Default is true, meaning quantum resistance is enabled.
 - Added an `allowDisconnectOnQuantumResistanceFailure` flag to `WireGuardAdapterConfiguration` to control whether the VPN disconnects if the post-connect quantum-resistant transition fails. Default is false, which preserves the existing classical WireGuard session. This flag has only effect when `quantumResistanceEnabled` is set to true.
 - Updated OpenVPN from v2.4 to v2.6.
@@ -23,7 +92,6 @@
 - Added `VPNConfigurationExtra` to configure additional VPN protocol routing flags, including local network, device communication, cellular services, route enforcement, and sleep-disconnect behavior.
 - Added `systemExtensionStatus` to `VPNAPIManager` and `VPNConnectionAdapterProtocol` to report the current adapter's system extension state on macOS 15.1 and later.
 - Added `VPNSystemExtensionDisabled` to `Errors.h` to report an error when the client attempts to connect while the system extension is disabled.
-
 
 ### Removed Items
 - Removed `VPNProtocolOpenVPN_UDP` and `VPNProtocolOpenVPN_TCP` VPNProtocols.
@@ -65,9 +133,6 @@
 - Added an optional `httpStatusCode` parameter to the completion handlers of `getIKev2ServerCredentials` and `getUserMetadata`.
 - Updated `WireGuardAdapterConfiguration.validate()` to return `WireGuardAdapterConfigurationError` values (none, missingBrandName, missingAPIKey) instead of a generic `Bool` result, providing more granular validation.
 
-
-## VPNKit 7.1.3
-
 ### Improvements
 - Enhanced `IKEv2` error handling to gracefully manage `VPNServerUnhealthyError` and `VPNInvalidServerError`
 - When connecting to a VPN server, if the connection fails with `VPNServerUnhealthyError` or `VPNInvalidServerError`, that server is now automatically removed to prevent future connection attempts to unhealthy or invalid servers. See [Fetch](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Fetch.md#refetching-updated-data) for details on refetching updated data.
@@ -107,7 +172,7 @@
 - Added new `vpnHandshakeUpdateDetected(_ error: Error?)` method at `WGPacketTunnelProvider`. Refer at [Handshake Update Implementation](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Handshake%20Update%20Implementation.md)
 - Added new properties to `WGPacketTunnelProvider`:
     - `lastHandshakeDate`   : `Date?` which indicates date timestamp of the last successful handshake.
-    - `isInternetAvaialble` : `Bool` which indicates the current network status. 
+    - `isInternetAvailable` : `Bool` which indicates the current network status. 
 
 ### Removed Items
 - Removed `vpnHandshakeFailureDetected()` method from `WGPacketTunnelProvider`.
@@ -124,7 +189,7 @@
 
 ### Breaking Changes
 - Replaced `vpnHandshakeFailureDetected()` with `vpnHandshakeUpdateDetected(_ error: Error?)` optional method at `WGPacketTunnelProvider`.
-- Replaced `getLastHandshake()` method with new `lastHandshakeDate` and `isInternetAvaialble` properties at `WGPacketTunnelProvider`.
+- Replaced `getLastHandshake()` method with new `lastHandshakeDate` and `isInternetAvailable` properties at `WGPacketTunnelProvider`.
 
 ## VPNKit 7.0.0
 

@@ -22,8 +22,8 @@
 ### 1.1 Add the required permissions for the app
 
 Add the required permissions for the app in the ***project file*** and initialize the app using the Primary Objects.
- > Refer to: [README MacOS Guide](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/Documentation/VPNKit%20macOS%20Guide.md)
- > Refer to: [README iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)
+ > Refer to: [VPNKit MacOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20MacOS%20Guide.md)
+ > Refer to: [VPNKit iOS Guide](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/VPNKit%20iOS%20Guide.md)
  
 ### 1.2 Integrate WireGuard Network Extension
 
@@ -45,7 +45,7 @@ Add the required permissions for the app in the ***project file*** and initializ
 - **Traffic Monitoring:** Override `vpnDidReceiveTrafficDataCounter` to handle and debug traffic data if traffic monitoring is enabled.
 - **Handshake Timestamp:** Read the `lastHandshakeDate` property to retrieve the timestamp of the last successful handshake.
 - **Disconnect VPN:** Call `disconnect()` to terminate the VPN connection. The SDK clears `isOnDemandEnabled` and `includeAllNetworks` on the underlying `NETunnelProviderManager` so iOS does not re-spawn the extension.
-- **Bypass Traffic:** Call `bypassAllTraffic()` to bypass all traffic from the VPN connection.
+- **Bypass Traffic:** Set `allowBypassAllTraffic = true` to bypass all traffic from the VPN connection. Set it back to `false` to restore the WireGuard tunnel routes and DNS settings. Direct calls to `bypassAllTraffic()` are deprecated for WireGuard clients.
 - **Connect-On-Demand status:** Read the `isOnDemandEnabled` property to check whether Connect-On-Demand is currently enabled on the provider.
 - **Kill switch status:** Read the `isKillSwitchEnabled` property to check whether the kill switch (`includeAllNetworks`) is enabled. Use this from `vpnHandshakeUpdateDetected(_:)` to decide whether a `captivePortalLikely` recovery requires an explicit `disconnect()` call (kill switch on) or whether the SDK will auto-recover once the user signs in (kill switch off).
 - **Roaming event verbosity:** `notifyRoamingOnce` (default `true`) debounces `.roaming` to one notification per roam episode. Set to `false` for verbose mode if you want a `.roaming` event on every handshake retry inside the post-roam window — useful for telemetry / diagnostics.
@@ -64,7 +64,7 @@ class PacketTunnelProvider: WGPacketTunnelProvider {
         Uncomment the following code block to enable traffic monitoring:
         
         // Enable reading packets, must override vpnDidReceiveTrafficDataCounter method if it is enabled.
-        self.allowReadPackets = true
+        self.allowDataUsageMetering = true
         
         // Set the threshold for monitoring downloaded bytes during each interval
         self.readThreshold = UInt64(6_000_000)  // Value in bytes
@@ -315,7 +315,7 @@ macOS entitlements example:
  #### `- (BOOL)systemExtensionApprovalPending`
 
  **Returns:**  
- `YES` if the WireGuard system extension is awaiting user approval, otherwise `NO`.CFBundleDisplayName
+ `YES` if the WireGuard system extension is awaiting user approval, otherwise `NO`.
  **Discussion:**  
  System extensions may require user approval after installation for security reasons. This method checks if such an approval is pending. Applications may need to prompt users to approve the extension in system settings.
 
@@ -356,26 +356,26 @@ macOS entitlements example:
  ## **6. Limitations, Features, and Compatibility**
 
  ### a. Limitations
-
  - **Network Extension Entitlements:** macOS apps require special entitlements to use Network Extensions. Ensure you have the necessary permissions from Apple.
  - **Background Execution:** Packet Tunnel Providers may have limited background execution time.
  - **Performance Considerations:** WireGuard is designed for efficiency, but network performance can still be affected by the device's processing power and network conditions.
 
  ### b. Features
-
  - **High Performance:** WireGuard is known for its high-speed cryptographic operations and minimal overhead, making it a preferred choice over other protocols.
  - **Simplicity:** The configuration and operation of WireGuard are simpler compared to other VPN protocols, making it easier to set up and manage.
  - **Security:** WireGuard uses state-of-the-art cryptography and is designed to minimize the attack surface.
  - Supports features like **Threat Protection, Multihop, KillSwitch, Connect On demand, Split Tunneling**.
 
+ ### c. Compatibility
+ - **Device Compatibility:** WireGuard is compatible with both Intel and Apple Silicon Macs and iOS devices.
+ - **Minimum Deployment Target:**
+    - **iOS**   : 15.0 and above
+    - **macOS** : 12.0 and above
+    - **tvOS**  : 17.0 and above
+
  > For more details:  
  > Refer to: [README MacOS](https://github.com/wlvpn/ConsumerVPN-macOS/blob/main/SDK/README%20MacOS.md)
  > Refer to: [README iOS](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/README%20iOS.md)
-
- ### c. Compatibility
-
- - **Device Compatibility:** WireGuard is compatible with both Intel and Apple Silicon Macs and iOS devices.
-
  > To get the necessary assets/SDK, please contact support@wlvpn.com
 
 ## **7. Handshake Update Implementation**

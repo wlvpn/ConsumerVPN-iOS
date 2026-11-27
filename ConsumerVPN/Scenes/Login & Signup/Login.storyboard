@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="db6-h9-1LP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="db6-h9-1LP">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,10 +21,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="banner" translatesAutoresizingMaskIntoConstraints="NO" id="tdw-9b-PRg">
-                                <rect key="frame" x="87" y="50" width="201" height="115"/>
+                                <rect key="frame" x="51" y="70" width="273" height="57"/>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="QZZ-LI-NeC" userLabel="Login Controls Stack View">
-                                <rect key="frame" x="37.5" y="215" width="300" height="224"/>
+                                <rect key="frame" x="37.5" y="177" width="300" height="224"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="p0W-0c-qu7" userLabel="Username Section Stack View">
                                         <rect key="frame" x="0.0" y="0.0" width="300" height="39"/>
@@ -98,7 +98,7 @@
                                             <constraint firstAttribute="trailing" secondItem="LCl-rE-oO3" secondAttribute="trailing" id="bdD-NK-PQt"/>
                                         </constraints>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pwF-y4-AWN">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pwF-y4-AWN">
                                         <rect key="frame" x="8" y="126" width="284" height="28"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <state key="normal" title="Forgot password?">
@@ -108,7 +108,7 @@
                                             <action selector="forgotLoginWithSender:" destination="db6-h9-1LP" eventType="touchUpInside" id="WaV-2Y-RC9"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gn-Ok-kO5" customClass="CustomButton" customModule="ConsumerVPN" customModuleProvider="target">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0gn-Ok-kO5" customClass="CustomButton" customModule="ConsumerVPN" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="178" width="300" height="46"/>
                                         <color key="backgroundColor" red="0.29019607843137252" green="0.56470588235294117" blue="0.88627450980392153" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -138,7 +138,7 @@
                                     <constraint firstItem="0gn-Ok-kO5" firstAttribute="width" secondItem="QZZ-LI-NeC" secondAttribute="width" id="jrL-4A-aJH"/>
                                 </constraints>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cBj-GY-NzX">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cBj-GY-NzX">
                                 <rect key="frame" x="75.5" y="617" width="224" height="30"/>
                                 <state key="normal" title="Don't have an account? SIGN UP">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -148,6 +148,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="eU3-jn-XdX"/>
                         <color key="backgroundColor" red="0.10980392160000001" green="0.1215686275" blue="0.1333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
@@ -159,7 +160,6 @@
                             <constraint firstItem="Ad1-Gx-MRU" firstAttribute="top" secondItem="cBj-GY-NzX" secondAttribute="bottom" constant="20" id="qE8-hM-hY7"/>
                             <constraint firstItem="QZZ-LI-NeC" firstAttribute="width" secondItem="Hqt-aH-uVR" secondAttribute="width" multiplier="0.8" id="vCz-eh-Plo"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="eU3-jn-XdX"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="M0r-FN-cBA" appends="YES" id="c6a-GX-e3F"/>
                         </connections>
@@ -197,11 +197,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="banner" translatesAutoresizingMaskIntoConstraints="NO" id="wsc-7P-l6U">
-                                <rect key="frame" x="87" y="50" width="201" height="115"/>
+                                <rect key="frame" x="51" y="70" width="273" height="57"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mo3-ds-Sap">
-                                <rect key="frame" x="20" y="20" width="25" height="25"/>
+                                <rect key="frame" x="20" y="40" width="25" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="L6H-EW-aM0"/>
                                     <constraint firstAttribute="width" constant="25" id="dGf-xg-ysX"/>
@@ -212,7 +212,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="OA4-Fj-ygh" userLabel="Login Controls Stack View">
-                                <rect key="frame" x="37.5" y="215" width="300" height="235"/>
+                                <rect key="frame" x="37.5" y="177" width="300" height="235"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="fn1-UB-8ic" userLabel="Username Section Stack View">
                                         <rect key="frame" x="0.0" y="0.0" width="300" height="39"/>
@@ -322,7 +322,7 @@
                                             <constraint firstAttribute="trailing" secondItem="XV7-rg-GzL" secondAttribute="trailing" id="rtv-gG-W2Q"/>
                                         </constraints>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9sm-gq-9UY" customClass="CustomButton" customModule="ConsumerVPN" customModuleProvider="target">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9sm-gq-9UY" customClass="CustomButton" customModule="ConsumerVPN" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="189" width="300" height="46"/>
                                         <color key="backgroundColor" red="0.2901960784" green="0.56470588239999997" blue="0.8862745098" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -354,9 +354,9 @@
                                 </constraints>
                             </stackView>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="VoY-34-jZX">
-                                <rect key="frame" x="177.5" y="323.5" width="20" height="20"/>
+                                <rect key="frame" x="177.5" y="333.5" width="20" height="20"/>
                             </activityIndicatorView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sp9-67-Emi">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sp9-67-Emi">
                                 <rect key="frame" x="16" y="617" width="116" height="30"/>
                                 <state key="normal" title="Terms of Service">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -365,7 +365,7 @@
                                     <action selector="openToS:" destination="ss2-4G-qw2" eventType="touchUpInside" id="EXB-dY-aFM"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vGc-K4-qhJ">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vGc-K4-qhJ">
                                 <rect key="frame" x="264" y="617" width="95" height="30"/>
                                 <state key="normal" title="Privacy Policy">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -375,6 +375,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="JtL-3p-7It"/>
                         <color key="backgroundColor" red="0.11850482969999999" green="0.13358181720000001" blue="0.148331821" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
@@ -392,7 +393,6 @@
                             <constraint firstItem="Mo3-ds-Sap" firstAttribute="top" secondItem="JtL-3p-7It" secondAttribute="top" constant="20" id="mpD-XF-JC2"/>
                             <constraint firstItem="Mo3-ds-Sap" firstAttribute="leading" secondItem="JtL-3p-7It" secondAttribute="leading" constant="20" id="sru-bc-f3c"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="JtL-3p-7It"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="o2L-y2-kdV" appends="YES" id="snX-s4-EFj"/>
                         </connections>
@@ -429,7 +429,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="banner" width="201" height="115"/>
+        <image name="banner" width="273" height="57"/>
         <image name="caret_back" width="13" height="22"/>
         <image name="lockIcon" width="18" height="25"/>
         <image name="userIcon" width="23" height="25"/>

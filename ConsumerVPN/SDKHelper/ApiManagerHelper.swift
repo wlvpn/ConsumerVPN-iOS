@@ -130,7 +130,7 @@ class ApiManagerHelper: NSObject {
         if let fetchedCities = apiManager.fetchAllCities() as? [City] {
             
             // Convert the fetchedCities into CityModel objects
-            let fetchedCityModels = fetchedCities.compactMap(CityModel.init)
+            let fetchedCityModels = fetchedCities.compactMap { CityModel(city: $0, false, server: nil) }
             // Assign the initial data model to both the reference point (cityModels)
             return fetchedCityModels
             
@@ -138,6 +138,27 @@ class ApiManagerHelper: NSObject {
             return []
         }
         
+    }
+    
+    func fetchDedicatedServerList() -> [CityModel] {
+        
+        let fetchedCities = apiManager.fetchCitiesWithDedicatedIPs()
+        var cityModels: [CityModel] = []
+        
+        for city in fetchedCities {
+            let servers = city.sortedDedicatedIPServers()
+            guard !servers.isEmpty else {
+                continue
+            }
+            
+            for server in servers {
+                if let cityModel = CityModel(city: city, true, server: server) {
+                    cityModels.append(cityModel)
+                }
+            }
+        }
+        
+        return cityModels
     }
     
     private func resetOnLogout() {
@@ -158,6 +179,18 @@ extension ApiManagerHelper: VPNServerStatusReporting {
     
     func statusServerUpdateFailed(_ notification: Notification) {
         UserDefaults.standard.set(nil, forKey: Theme.lastUpdateKey)
+    }
+    
+    func statusDedicatedIPServersUpdateWillBegin(_ notification: Notification) {
+        // Fetching dedicated private IPs
+    }
+    
+    func statusDedicatedIPServersUpdateSucceeded(_ notification: Notification) {
+        // Dedicated private IPs servers fetched
+    }
+    
+    func statusDedicatedIPServersUpdateFailed(_ notification: Notification) {
+        // Dedicated private IPs servers fetch failed
     }
     
 }

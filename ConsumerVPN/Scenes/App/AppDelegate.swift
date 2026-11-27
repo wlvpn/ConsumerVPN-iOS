@@ -13,45 +13,12 @@ import LocalAuthentication
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    var window: UIWindow?
-    
-    var appCoordinator: AppCoordinator!
-    var apiManager: VPNAPIManager!
-    
     static func sharedDelegate() -> AppDelegate {
         // This should cause a crash if it isn't correct, hence the force unwrap.
         return UIApplication.shared.delegate as! AppDelegate
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        // Initialize the APIManager using helper Objc object.
-        apiManager = ApiManagerHelper.shared.apiManager
-        // set the default encryption to 256 if one isn't already set
-        ApiManagerHelper.shared.setDefaultEncryption()
-        
-        appCoordinator = AppCoordinator(apiManager: apiManager)
-        
-        let dashboardVC = DashboardViewController.build(with: apiManager,
-                                                        delegate: appCoordinator)
-        let serverListVC = ServerListViewController.build(with: apiManager)
-        let settingsVC = SettingsTableViewController.build(with: apiManager)
-        let tabBarC = WLVPNTabBarController.build(with: apiManager,
-                                                  dashboardVC: dashboardVC,
-                                                  serverListVC: serverListVC,
-                                                  settingsVC: settingsVC)
-        appCoordinator.tabController = tabBarC
-        
-        // No user object means not signed in, so show login view
-        if !ApiManagerHelper.shared.isUserLogin() {
-            appCoordinator.beginLoginFlow()
-        }
-        
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = tabBarC
-        
-        self.window = window
-        self.window?.makeKeyAndVisible()
-        
         return true
     }
     
@@ -70,39 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         ApiManagerHelper.shared.disconnectOnAppTerminate()
-    }
-    
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-              let incomingURL = userActivity.webpageURL,
-              let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true),
-              let _ = components.path,
-              let params = components.queryItems else {
-            return false
-        }
-        
-        var code = "";
-        for param in params {
-            if param.name == "code" {
-                code = param.value!
-            }
-        }
-        
-        return loginWithCode(code)
-    }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        
-        guard
-            let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-            let _ = components.path,
-            let code = components.queryItems?[0].name else {
-            return false
-        }
-        
-        return loginWithCode(code)
     }
     
     func loginWithCode(_ code: String) -> Bool {
@@ -134,6 +68,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         alertController.addAction(action1)
         
-        self.window?.rootViewController?.presentedViewController?.present(alertController, animated: true, completion: nil)
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
+        window?.rootViewController?.presentedViewController?.present(alertController, animated: true, completion: nil)
     }
 }

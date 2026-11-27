@@ -12,7 +12,6 @@
 - **`networkType`**             : `VPNNetworkType` object - Describes the type of network interface on the device.
 - **`captivePortalStatus`**     : `CaptivePortal` object - Describes the possibility of being in a captive portal.
 - **`apiAdapter`**              : Read-only.
-- **`metadata`**                : `MetaProxy` object - Provides metadata API access. 
 - **`isLoggedIn`**              : `Bool` - Returns `YES` if the user is logged in otherwise `NO`.
 - **`availableEntitlements`**:  : `NSArray` - Returns array of available entitlements.
 
@@ -280,6 +279,34 @@ let cities = apiManager.fetchAllCities()
   - (id<VPNPluginProtocol> _Nonnull)getPlugin:(NSString * _Nonnull)key;
 ```
   Gets a plugin from the `VPNAPIManager`.
+
+## Metadata Collection Management
+
+- **`getCollection:`**
+
+```objc
+  - (void)getCollection:(void (^_Nonnull)(NSDictionary<NSString *, NSString *> * _Nullable result, NSError * _Nullable error))completion;
+```
+
+  Retrieves the metadata collection for the current user. This method handles token expiration errors automatically by reauthenticating or refreshing tokens as needed.
+
+- **`clearCollection:`**
+
+```objc
+  - (void)clearCollection:(void (^_Nonnull)(NSError * _Nullable error))completion;
+```
+
+  Clears the metadata collection for the current user. This method handles token expiration errors automatically by reauthenticating or refreshing tokens as needed.
+
+- **`updateCollection:completion:`**
+
+```objc
+  - (void)updateCollection:(NSDictionary * _Nonnull)values completion:(void (^_Nonnull)(NSDictionary<NSString *, NSString *> * _Nullable result, NSError * _Nullable error))completion;
+```
+
+  Updates the metadata collection for the current user with the provided values. This method handles token expiration errors automatically by reauthenticating or refreshing tokens as needed.
+
+> Refer: [Metadata](https://github.com/wlvpn/ConsumerVPN-iOS/blob/main/SDK/Documentation/Metadata.md)
 
 ## System Extension Helpers (macOS only)
 

@@ -104,11 +104,7 @@ extension ApiManagerHelper {
 extension ApiManagerHelper: VPNConnectionStatusReporting {
     func statusConnectionSucceeded(_ notification: Notification) {
         debugPrint("[ConsumerVPN] \(#function): \(notification)")
-        appendDiagnosticEvent("VPN connection succeeded")
-        // if autobalancing is on, reset the vpn config to nil in those areas
-        if vpnConfiguration.usingAutoselectedCity {
-            vpnConfiguration.city = nil
-        }
+        
     }
     
     func statusConnectionDidDisconnect(_ notification: Notification) {
